@@ -108,13 +108,13 @@ private:
 	FRotator TargetRotator;
 	FRotator StartRotator;
 
-
-
 	UFUNCTION()
 	void UpdateRotation(float Alpha);
 
 	UFUNCTION()
 	void TimelineFinishedFunction();
+
+	bool IsCanRotate;
 	//-----------------------------------------------------------------------------------------------
 
 

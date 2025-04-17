@@ -15,7 +15,7 @@
 #include "Project/WorldSubSystem/EffectObjectPool.h"
 
 AArcher::AArcher()
-	: ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
+	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
 	DefaultArmLength(800.0f), DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f)
 {
@@ -195,6 +195,8 @@ void AArcher::BasicAttackAction()
 
 void AArcher::BasicAttackMontageEnded()
 {
+	IsCanRotate = true;
+
 	ComboInput = false;
 	MoveAble = true;
 	Attacking = false;
@@ -205,6 +207,8 @@ void AArcher::BasicAttackMontageEnded()
 
 void AArcher::BasicAttackComboCheck()
 {
+	IsCanRotate = true;
+
 	//공격 키가 안 눌렸으면 이동 가능 상태로 만들고
 	//공격 몽타주 정지 후 Idle상태로 돌아가기
 	if (!ComboInput)
@@ -236,6 +240,9 @@ void AArcher::BasicAttackShoot()
 {	
 	if (Bow)
 		Bow->BasicAttack();
+
+	//기본공격에 화살을 발사하는 동안은 회전을 안하도록 막기
+	IsCanRotate = false;
 }
 
 void AArcher::MoveSkillAction()
@@ -416,6 +423,12 @@ void AArcher::AddRotateMouseDirection(float DeltaTime)
 
 void AArcher::UpdateRotation(float Alpha)
 {
+	//회전이 불가능한 상태면 회전을 안하도록
+	//------------------------------------------------
+	if (!IsCanRotate)
+		return;
+	//------------------------------------------------
+
 	FRotator NewRotation = FMath::Lerp(StartRotator, TargetRotator, Alpha);
 	SetActorRotation(NewRotation);
 }
