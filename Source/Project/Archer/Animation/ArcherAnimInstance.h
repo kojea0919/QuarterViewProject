@@ -38,6 +38,18 @@ public:
 	//SkillMontage가 끝나면 호출될 함수(SkillMontageEnd함수)를 Bind
 	void BindSkillMontageEndDelegate(UAnimMontage* SkillMontage);
 
+
+	//스킬 Montage 재생, 정지
+	//-----------------------------
+	void PlayDesperadoMontage();
+	void StopDesperadoMontage();
+	//-----------------------------
+
+	//스킬 Montage Get함수
+	//-----------------------------
+	UAnimMontage* GetDesperadoMontage() const { return DesperadoMontage; }
+	//-----------------------------
+
 public:
 	void SetCurSkill(class UBaseSkill* Skill) { CurSkill = Skill; }
 
@@ -57,6 +69,12 @@ private:
 	//MoveSkill 사용시 바닥 Decal 생성
 	UFUNCTION()
 	void AnimNotify_MoveSkillFootDecalSpawn();
+
+	UFUNCTION()
+	void AnimNotify_RemoveMoveSkillFootDirt();
+
+	UFUNCTION()
+	void Animnotify_CreateMoveSkillFootDirt();
 
 	//현재 실행 중인 Skill Montage가 끝날 때 호출될 함수
 	void SkillMontageEnd(UAnimMontage*, bool);
@@ -82,6 +100,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MoveSkill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* MoveSkillMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* DesperadoMontage;
 
 	class AArcher* Archer;
 

@@ -18,6 +18,8 @@ public:
 	virtual void SpwanNiagaraEffect(const FTransform& Transform);
 
 	virtual void SpawnAndAttachNiagaraEffect(class USkeletalMeshComponent* TargetMesh, FName SocketName);
+
+	virtual void SetEffectEnable(bool Enable);
 public:
 	//파티클이 끝나면 호출될 함수로 OnNiagaraSystemFinished를 등록
 	UFUNCTION()

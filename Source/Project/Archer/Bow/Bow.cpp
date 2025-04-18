@@ -23,17 +23,12 @@ ABow::ABow()
 
 void ABow::BeginPlay()
 {
-	Super::BeginPlay();
-
-	UE_LOG(LogTemp, Warning, TEXT("Good"));
-	
+	Super::BeginPlay();	
 }
 
 void ABow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("%s"),*GetActorLocation().ToString());
-
 }
 
 void ABow::BasicAttack()

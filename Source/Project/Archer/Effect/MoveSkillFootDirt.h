@@ -17,6 +17,9 @@ class PROJECT_API AMoveSkillFootDirt : public ANiagaraEffectActor
 public:
 	AMoveSkillFootDirt();
 
+	virtual void Tick(float DeltaTime) override;
+
+
 public:
 	virtual void OnNiagaraSystemFinished_Impl();
 };

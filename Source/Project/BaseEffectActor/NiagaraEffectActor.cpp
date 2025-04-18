@@ -22,16 +22,21 @@ void ANiagaraEffectActor::SpawnAndAttachNiagaraEffect(USkeletalMeshComponent* Ta
 	//Spawn NiagaraComp
 	FTransform SocketTransform = TargetMesh->GetSocketTransform(SocketName);
 	NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraEffect, TargetMesh, SocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,true);
-	//NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, SocketTransform.GetLocation(),
-	//	SocketTransform.GetRotation().Rotator(), FVector(1.0f));
-
-	UE_LOG(LogTemp, Warning, TEXT("Call"));
+	
 	RootComponent = NiagaraComp;
-
 
 	NiagaraComp->AttachToComponent(TargetMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
 
 	NiagaraComp->OnSystemFinished.AddDynamic(this, &ANiagaraEffectActor::OnNiagaraSystemFinished);
+
+}
+
+void ANiagaraEffectActor::SetEffectEnable(bool Enable)
+{
+	if (NiagaraComp)
+	{
+		NiagaraComp->SetVisibility(Enable);
+	}
 }
 
 void ANiagaraEffectActor::OnNiagaraSystemFinished(UNiagaraComponent* PSystem)

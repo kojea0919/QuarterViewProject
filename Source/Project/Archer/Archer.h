@@ -69,6 +69,12 @@ public:
 
 	//이동 스킬 Foot Decal생성
 	void SpawnMoveSkillFootDecal();
+
+	//이동 스킬 먼지 효과 제거
+	void RemoveMoveSkillFootDirt();
+
+	//이동 스킬 먼지 효과 생성
+	void CreateMoveSkillFootDirt();
 	//----------------------------------------------------
 
 
@@ -78,8 +84,11 @@ private:
 
 	void UpdateAttackTargetLocation();
 
-	//MAterial초기화 함수
+	//Material초기화 함수
 	void InitMaterial();
+
+	//효과를 껐다 켰다할 EffectActor 초기화 함수
+	void InitEffect();
 
 	//마우스 방향으로 RotateSpeed만큼 회전하는 함수
 	void AddRotateMouseDirection(float DeltaTime);

@@ -4,6 +4,7 @@
 #include "SkillQuickSlot.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "DragImage.h"
 #include "SkillImageDragDropOperation.h"
@@ -11,7 +12,7 @@
 
 void USkillQuickSlot::SetMaterial(UMaterialInstanceDynamic* Material)
 {
-	SkillImage->SetBrushFromMaterial(Material);
+	//SkillImage->SetBrushFromMaterial(Material);
 }
 
 void USkillQuickSlot::SetSkill(UBaseSkill* Skill)
@@ -33,7 +34,7 @@ void USkillQuickSlot::SetSlotKeyText(const TCHAR* SlotKey)
 
 void USkillQuickSlot::SetRemainCoolTimeVisible(bool Enable)
 {
-	if (RemainCoolTimeText)
+	/*if (RemainCoolTimeText)
 	{
 		if (Enable)
 		{
@@ -43,30 +44,30 @@ void USkillQuickSlot::SetRemainCoolTimeVisible(bool Enable)
 		{
 			RemainCoolTimeText->SetVisibility(ESlateVisibility::Hidden);
 		}
-	}
+	}*/
 }
 
 void USkillQuickSlot::UpdateRemainCoolTime()
 {
-	if (RemainCoolTimeText)
-	{
-		//스킬로 부터 남은 쿨타임 계산
-		float RemainCoolTime = SlotSkill->GetRemainCoolTime();
+	//if (RemainCoolTimeText)
+	//{
+	//	//스킬로 부터 남은 쿨타임 계산
+	//	float RemainCoolTime = SlotSkill->GetRemainCoolTime();
 
-		//정수 부분과 소수 부분 분리
-		uint8 IntegerPart = RemainCoolTime;
-		uint8 DecimalPart = (RemainCoolTime - IntegerPart) * 10;
+	//	//정수 부분과 소수 부분 분리
+	//	uint8 IntegerPart = RemainCoolTime;
+	//	uint8 DecimalPart = (RemainCoolTime - IntegerPart) * 10;
 
-		FString RemainTimeString = FString::Printf(TEXT("%d.%d"), IntegerPart, DecimalPart);
+	//	FString RemainTimeString = FString::Printf(TEXT("%d.%d"), IntegerPart, DecimalPart);
 
-		RemainCoolTimeText->SetText(FText::FromString(RemainTimeString));
-	}
+	//	RemainCoolTimeText->SetText(FText::FromString(RemainTimeString));
+	//}
 }
 
 void USkillQuickSlot::PlaySkillCoolTimeEndAnimation()
 {
-	if (SkillCoolTimeEndAnimation)
-		PlayAnimation(SkillCoolTimeEndAnimation);
+	//if (SkillCoolTimeEndAnimation)
+	//	PlayAnimation(SkillCoolTimeEndAnimation);
 }
 
 void USkillQuickSlot::UseSkill()
@@ -89,10 +90,11 @@ void USkillQuickSlot::NativeConstruct()
 
 	Empty = true;
 
+	//RemainCoolTimeText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_RemainCoolTime")));
+	//SkillCoolTimeEnd = Cast<UImage>(GetWidgetFromName(FName("Img_SkillCoolTimeEnd")));
+	SlotBackGround = Cast<UButton>(GetWidgetFromName(FName("BT_SlotBackGround")));
 	SkillImage = Cast<UImage>(GetWidgetFromName(FName("Img_SkillImage")));
 	SlotKeyText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_SlotKey")));
-	RemainCoolTimeText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_RemainCoolTime")));
-	SkillCoolTimeEnd = Cast<UImage>(GetWidgetFromName(FName("Img_SkillCoolTimeEnd")));
 }
 
 FReply USkillQuickSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -108,7 +110,7 @@ FReply USkillQuickSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 
 		return ReplyResult.NativeReply;
 	}
-
+	
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }
 
@@ -120,8 +122,8 @@ void USkillQuickSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FP
 
 	//Texture 복사
 	//-------------------------------------------------------------------------------
-	UMaterialInstanceDynamic* SkillMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
-	DragImage->SetMaterial(SkillMaterial);
+	//UMaterialInstanceDynamic* SkillMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
+	//DragImage->SetMaterial(SkillMaterial);
 	//-------------------------------------------------------------------------------
 
 	USkillImageDragDropOperation* DragDrop = NewObject<USkillImageDragDropOperation>(DragImage);
@@ -193,37 +195,37 @@ void USkillQuickSlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void USkillQuickSlot::SwapSkill(USkillQuickSlot* OtherSlot)
 {
-	if (IsValid(OtherSlot))
-	{
-		//Material 바꾸기
-		//---------------------------------------------------------------------------
-		UMaterialInstanceDynamic* ThisMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
-		UMaterialInstanceDynamic* OtherMaterial = Cast<UMaterialInstanceDynamic>(OtherSlot->SkillImage->GetBrush().GetResourceObject());
+	//if (IsValid(OtherSlot))
+	//{
+	//	//Material 바꾸기
+	//	//---------------------------------------------------------------------------
+	//	UMaterialInstanceDynamic* ThisMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
+	//	UMaterialInstanceDynamic* OtherMaterial = Cast<UMaterialInstanceDynamic>(OtherSlot->SkillImage->GetBrush().GetResourceObject());
 
-		OtherSlot->SetMaterial(ThisMaterial);
-		SetMaterial(OtherMaterial);
-		//---------------------------------------------------------------------------
+	//	OtherSlot->SetMaterial(ThisMaterial);
+	//	SetMaterial(OtherMaterial);
+	//	//---------------------------------------------------------------------------
 
-		//SkillSlot바꾸기
-		//---------------------------------------------------------------------------
-		UBaseSkill* OtherSkill = OtherSlot->SlotSkill;
-		if (OtherSkill)
-			OtherSkill->SetQuickSlot(this);
-		if (SlotSkill)
-			SlotSkill->SetQuickSlot(OtherSlot);
-		//---------------------------------------------------------------------------
+	//	//SkillSlot바꾸기
+	//	//---------------------------------------------------------------------------
+	//	UBaseSkill* OtherSkill = OtherSlot->SlotSkill;
+	//	if (OtherSkill)
+	//		OtherSkill->SetQuickSlot(this);
+	//	if (SlotSkill)
+	//		SlotSkill->SetQuickSlot(OtherSlot);
+	//	//---------------------------------------------------------------------------
 
-		//Skill바꾸기
-		//---------------------------------------------------------------------------
-		OtherSlot->SlotSkill = SlotSkill;
-		SlotSkill = OtherSkill;
-		//---------------------------------------------------------------------------
+	//	//Skill바꾸기
+	//	//---------------------------------------------------------------------------
+	//	OtherSlot->SlotSkill = SlotSkill;
+	//	SlotSkill = OtherSkill;
+	//	//---------------------------------------------------------------------------
 
-		//Empty바꾸기
-		//---------------------------------------------------------------------------
-		bool OtherIsEmpty = OtherSlot->Empty;
-		OtherSlot->Empty = Empty;
-		Empty = OtherIsEmpty;
-		//---------------------------------------------------------------------------
-	}
+	//	//Empty바꾸기
+	//	//---------------------------------------------------------------------------
+	//	bool OtherIsEmpty = OtherSlot->Empty;
+	//	OtherSlot->Empty = Empty;
+	//	Empty = OtherIsEmpty;
+	//	//---------------------------------------------------------------------------
+	//}
 }

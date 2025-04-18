@@ -122,6 +122,7 @@ void AArcher::PostInitializeComponents()
 		ArcherAnim = Anim;
 
 	InitMaterial();
+	InitEffect();
 }
 
 void AArcher::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -274,7 +275,7 @@ void AArcher::MoveSkillAction()
 void AArcher::SpawnMoveSkillFootDecal()
 {
 	//왼쪽, 오른쪽 발 위치 바닥에 Decal 생성
-		//--------------------------------
+	//--------------------------------
 	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
 	if (nullptr == EffectObjPool)
 		return;
@@ -294,22 +295,25 @@ void AArcher::SpawnMoveSkillFootDecal()
 	LeftFootDecal->SetActorLocation(HitResult.Location);
 	LeftFootDecal->SetActorRotation(GetActorRotation());
 
-	//--------------------------------
-
-
-	//바닥 마찰로 인한 먼지 효과 생성
-	//-----------------------------------------------
-	AMoveSkillFootDirt * DirtEffect = EffectObjPool->GetMoveSkillFootDirt();
-
-	DirtEffect->SpawnAndAttachNiagaraEffect(GetMesh(), FName(TEXT("MoveSkillDirtSocket")));
-	//DirtEffect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(FName(TEXT("MoveSkillDirtSocket"))));
 	
-	//DirtEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	// , FName("MoveSkillDirtSocket"));
 
-	UE_LOG(LogTemp, Warning, TEXT("Dirt : %s"), *(DirtEffect->GetActorLocation().ToString()));
-	UE_LOG(LogTemp, Warning, TEXT("Actor : %s"), *GetActorLocation().ToString());
-	//-----------------------------------------------
+	UE_LOG(LogTemp, Warning, TEXT("good"));
+}
+
+void AArcher::RemoveMoveSkillFootDirt()
+{
+	if (FootDirtEffect)
+	{
+		FootDirtEffect->SetEffectEnable(false);
+	}
+}
+
+void AArcher::CreateMoveSkillFootDirt()
+{
+	if (FootDirtEffect)
+	{
+		FootDirtEffect->SetEffectEnable(true);
+	}
 }
 
 void AArcher::RotateMouseDirection()
@@ -388,6 +392,20 @@ void AArcher::InitMaterial()
 	GetMesh()->SetMaterial(8, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 	//---------------------------------------------
+}
+
+void AArcher::InitEffect()
+{
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	//바닥 마찰로 인한 먼지 효과 생성
+	FootDirtEffect = EffectObjPool->GetMoveSkillFootDirt();
+
+	FootDirtEffect->SpawnAndAttachNiagaraEffect(GetMesh(), FName(TEXT("MoveSkillDirtSocket")));
+
+	FootDirtEffect->SetEffectEnable(false);
 }
 
 void AArcher::AddRotateMouseDirection(float DeltaTime)

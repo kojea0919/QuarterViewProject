@@ -96,6 +96,20 @@ void UArcherAnimInstance::BindSkillMontageEndDelegate(UAnimMontage* SkillMontage
 	}
 }
 
+void UArcherAnimInstance::PlayDesperadoMontage()
+{
+	if (!Montage_IsPlaying(DesperadoMontage))
+	{
+		Montage_Play(DesperadoMontage, 1.0f);
+	}
+}
+
+void UArcherAnimInstance::StopDesperadoMontage()
+{
+	if (Montage_IsPlaying(DesperadoMontage))
+		Montage_Stop(0.2f, DesperadoMontage);
+}
+
 void UArcherAnimInstance::AnimNotify_BasicAttackComboCheck()
 {
 	if (Archer)
@@ -121,6 +135,18 @@ void UArcherAnimInstance::AnimNotify_MoveSkillFootDecalSpawn()
 {
 	if (Archer)
 		Archer->SpawnMoveSkillFootDecal();
+}
+
+void UArcherAnimInstance::AnimNotify_RemoveMoveSkillFootDirt()
+{
+	if (Archer)
+		Archer->RemoveMoveSkillFootDirt();
+}
+
+void UArcherAnimInstance::Animnotify_CreateMoveSkillFootDirt()
+{
+	if (Archer)
+		Archer->CreateMoveSkillFootDirt();
 }
 
 void UArcherAnimInstance::SkillMontageEnd(UAnimMontage*, bool)
@@ -164,5 +190,12 @@ void UArcherAnimInstance::InitMontage()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MOVESKILL_MONTAGE(TEXT("/Game/Player/Archer/Animation/MoveSkillMontage.MoveSkillMontage"));
 	if (MOVESKILL_MONTAGE.Succeeded())
 		MoveSkillMontage = MOVESKILL_MONTAGE.Object;
+	//-------------------------------------------
+
+	//Desperado Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DESPERADO_MONTAGE(TEXT("/Game/Player/Archer/Animation/Desperado.Desperado"));
+	if (DESPERADO_MONTAGE.Succeeded())
+		DesperadoMontage = DESPERADO_MONTAGE.Object;
 	//-------------------------------------------
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Project/UI/SlotKey.h"
 #include "BaseSkill.generated.h"
 
 /**
@@ -52,8 +53,8 @@ public:
 
 	//Slot Key
 	//------------------------------------------------------------
-	//void SetQuickSlotKey(ESkillQuickSlot Key) { SlotKey = Key; }
-	//ESkillQuickSlot GetQuickSlotKey() const { return SlotKey; }
+	void SetQuickSlotKey(ESkillQuickSlot Key) { SlotKey = Key; }
+	ESkillQuickSlot GetQuickSlotKey() const { return SlotKey; }
 	//------------------------------------------------------------
 
 	//CoolTime
@@ -91,7 +92,7 @@ protected:
 	UMaterialInstanceDynamic* SkillUIMaterial;
 
 	//스킬 Slot Key
-	//ESkillQuickSlot SlotKey;
+	ESkillQuickSlot SlotKey;
 
 	//현재 스킬인 궁극기 인지 나타내는 변수
 	bool IsUltimateSkill;

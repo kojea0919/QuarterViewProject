@@ -5,9 +5,14 @@
 #include "NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Project/Archer/Archer.h"
+#include "Project/UI/PlayerHUD.h"
 
 AArcherPlayerController::AArcherPlayerController()
+	: PlayerHUD(nullptr)
 {
+	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
+	if (UI_PLAYERHUD_C.Succeeded())
+		PlayerHUDWidgetClass = UI_PLAYERHUD_C.Class;
 }
 
 void AArcherPlayerController::BeginPlay()
@@ -23,7 +28,7 @@ void AArcherPlayerController::BeginPlay()
 	SetInputMode(InputMode);
 	//-------------------------------------------
 
-
+	InitPlayerHUD();
 }
 
 void AArcherPlayerController::SetupInputComponent()
@@ -61,10 +66,30 @@ void AArcherPlayerController::MoveTarget(FVector TargetLocation)
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, TargetLocation);
 }
 
+void AArcherPlayerController::InitPlayerHUD()
+{
+	if (PlayerHUDWidgetClass)
+	{
+		PlayerHUD = CreateWidget<UPlayerHUD>(this,PlayerHUDWidgetClass);
+		if (PlayerHUD)
+		{
+			PlayerHUD->AddToViewport();
+		}
+	}
+}
+
 FVector AArcherPlayerController::GetMouseWorldLocation()
 {
 	FHitResult HitResult;
 	GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
 	return HitResult.Location;
+}
+
+void AArcherPlayerController::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetQuickSlotSkill(Skill, SlotKey);
+	}
 }
