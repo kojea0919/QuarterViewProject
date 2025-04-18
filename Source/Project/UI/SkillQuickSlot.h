@@ -55,7 +55,7 @@ protected:
 	//드래그가 감지되면 호출되는 함수
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 
-	//드롭이되면 호출되는 함수
+	//드롭되면 호출되는 함수
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
