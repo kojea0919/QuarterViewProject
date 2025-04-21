@@ -34,6 +34,8 @@ public:
 	class AMoveSkillFootDirt* GetMoveSkillFootDirt();
 	void ReturnMoveSkillFootDirt(class AMoveSkillFootDirt* ReturnObj);
 
+	class AArcherDesperadoSkillEffect* GetDesperadoSkillEffect();
+	void ReturnDesperadoSkillEffect(class AArcherDesperadoSkillEffect* ReturnObj);
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -57,6 +59,9 @@ private:
 
 	UPROPERTY()
 	TArray<class AMoveSkillFootDirt*> ArcherMoveSkillFootDirtArr;
+
+	UPROPERTY()
+	TArray<class AArcherDesperadoSkillEffect*> ArcherDesperadoSkillArr;
 };
 
 

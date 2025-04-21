@@ -49,6 +49,12 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	//슬롯에 마우스가 들어오면 호출되는 함수
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+
+	//슬롯에 마우스가 나가면 호출되는 함수
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
+
 	//슬롯에 마우스 버튼이 눌리면 호출되는 함수
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
@@ -64,9 +70,18 @@ private:
 	void SwapSkill(USkillQuickSlot* OtherSlot);
 
 private:
+	//슬롯 배경 이미지
+	//------------------------------------------
 	UPROPERTY()
-	class UButton* SlotBackGround;
+	class UImage* SlotImage;
 	
+	UPROPERTY()
+	class UTexture2D* HoverSlotTexture;
+
+	UPROPERTY()
+	class UTexture2D* NormalSlotTexture;
+	//------------------------------------------
+
 	UPROPERTY()
 	class UImage* SkillImage;
 

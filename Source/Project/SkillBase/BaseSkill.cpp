@@ -80,10 +80,13 @@ void UBaseSkill::UpdateCoolDownEffect(float DeltaTime)
 void UBaseSkill::SetMaterial(const TCHAR* FileName)
 {
 	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, FileName);
+	
+	if (Material)
+	{
+		SkillUIMaterial = UMaterialInstanceDynamic::Create(Material, this);
 
-	SkillUIMaterial = UMaterialInstanceDynamic::Create(Material, this);
-
-	SkillUIMaterial->SetScalarParameterValue(FName("CoolDownPercent"), 0.0f);
+		SkillUIMaterial->SetScalarParameterValue(FName("CoolDownPercent"), 0.0f);
+	}
 }
 
 void UBaseSkill::SetQuickSlot(USkillQuickSlot* Slot)

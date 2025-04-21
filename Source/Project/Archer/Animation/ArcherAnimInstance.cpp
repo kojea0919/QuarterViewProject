@@ -4,6 +4,9 @@
 #include "ArcherAnimInstance.h"
 #include "Project/Archer/Archer.h"
 #include "Project/SkillBase/BaseSkill.h"
+#include "Project/SkillBase/ComboSkill/ComboSkill.h"
+#include "Project/WorldSubSystem/EffectObjectPool.h"
+#include "Project/Archer/Effect/ArcherDesperadoSkillEffect.h"
 
 UArcherAnimInstance::UArcherAnimInstance()
 	: CurrentSpeed(0.0f), Archer(nullptr), CurSkill(nullptr)
@@ -110,6 +113,20 @@ void UArcherAnimInstance::StopDesperadoMontage()
 		Montage_Stop(0.2f, DesperadoMontage);
 }
 
+void UArcherAnimInstance::PlayKickShotMontage()
+{
+	if (!Montage_IsPlaying(DesperadoMontage))
+	{
+		Montage_Play(DesperadoMontage, 1.0f);
+	}
+}
+
+void UArcherAnimInstance::StopKickShotMontage()
+{
+	if (Montage_IsPlaying(DesperadoMontage))
+		Montage_Stop(0.2f, DesperadoMontage);
+}
+
 void UArcherAnimInstance::AnimNotify_BasicAttackComboCheck()
 {
 	if (Archer)
@@ -170,6 +187,35 @@ void UArcherAnimInstance::AnimNotify_PlayerMovable()
 		Archer->SetMoveAble(true);
 }
 
+void UArcherAnimInstance::AnimNotify_SpawnDeperadoEffect()
+{
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	AArcherDesperadoSkillEffect* Effect= EffectObjPool->GetDesperadoSkillEffect();
+	if (Effect)
+	{
+		Effect->SpawnAndAttachNiagaraEffect(Archer->GetMesh(), FName(TEXT("DesperadoEffectPos")));
+		//Effect->SpwanNiagaraEffect(Archer->GetTransform());
+	}
+}
+
+void UArcherAnimInstance::AnimNotify_SkillComboCheck()
+{
+	if (CurExcuteComboSkill)
+	{
+		CurExcuteComboSkill->SkillComboCheck();
+		CurExcuteComboSkill->SetCanNextCombo(false);
+	}
+}
+
+void UArcherAnimInstance::AnimNotify_SkillInputCheckStart()
+{
+	if (CurExcuteComboSkill)
+		CurExcuteComboSkill->SetCanNextCombo(true);
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)
@@ -194,8 +240,15 @@ void UArcherAnimInstance::InitMontage()
 
 	//Desperado Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> DESPERADO_MONTAGE(TEXT("/Game/Player/Archer/Animation/Desperado.Desperado"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DESPERADO_MONTAGE(TEXT("/Game/Player/Archer/Animation/DesperadoMontage.DesperadoMontage"));
 	if (DESPERADO_MONTAGE.Succeeded())
 		DesperadoMontage = DESPERADO_MONTAGE.Object;
+	//-------------------------------------------
+
+	//KickShot Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> KICKSHOT_MONTAGE(TEXT("/Game/Player/Archer/Animation/KickShotMontage.KickShotMontage"));
+	if (KICKSHOT_MONTAGE.Succeeded())
+		KickShotMontage = KICKSHOT_MONTAGE.Object;
 	//-------------------------------------------
 }

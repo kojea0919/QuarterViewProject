@@ -4,16 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Project/SkillBase/BaseSkill.h"
-#include "ArcherSkillDesperado.generated.h"
+#include "ArcherSkillKickShot.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT_API UArcherSkillDesperado : public UBaseSkill
+class PROJECT_API UArcherSkillKickShot : public UBaseSkill
 {
 	GENERATED_BODY()
 	
-public:
-	virtual bool Use() override;
 };

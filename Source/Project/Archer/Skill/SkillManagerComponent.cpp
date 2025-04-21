@@ -6,6 +6,7 @@
 #include "Project/Archer/ArcherPlayerController.h"
 #include "Project/Archer/Animation/ArcherAnimInstance.h"
 #include "ArcherSkillDesperado.h"
+#include "ArcherSkillKickShot.h"
 
 USkillManagerComponent::USkillManagerComponent()
 {
@@ -48,11 +49,24 @@ void USkillManagerComponent::Init()
 	Desperado->SetMontage(Anim->GetDesperadoMontage());	//재생할 스킬 Montage설정
 	Desperado->SetBaseClass(Archer);
 	Desperado->SetQuickSlotKey(ESkillQuickSlot::SlotQ);	//초기 QuickSlotKey 설정
-	Desperado->SetMaterial(TEXT("/Script/Engine.Material'/Game/Player/UI/Skill/M_Desperado.M_Desperado"));
+	Desperado->SetMaterial(TEXT("/Game/Player/UI/Skill/M_Desperado.M_Desperado"));
 
 	PlayerController->SetQuickSlotSkill(Desperado, ESkillQuickSlot::SlotQ);
 	//---------------------------------------------------------
 
+
+	//KickShot Setting
+	//---------------------------------------------------------
+	UArcherSkillKickShot* KickShot = NewObject<UArcherSkillKickShot>();
+	SkillArr.Push(KickShot);
+	KickShot->SetAnimInstance(Anim);
+	KickShot->SetMontage(Anim->GetKickShotMontage());
+	KickShot->SetBaseClass(Archer);
+	KickShot->SetQuickSlotKey(ESkillQuickSlot::SlotW);
+	KickShot->SetMaterial(TEXT("/Game/Player/UI/Skill/M_KickShot.M_KickShot"));
+
+	PlayerController->SetQuickSlotSkill(KickShot, ESkillQuickSlot::SlotW);
+	//---------------------------------------------------------
 }
 
 UBaseSkill* USkillManagerComponent::GetSkill(uint8 SkillType)

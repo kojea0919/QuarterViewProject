@@ -9,6 +9,7 @@
 enum class EArcherSkillType : uint8
 {
 	Desperado = 0,
+	KickShot,
 	Max
 };
 

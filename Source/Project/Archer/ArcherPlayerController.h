@@ -31,6 +31,16 @@ public:
 	//Skill Quick Slot Key Setting
 	void SetQuickSlotSkill(class UBaseSkill* Skill, ESkillQuickSlot SlotKey);
 
+
+	//Skill Slot 바인드 함수
+	//-------------------------------------------------
+	void UseQSlot();
+	void ReleaseQSlot();
+
+	void UseWSlot();
+	void ReleaseWSlot();
+	//-------------------------------------------------
+
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
@@ -48,4 +58,10 @@ private:
 
 	class UPlayerHUD* PlayerHUD;
 	//-------------------------------------------------
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotQInputAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotWInputAction;
 };

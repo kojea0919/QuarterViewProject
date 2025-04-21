@@ -7,6 +7,7 @@
 #include "Components/TimelineComponent.h"
 #include "Archer.generated.h"
 
+
 UCLASS()
 class PROJECT_API AArcher : public ACharacter
 {
@@ -60,6 +61,7 @@ public:
 
 	//기본 공격 실행
 	void BasicAttackShoot();
+
 	//----------------------------------------------------
 
 	//이동 스킬
@@ -103,25 +105,34 @@ private:
 	class UCameraComponent* QuarterViewCamera;
 	//-----------------------------------------------------------------------------------------------
 
+	//스킬 관련 ActorComponent
+	UPROPERTY(VisibleAnywhere, Category = Skill)
+	class USkillManagerComponent* SkillManager;
+
+	//Enhanced input system
+	//-----------------------------------------------------------------------------------------------
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* MoveSkillInputAction;
+	//-----------------------------------------------------------------------------------------------
+
 	//캐릭터 공격시 회전
 	//-----------------------------------------------------------------------------------------------
-	UPROPERTY(Visibleanywhere,BlueprintReadOnly, Category = CharacterMove, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CharacterMove, meta = (AllowPrivateAccess = "true"))
 	class UTimelineComponent* AttackRotationTimeline;
 
 	UPROPERTY()
 	UCurveFloat* RotationCurve;
 	
 	FOnTimelineFloat RotateTimelineProgress;
-	FOnTimelineEvent RotateTimelineFinished;
 
 	FRotator TargetRotator;
 	FRotator StartRotator;
 
 	UFUNCTION()
 	void UpdateRotation(float Alpha);
-
-	UFUNCTION()
-	void TimelineFinishedFunction();
 
 	bool IsCanRotate;
 	//-----------------------------------------------------------------------------------------------

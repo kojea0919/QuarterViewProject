@@ -3,6 +3,10 @@
 
 #include "EffectObjectPool.h"
 #include "Project/Archer/Effect/ArcherBasicAttackArrowEffect.h"
+#include "Project/Archer/Effect/ArcherBasicAttackMuzzleEffect.h"
+#include "Project/Archer/Effect/ArcherDesperadoSkillEffect.h"
+#include "Project/Archer/Effect/ArcherMoveSkillFootDecal.h"
+#include "Project/Archer/Effect/MoveSkillFootDirt.h"
 
 UEffectObjectPool::UEffectObjectPool()
 {
@@ -24,6 +28,7 @@ void UEffectObjectPool::Init()
 	InitArr(ArcherBasicAttackMuzzleEffectArr, 3);
 	InitArr(ArcherMoveSkillFootDecalArr, 3);
 	InitArr(ArcherMoveSkillFootDirtArr, 2);
+	InitArr(ArcherDesperadoSkillArr, 1);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -64,4 +69,14 @@ AMoveSkillFootDirt* UEffectObjectPool::GetMoveSkillFootDirt()
 void UEffectObjectPool::ReturnMoveSkillFootDirt(AMoveSkillFootDirt* ReturnObj)
 {
 	ReturnEffectObject(ArcherMoveSkillFootDirtArr, ReturnObj);
+}
+
+AArcherDesperadoSkillEffect* UEffectObjectPool::GetDesperadoSkillEffect()
+{
+	return GetEffectObject(ArcherDesperadoSkillArr);
+}
+
+void UEffectObjectPool::ReturnDesperadoSkillEffect(AArcherDesperadoSkillEffect* ReturnObj)
+{
+	ReturnEffectObject(ArcherDesperadoSkillArr, ReturnObj);
 }

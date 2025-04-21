@@ -2,6 +2,9 @@
 
 
 #include "Archer.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Camera/CameraComponent.h"
@@ -13,6 +16,7 @@
 #include "Project/Archer/Effect/ArcherMoveSkillFootDecal.h"
 #include "Project/Archer/Effect/MoveSkillFootDirt.h"
 #include "Project/WorldSubSystem/EffectObjectPool.h"
+#include "Project/Archer/Skill/SkillManagerComponent.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
@@ -25,8 +29,20 @@ AArcher::AArcher()
 	//---------------------------------------------
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	QuarterViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("QUARTERVIEWCAMERA"));
+	SkillManager = CreateDefaultSubobject<USkillManagerComponent>(TEXT("SKILLMANAGER"));
 
 	AttackRotationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ATTACKROTATIONTIMELINE"));
+	//---------------------------------------------
+
+	//Input Setting
+	//---------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext>INPUTMAPPINGCONTEXT(TEXT("/Game/Player/Input/IMC_Player.IMC_Player"));
+	if (INPUTMAPPINGCONTEXT.Succeeded())
+		InputMappingContext = INPUTMAPPINGCONTEXT.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_MOVESKILL_INPUTACTION(TEXT("/Game/Player/Input/IA_MoveSkill.IA_MoveSkill"));
+	if (IA_MOVESKILL_INPUTACTION.Succeeded())
+		MoveSkillInputAction = IA_MOVESKILL_INPUTACTION.Object;
 	//---------------------------------------------
 
 	//Curve Setting
@@ -97,11 +113,18 @@ void AArcher::BeginPlay()
 
 	//TimeLine Setting
 	//----------------------------------------------
-	RotateTimelineFinished.BindUFunction(this, FName("TimelineFinishedFunction"));
 	RotateTimelineProgress.BindUFunction(this, FName("UpdateRotation"));
-	AttackRotationTimeline->SetTimelineFinishedFunc(RotateTimelineFinished);
 	AttackRotationTimeline->AddInterpFloat(RotationCurve, RotateTimelineProgress);
 	//----------------------------------------------
+
+	APlayerController * PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			SubSystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
 }
 
 void AArcher::Tick(float DeltaTime)
@@ -129,8 +152,14 @@ void AArcher::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(MoveSkillInputAction, ETriggerEvent::Triggered, this, &AArcher::MoveSkillAction);
+	}
+
+
 	PlayerInputComponent->BindAction(TEXT("BasicAttack"), EInputEvent::IE_Pressed, this, &AArcher::BasicAttackAction);
-	PlayerInputComponent->BindAction(TEXT("MoveSkill"), EInputEvent::IE_Pressed, this, &AArcher::MoveSkillAction);
+	//PlayerInputComponent->BindAction(TEXT("MoveSkill"), EInputEvent::IE_Pressed, this, &AArcher::MoveSkillAction);
 }
 
 void AArcher::PossessedBy(AController* PossessedController)
@@ -447,13 +476,9 @@ void AArcher::UpdateRotation(float Alpha)
 		return;
 	//------------------------------------------------
 
+	UE_LOG(LogTemp, Warning, TEXT("Rotate"));
 	FRotator NewRotation = FMath::Lerp(StartRotator, TargetRotator, Alpha);
 	SetActorRotation(NewRotation);
-}
-
-void AArcher::TimelineFinishedFunction()
-{
-	
 }
 
 void AArcher::RotateTargetLocation(FVector TargetVector)

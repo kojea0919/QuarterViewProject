@@ -4,7 +4,6 @@
 #include "SkillQuickSlot.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "Components/Button.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "DragImage.h"
 #include "SkillImageDragDropOperation.h"
@@ -12,7 +11,7 @@
 
 void USkillQuickSlot::SetMaterial(UMaterialInstanceDynamic* Material)
 {
-	//SkillImage->SetBrushFromMaterial(Material);
+	SkillImage->SetBrushFromMaterial(Material);
 }
 
 void USkillQuickSlot::SetSkill(UBaseSkill* Skill)
@@ -92,9 +91,27 @@ void USkillQuickSlot::NativeConstruct()
 
 	//RemainCoolTimeText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_RemainCoolTime")));
 	//SkillCoolTimeEnd = Cast<UImage>(GetWidgetFromName(FName("Img_SkillCoolTimeEnd")));
-	SlotBackGround = Cast<UButton>(GetWidgetFromName(FName("BT_SlotBackGround")));
+	SlotImage = Cast<UImage>(GetWidgetFromName(FName("Img_SlotImage")));
 	SkillImage = Cast<UImage>(GetWidgetFromName(FName("Img_SkillImage")));
 	SlotKeyText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_SlotKey")));
+
+	NormalSlotTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/UITexture/TX_PlayerSlot.TX_PlayerSlot"));
+	HoverSlotTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/UITexture/TX_PlayerSlot_Act.TX_PlayerSlot_Act"));
+
+}
+
+void USkillQuickSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	SlotImage->SetBrushFromTexture(HoverSlotTexture);
+}
+
+void USkillQuickSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	SlotImage->SetBrushFromTexture(NormalSlotTexture);
 }
 
 FReply USkillQuickSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -103,11 +120,11 @@ FReply USkillQuickSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 	if (Empty)
 		return FReply::Unhandled();
 
+
 	// 왼쪽 마우스 버튼이 눌렸을 때의 처리
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
-
 		return ReplyResult.NativeReply;
 	}
 	
@@ -122,13 +139,14 @@ void USkillQuickSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FP
 
 	//Texture 복사
 	//-------------------------------------------------------------------------------
-	//UMaterialInstanceDynamic* SkillMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
-	//DragImage->SetMaterial(SkillMaterial);
+	UMaterialInstanceDynamic* SkillMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
+	DragImage->SetMaterial(SkillMaterial);
 	//-------------------------------------------------------------------------------
 
 	USkillImageDragDropOperation* DragDrop = NewObject<USkillImageDragDropOperation>(DragImage);
 	OutOperation = DragDrop;
 	DragDrop->DefaultDragVisual = DragImage;
+	DragDrop->Pivot = EDragPivot::CenterCenter;
 	DragDrop->SetDragObject(this);
 }
 
@@ -195,37 +213,37 @@ void USkillQuickSlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void USkillQuickSlot::SwapSkill(USkillQuickSlot* OtherSlot)
 {
-	//if (IsValid(OtherSlot))
-	//{
-	//	//Material 바꾸기
-	//	//---------------------------------------------------------------------------
-	//	UMaterialInstanceDynamic* ThisMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
-	//	UMaterialInstanceDynamic* OtherMaterial = Cast<UMaterialInstanceDynamic>(OtherSlot->SkillImage->GetBrush().GetResourceObject());
+	if (IsValid(OtherSlot))
+	{
+		//Material 바꾸기
+		//---------------------------------------------------------------------------
+		UMaterialInstanceDynamic* ThisMaterial = Cast<UMaterialInstanceDynamic>(SkillImage->GetBrush().GetResourceObject());
+		UMaterialInstanceDynamic* OtherMaterial = Cast<UMaterialInstanceDynamic>(OtherSlot->SkillImage->GetBrush().GetResourceObject());
 
-	//	OtherSlot->SetMaterial(ThisMaterial);
-	//	SetMaterial(OtherMaterial);
-	//	//---------------------------------------------------------------------------
+		OtherSlot->SetMaterial(ThisMaterial);
+		SetMaterial(OtherMaterial);
+		//---------------------------------------------------------------------------
 
-	//	//SkillSlot바꾸기
-	//	//---------------------------------------------------------------------------
-	//	UBaseSkill* OtherSkill = OtherSlot->SlotSkill;
-	//	if (OtherSkill)
-	//		OtherSkill->SetQuickSlot(this);
-	//	if (SlotSkill)
-	//		SlotSkill->SetQuickSlot(OtherSlot);
-	//	//---------------------------------------------------------------------------
+		//SkillSlot바꾸기
+		//---------------------------------------------------------------------------
+		UBaseSkill* OtherSkill = OtherSlot->SlotSkill;
+		if (OtherSkill)
+			OtherSkill->SetQuickSlot(this);
+		if (SlotSkill)
+			SlotSkill->SetQuickSlot(OtherSlot);
+		//---------------------------------------------------------------------------
 
-	//	//Skill바꾸기
-	//	//---------------------------------------------------------------------------
-	//	OtherSlot->SlotSkill = SlotSkill;
-	//	SlotSkill = OtherSkill;
-	//	//---------------------------------------------------------------------------
+		//Skill바꾸기
+		//---------------------------------------------------------------------------
+		OtherSlot->SlotSkill = SlotSkill;
+		SlotSkill = OtherSkill;
+		//---------------------------------------------------------------------------
 
-	//	//Empty바꾸기
-	//	//---------------------------------------------------------------------------
-	//	bool OtherIsEmpty = OtherSlot->Empty;
-	//	OtherSlot->Empty = Empty;
-	//	Empty = OtherIsEmpty;
-	//	//---------------------------------------------------------------------------
-	//}
+		//Empty바꾸기
+		//---------------------------------------------------------------------------
+		bool OtherIsEmpty = OtherSlot->Empty;
+		OtherSlot->Empty = Empty;
+		Empty = OtherIsEmpty;
+		//---------------------------------------------------------------------------
+	}
 }

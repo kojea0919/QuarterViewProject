@@ -43,15 +43,20 @@ public:
 	//-----------------------------
 	void PlayDesperadoMontage();
 	void StopDesperadoMontage();
+
+	void PlayKickShotMontage();
+	void StopKickShotMontage();
 	//-----------------------------
 
 	//스킬 Montage Get함수
 	//-----------------------------
 	UAnimMontage* GetDesperadoMontage() const { return DesperadoMontage; }
+	UAnimMontage* GetKickShotMontage() const { return KickShotMontage; }
 	//-----------------------------
 
 public:
 	void SetCurSkill(class UBaseSkill* Skill) { CurSkill = Skill; }
+	void SetCurExcuteComboSkill(class UComboSkill* Skill) { CurExcuteComboSkill = Skill; }
 
 private:
 	//AttackComboCheck Notify를 받으면 호출할 함수
@@ -83,6 +88,15 @@ private:
 	UFUNCTION()
 	void AnimNotify_PlayerMovable();
 
+	UFUNCTION()
+	void AnimNotify_SpawnDeperadoEffect();
+
+	UFUNCTION()
+	void AnimNotify_SkillComboCheck();
+
+	UFUNCTION()
+	void AnimNotify_SkillInputCheckStart();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);
@@ -104,7 +118,14 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* DesperadoMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* KickShotMontage;
+
 	class AArcher* Archer;
 
+	//현재 사용중인 Skill
 	class UBaseSkill* CurSkill;
+
+	//현재 사용중인 ComboSkill
+	class UComboSkill* CurExcuteComboSkill;
 };

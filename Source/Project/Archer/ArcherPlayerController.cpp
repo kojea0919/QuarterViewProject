@@ -6,6 +6,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Project/Archer/Archer.h"
 #include "Project/UI/PlayerHUD.h"
+#include "EnhancedInputComponent.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr)
@@ -13,6 +14,14 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
 		PlayerHUDWidgetClass = UI_PLAYERHUD_C.Class;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
+	if (IA_SLOTQ_INPUTACTION.Succeeded())
+		SlotQInputAction = IA_SLOTQ_INPUTACTION.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTW_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotW.IA_UseQuickSlotW"));
+	if (IA_SLOTW_INPUTACTION.Succeeded())
+		SlotWInputAction = IA_SLOTW_INPUTACTION.Object;
 }
 
 void AArcherPlayerController::BeginPlay()
@@ -34,6 +43,16 @@ void AArcherPlayerController::BeginPlay()
 void AArcherPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		EnhancedInputComponent->BindAction(SlotQInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseQSlot);
+		EnhancedInputComponent->BindAction(SlotQInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseQSlot);
+
+		EnhancedInputComponent->BindAction(SlotWInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseWSlot);
+		EnhancedInputComponent->BindAction(SlotWInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseWSlot);
+	}
+
 
 	InputComponent->BindAction(TEXT("MoveTarget"), IE_Pressed, this, &AArcherPlayerController::MoveTargetAction);
 }
@@ -91,5 +110,39 @@ void AArcherPlayerController::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSl
 	if (PlayerHUD)
 	{
 		PlayerHUD->SetQuickSlotSkill(Skill, SlotKey);
+	}
+}
+
+void AArcherPlayerController::UseQSlot()
+{
+	if (PlayerHUD)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("q"));
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotQ);
+	}
+}
+
+void AArcherPlayerController::ReleaseQSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotQ);
+	}
+}
+
+void AArcherPlayerController::UseWSlot()
+{
+	if (PlayerHUD)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("w"));
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotW);
+	}
+}
+
+void AArcherPlayerController::ReleaseWSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotW);
 	}
 }
