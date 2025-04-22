@@ -65,12 +65,14 @@ void UComboSkill::SkillComboCheck()
 	if (!ComboInput)
 	{
 		Archer->SetMoveAble(true);
+		StopMontage();
 	}
 	//콤보 키가 눌렸으면 다음 콤보를 계산해서 해당 Section 재생
 	else if (nullptr != AnimInstance)
 	{
 		CurrentCombo = (CurrentCombo + 1) % (MaxCombo + 1);
-		PlaySkillMontageSection(CurrentCombo);
+
+		//PlaySkillMontageSection(CurrentCombo);
 
 		ComboInput = false;
 		CanNextCombo = false;

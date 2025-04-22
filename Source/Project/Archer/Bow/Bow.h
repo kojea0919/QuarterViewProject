@@ -22,6 +22,17 @@ public:
 
 public:
 	void BasicAttack();
+	void SpecialAttack();
+
+	void FlippingShot1();
+	void FlippingShot2();
+	void FlippingShot3();
+
+private:
+	void SpawnArrow(class ANiagaraEffectActor* ArrowEffect);
+	void SpawnMuzzle(class ANiagaraEffectActor* MuzzleEffect);
+
+	void SpawnArrowAddYawAngle(class ANiagaraEffectActor* ArrowEffect, float AddYawAngle);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Pistol)

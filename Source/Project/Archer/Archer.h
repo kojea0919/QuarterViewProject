@@ -60,8 +60,7 @@ public:
 	void BasicAttackComboCheck();
 
 	//기본 공격 실행
-	void BasicAttackShoot();
-
+	void BasicAttackShot();
 	//----------------------------------------------------
 
 	//이동 스킬
@@ -79,6 +78,16 @@ public:
 	void CreateMoveSkillFootDirt();
 	//----------------------------------------------------
 
+
+	//KickShotSkill
+	void SpecialAttackShot();
+
+	//FlippingSkill
+	//----------------------------------------------------
+	void FlippingShot1();
+	void FlippingShot2();
+	void FlippingShot3();
+	//----------------------------------------------------
 
 private:
 	//마우스 방향으로 회전하는 함수

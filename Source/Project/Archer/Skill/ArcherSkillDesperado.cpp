@@ -9,6 +9,7 @@ bool UArcherSkillDesperado::Use()
 	if(!Super::Use())
 		return false;
 
-	Archer->SetLookMouseDirection(false);
+	Archer->GetCharacterMovement()->bOrientRotationToMovement = false;
+
 	return true;
 }

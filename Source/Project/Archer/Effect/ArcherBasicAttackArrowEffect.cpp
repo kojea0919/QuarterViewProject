@@ -15,7 +15,7 @@ void AArcherBasicAttackArrowEffect::SpwanNiagaraEffect(const FTransform& Transfo
 {
 	Super::SpwanNiagaraEffect(Transform);
 
-	NiagaraComp->SetVariableFloat(TEXT("VelocitySpeed1"), 4000.0f);
+	NiagaraComp->SetVariableFloat(TEXT("VelocitySpeedX"), 4000.0f);
 }
 
 void AArcherBasicAttackArrowEffect::OnNiagaraSystemFinished_Impl()

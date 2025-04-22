@@ -52,6 +52,7 @@ public:
 	//-----------------------------
 	UAnimMontage* GetDesperadoMontage() const { return DesperadoMontage; }
 	UAnimMontage* GetKickShotMontage() const { return KickShotMontage; }
+	UAnimMontage* GetFlippingArrowMontage() const { return FlippingArrowMontage; }
 	//-----------------------------
 
 public:
@@ -69,7 +70,7 @@ private:
 
 	//기본공격 AnimNotify
 	UFUNCTION()
-	void AnimNotify_BasicAttackShoot();
+	void AnimNotify_BasicAttackShot();
 
 	//MoveSkill 사용시 바닥 Decal 생성
 	UFUNCTION()
@@ -88,6 +89,11 @@ private:
 	UFUNCTION()
 	void AnimNotify_PlayerMovable();
 
+	//플레이어를 이동 불가 상태로 변경
+	UFUNCTION()
+	void AnimNotify_PlayerUnMovalbe();
+
+	//스킬 이펙트 생성
 	UFUNCTION()
 	void AnimNotify_SpawnDeperadoEffect();
 
@@ -96,6 +102,18 @@ private:
 
 	UFUNCTION()
 	void AnimNotify_SkillInputCheckStart();
+
+	UFUNCTION()
+	void AnimNotify_SpecialAttackShot();
+
+	UFUNCTION()
+	void AnimNotify_FlippingShot1();
+
+	UFUNCTION()
+	void AnimNotify_FlippingShot2();
+
+	UFUNCTION()
+	void AnimNotify_FlippingShot3();
 
 private:
 	UFUNCTION()
@@ -121,6 +139,9 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* KickShotMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* FlippingArrowMontage;
+	
 	class AArcher* Archer;
 
 	//현재 사용중인 Skill

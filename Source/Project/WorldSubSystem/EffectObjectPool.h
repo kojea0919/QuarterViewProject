@@ -17,7 +17,7 @@ class PROJECT_API UEffectObjectPool : public UWorldSubsystem
 public:
 	UEffectObjectPool();
 
-	virtual void Initialize(FSubsystemCollectionBase& Collection);
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	void Init();
 
 
@@ -36,6 +36,13 @@ public:
 
 	class AArcherDesperadoSkillEffect* GetDesperadoSkillEffect();
 	void ReturnDesperadoSkillEffect(class AArcherDesperadoSkillEffect* ReturnObj);
+
+	class AArcherSpecialAttackArrowEffect* GetArcherSpecialAttackArrowEffect();
+	void ReturnArcherSpecialAttackArrowEffect(class AArcherSpecialAttackArrowEffect* ReturnObj);
+
+	class AArcherBigArrowEffect* GetArcherBigArrowEffect();
+	void ReturnArcherBigArrowEffect(class AArcherBigArrowEffect* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -62,6 +69,12 @@ private:
 
 	UPROPERTY()
 	TArray<class AArcherDesperadoSkillEffect*> ArcherDesperadoSkillArr;
+
+	UPROPERTY()
+	TArray<class AArcherSpecialAttackArrowEffect*> ArcherSpecialAttackArrowEffectArr;
+
+	UPROPERTY()
+	TArray<class AArcherBigArrowEffect*> ArcherBigArrowEffectArr;
 };
 
 

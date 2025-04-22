@@ -39,6 +39,9 @@ public:
 
 	void UseWSlot();
 	void ReleaseWSlot();
+
+	void UseESlot();
+	void ReleaseESlot();
 	//-------------------------------------------------
 
 private:
@@ -64,4 +67,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotWInputAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotEInputAction;
 };

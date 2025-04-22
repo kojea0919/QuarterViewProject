@@ -53,7 +53,9 @@ void UBaseSkill::StopMontage()
 void UBaseSkill::PlaySkillMontageSection(int32 NewSection)
 {
 	if (SkillMontage)
+	{
 		AnimInstance->PlayComboSkillMontageSection(NewSection);
+	}
 }
 
 bool UBaseSkill::IsPlayingMontage()

@@ -22,6 +22,10 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTW_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotW.IA_UseQuickSlotW"));
 	if (IA_SLOTW_INPUTACTION.Succeeded())
 		SlotWInputAction = IA_SLOTW_INPUTACTION.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTE_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotE.IA_UseQuickSlotE"));
+	if (IA_SLOTE_INPUTACTION.Succeeded())
+		SlotEInputAction = IA_SLOTE_INPUTACTION.Object;
 }
 
 void AArcherPlayerController::BeginPlay()
@@ -51,6 +55,9 @@ void AArcherPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SlotWInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseWSlot);
 		EnhancedInputComponent->BindAction(SlotWInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseWSlot);
+
+		EnhancedInputComponent->BindAction(SlotEInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseESlot);
+		EnhancedInputComponent->BindAction(SlotEInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseESlot);
 	}
 
 
@@ -134,12 +141,27 @@ void AArcherPlayerController::UseWSlot()
 {
 	if (PlayerHUD)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("w"));
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotW);
 	}
 }
 
 void AArcherPlayerController::ReleaseWSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotW);
+	}
+}
+
+void AArcherPlayerController::UseESlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotE);
+	}
+}
+
+void AArcherPlayerController::ReleaseESlot()
 {
 	if (PlayerHUD)
 	{

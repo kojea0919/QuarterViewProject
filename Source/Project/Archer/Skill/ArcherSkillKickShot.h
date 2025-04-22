@@ -13,5 +13,7 @@ UCLASS()
 class PROJECT_API UArcherSkillKickShot : public UBaseSkill
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual bool Use() override;
 };

@@ -83,8 +83,8 @@ void UArcherAnimInstance::PlayComboSkillMontageSection(int32 NewSection)
 {	
 	//다음 Montage 실행
 	//----------------------------------------------
-	FName SecitonName = *FString::Printf(TEXT("Attack%d"), NewSection);
-	Montage_JumpToSection(SecitonName);
+	FName SectionName = *FString::Printf(TEXT("Attack%d"), NewSection);
+	Montage_JumpToSection(SectionName);
 	//----------------------------------------------
 }
 
@@ -142,10 +142,11 @@ void UArcherAnimInstance::AnimNotify_BasicAttackInputCheckStart()
 		Archer->SetCanNextCombo(true);
 }
 
-void UArcherAnimInstance::AnimNotify_BasicAttackShoot()
+void UArcherAnimInstance::AnimNotify_BasicAttackShot()
 {
+	UE_LOG(LogTemp, Warning, TEXT("call"));
 	if (Archer)
-		Archer->BasicAttackShoot();
+		Archer->BasicAttackShot();
 }
 
 void UArcherAnimInstance::AnimNotify_MoveSkillFootDecalSpawn()
@@ -187,6 +188,14 @@ void UArcherAnimInstance::AnimNotify_PlayerMovable()
 		Archer->SetMoveAble(true);
 }
 
+void UArcherAnimInstance::AnimNotify_PlayerUnMovalbe()
+{
+	if (Archer)
+	{
+		Archer->SetMoveAble(false);
+	}
+}
+
 void UArcherAnimInstance::AnimNotify_SpawnDeperadoEffect()
 {
 	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
@@ -197,7 +206,6 @@ void UArcherAnimInstance::AnimNotify_SpawnDeperadoEffect()
 	if (Effect)
 	{
 		Effect->SpawnAndAttachNiagaraEffect(Archer->GetMesh(), FName(TEXT("DesperadoEffectPos")));
-		//Effect->SpwanNiagaraEffect(Archer->GetTransform());
 	}
 }
 
@@ -214,6 +222,30 @@ void UArcherAnimInstance::AnimNotify_SkillInputCheckStart()
 {
 	if (CurExcuteComboSkill)
 		CurExcuteComboSkill->SetCanNextCombo(true);
+}
+
+void UArcherAnimInstance::AnimNotify_SpecialAttackShot()
+{
+	if (Archer)
+		Archer->SpecialAttackShot();
+}
+
+void UArcherAnimInstance::AnimNotify_FlippingShot1()
+{
+	if (Archer)
+		Archer->FlippingShot1();
+}
+
+void UArcherAnimInstance::AnimNotify_FlippingShot2()
+{
+	if (Archer)
+		Archer->FlippingShot2();
+}
+
+void UArcherAnimInstance::AnimNotify_FlippingShot3()
+{
+	if (Archer)
+		Archer->FlippingShot3();
 }
 
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
@@ -250,5 +282,12 @@ void UArcherAnimInstance::InitMontage()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> KICKSHOT_MONTAGE(TEXT("/Game/Player/Archer/Animation/KickShotMontage.KickShotMontage"));
 	if (KICKSHOT_MONTAGE.Succeeded())
 		KickShotMontage = KICKSHOT_MONTAGE.Object;
+	//-------------------------------------------
+
+	//FlippingArrow Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FLIPPINGARROW_MONTAGE(TEXT("/Game/Player/Archer/Animation/FlippingArrowMontage.FlippingArrowMontage"));
+	if (FLIPPINGARROW_MONTAGE.Succeeded())
+		FlippingArrowMontage = FLIPPINGARROW_MONTAGE.Object;
 	//-------------------------------------------
 }

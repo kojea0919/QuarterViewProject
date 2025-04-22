@@ -7,6 +7,8 @@
 #include "Project/Archer/Effect/ArcherDesperadoSkillEffect.h"
 #include "Project/Archer/Effect/ArcherMoveSkillFootDecal.h"
 #include "Project/Archer/Effect/MoveSkillFootDirt.h"
+#include "Project/Archer/Effect/ArcherSpecialAttackArrowEffect.h"
+#include "Project/Archer/Effect/ArcherBigArrowEffect.h"
 
 UEffectObjectPool::UEffectObjectPool()
 {
@@ -29,6 +31,8 @@ void UEffectObjectPool::Init()
 	InitArr(ArcherMoveSkillFootDecalArr, 3);
 	InitArr(ArcherMoveSkillFootDirtArr, 2);
 	InitArr(ArcherDesperadoSkillArr, 1);
+	InitArr(ArcherSpecialAttackArrowEffectArr, 1);
+	InitArr(ArcherBigArrowEffectArr, 3);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -79,4 +83,24 @@ AArcherDesperadoSkillEffect* UEffectObjectPool::GetDesperadoSkillEffect()
 void UEffectObjectPool::ReturnDesperadoSkillEffect(AArcherDesperadoSkillEffect* ReturnObj)
 {
 	ReturnEffectObject(ArcherDesperadoSkillArr, ReturnObj);
+}
+
+AArcherSpecialAttackArrowEffect* UEffectObjectPool::GetArcherSpecialAttackArrowEffect()
+{
+	return GetEffectObject(ArcherSpecialAttackArrowEffectArr);
+}
+
+void UEffectObjectPool::ReturnArcherSpecialAttackArrowEffect(AArcherSpecialAttackArrowEffect* ReturnObj)
+{
+	ReturnEffectObject(ArcherSpecialAttackArrowEffectArr, ReturnObj);
+}
+
+AArcherBigArrowEffect* UEffectObjectPool::GetArcherBigArrowEffect()
+{
+	return GetEffectObject(ArcherBigArrowEffectArr);
+}
+
+void UEffectObjectPool::ReturnArcherBigArrowEffect(AArcherBigArrowEffect* ReturnObj)
+{
+	ReturnEffectObject(ArcherBigArrowEffectArr, ReturnObj);
 }

@@ -177,6 +177,8 @@ void AArcher::SetMoveAble(bool Enable)
 
 	if (Enable)
 		GetCharacterMovement()->bOrientRotationToMovement = true;
+	else
+		GetController()->StopMovement();
 }
 
 void AArcher::BasicAttackAction()
@@ -266,7 +268,7 @@ void AArcher::BasicAttackComboCheck()
 	}
 }
 
-void AArcher::BasicAttackShoot()
+void AArcher::BasicAttackShot()
 {	
 	if (Bow)
 		Bow->BasicAttack();
@@ -343,6 +345,30 @@ void AArcher::CreateMoveSkillFootDirt()
 	{
 		FootDirtEffect->SetEffectEnable(true);
 	}
+}
+
+void AArcher::SpecialAttackShot()
+{
+	if (Bow)
+		Bow->SpecialAttack();
+}
+
+void AArcher::FlippingShot1()
+{
+	if (Bow)
+		Bow->FlippingShot1();
+}
+
+void AArcher::FlippingShot2()
+{
+	if (Bow)
+		Bow->FlippingShot2();
+}
+
+void AArcher::FlippingShot3()
+{
+	if (Bow)
+		Bow->FlippingShot3();
 }
 
 void AArcher::RotateMouseDirection()
@@ -476,7 +502,6 @@ void AArcher::UpdateRotation(float Alpha)
 		return;
 	//------------------------------------------------
 
-	UE_LOG(LogTemp, Warning, TEXT("Rotate"));
 	FRotator NewRotation = FMath::Lerp(StartRotator, TargetRotator, Alpha);
 	SetActorRotation(NewRotation);
 }
