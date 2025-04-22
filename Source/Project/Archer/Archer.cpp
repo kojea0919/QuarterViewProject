@@ -105,7 +105,7 @@ void AArcher::BeginPlay()
 	{
 		FName BowSocket(TEXT("GripBow"));
 
-		Bow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, BowSocket);
+		Bow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, BowSocket); 
 		Bow->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
 		Bow->SetOwner(this);
 	}

@@ -33,6 +33,7 @@ void UEffectObjectPool::Init()
 	InitArr(ArcherDesperadoSkillArr, 1);
 	InitArr(ArcherSpecialAttackArrowEffectArr, 1);
 	InitArr(ArcherBigArrowEffectArr, 3);
+	InitArr(AfterimageEffectArr, 10);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -103,4 +104,14 @@ AArcherBigArrowEffect* UEffectObjectPool::GetArcherBigArrowEffect()
 void UEffectObjectPool::ReturnArcherBigArrowEffect(AArcherBigArrowEffect* ReturnObj)
 {
 	ReturnEffectObject(ArcherBigArrowEffectArr, ReturnObj);
+}
+
+AAfterimageEffect* UEffectObjectPool::GetAfterimageEffect()
+{
+	return GetEffectObject(AfterimageEffectArr);
+}
+
+void UEffectObjectPool::ReturnAfterimageEffect(AAfterimageEffect* ReturnObj)
+{
+	ReturnEffectObject(AfterimageEffectArr, ReturnObj);
 }
