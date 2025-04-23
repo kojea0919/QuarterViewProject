@@ -4,6 +4,7 @@
 #include "ChargingSkill.h"
 #include "../../Archer/Archer.h"
 #include "../../Archer/ArcherPlayerController.h"
+#include "Project/UI/SkillGaugeBar.h"
 
 UChargingSkill::UChargingSkill()
 	: ChargingSpeed(0.0f), TotalChargingTime(0.0f), IsLookMouse(true),
@@ -19,15 +20,22 @@ bool UChargingSkill::Use()
 		return false;
 	
 	//스킬 게이지바 출력
+	if (SkillGaugeBar)
+	{
+		SkillGaugeBar->SetCurrentSkill(this);
+		SkillGaugeBar->SetVisibility(ESlateVisibility::Visible);
+		SkillGaugeBar->SetPercent(0.0f);
+	}
 
-
-	//플레이어 마우스 방향으로 회전시키는 함수 호출
-	//if(IsLookMouse)
 	
 	//이동 불가능 상태로 만들고 현재 이동 멈추기
 	//------------------------------------------------------
 	if (nullptr == Archer)
 		return false;
+
+	//플레이어 마우스 방향으로 회전시키는 함수 호출
+	if (IsLookMouse)
+		Archer->SetLookMouseDirection(true);
 	
 	Archer->SetMoveAble(false);
 
@@ -73,7 +81,7 @@ void UChargingSkill::End()
 void UChargingSkill::ResetSkillState()
 {
 	//쿨타임 시작
-	StartCoolDown();
+	//StartCoolDown();
 
 	//사용한 Charging 이펙트 제거
 	ReleaseEffect();	
@@ -83,6 +91,11 @@ void UChargingSkill::ResetSkillState()
 		Archer->SetLookMouseDirection(false);
 
 	//UI끄기
+	if (SkillGaugeBar)
+	{
+		SkillGaugeBar->SetVisibility(ESlateVisibility::Hidden);
+		SkillGaugeBar->SetPercent(0.0f);
+	}
 
 	IsCharging = false;
 }

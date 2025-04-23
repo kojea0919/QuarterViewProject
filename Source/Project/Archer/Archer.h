@@ -78,7 +78,6 @@ public:
 	void CreateMoveSkillFootDirt();
 	//----------------------------------------------------
 
-
 	//KickShotSkill
 	void SpecialAttackShot();
 
@@ -88,6 +87,10 @@ public:
 	void FlippingShot2();
 	void FlippingShot3();
 	//----------------------------------------------------
+
+
+public:
+	void CreateAfterimage();
 
 private:
 	//마우스 방향으로 회전하는 함수

@@ -8,6 +8,7 @@
 #include "ArcherSkillDesperado.h"
 #include "ArcherSkillKickShot.h"
 #include "ArcherSkillFlippingArrow.h"
+#include "ArcherSkillArrowShower.h"
 
 USkillManagerComponent::USkillManagerComponent()
 {
@@ -81,6 +82,20 @@ void USkillManagerComponent::Init()
 	FlippingArrow->SetMaterial(TEXT("/Game/Player/UI/Skill/M_FlippingArrow.M_FlippingArrow"));
 
 	PlayerController->SetQuickSlotSkill(FlippingArrow, ESkillQuickSlot::SlotE);
+	//---------------------------------------------------------
+
+	//ArrowShower Setting
+	//---------------------------------------------------------
+	UArcherSkillArrowShower* ArrowShower = NewObject<UArcherSkillArrowShower>();
+	SkillArr.Push(ArrowShower);
+	ArrowShower->SetAnimInstance(Anim);
+	ArrowShower->SetMontage(Anim->GetArrowShowerMontage());
+	ArrowShower->SetBaseClass(Archer);
+	ArrowShower->SetQuickSlotKey(ESkillQuickSlot::SlotR);
+	ArrowShower->SetSkillGaugeBar(PlayerController->GetSkillGaugeBar());
+	ArrowShower->SetMaterial(TEXT("/Game/Player/UI/Skill/M_ArrowShower.M_ArrowShower"));
+
+	PlayerController->SetQuickSlotSkill(ArrowShower, ESkillQuickSlot::SlotR);
 	//---------------------------------------------------------
 }
 

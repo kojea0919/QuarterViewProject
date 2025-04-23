@@ -248,6 +248,12 @@ void UArcherAnimInstance::AnimNotify_FlippingShot3()
 		Archer->FlippingShot3();
 }
 
+void UArcherAnimInstance::AnimNotify_CreateAfterimage()
+{
+	if (Archer)
+		Archer->CreateAfterimage();
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)

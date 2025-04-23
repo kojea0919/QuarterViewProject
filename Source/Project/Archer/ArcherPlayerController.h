@@ -42,7 +42,12 @@ public:
 
 	void UseESlot();
 	void ReleaseESlot();
+
+	void UseRSlot();
+	void ReleaseRSlot();
 	//-------------------------------------------------
+
+	class USkillGaugeBar* GetSkillGaugeBar() const;
 
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
@@ -70,4 +75,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotEInputAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotRInputAction;
 };

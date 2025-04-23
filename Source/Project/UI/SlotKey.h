@@ -8,6 +8,7 @@ enum class ESkillQuickSlot :uint8
 	SlotQ = 0,
 	SlotW,
 	SlotE,
+	SlotR,
 	SlotV,
 	SlotMax
 };

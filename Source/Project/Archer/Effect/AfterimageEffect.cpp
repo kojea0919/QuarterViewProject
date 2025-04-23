@@ -71,10 +71,14 @@ void AAfterimageEffect::Tick(float DeltaTime)
 
 void AAfterimageEffect::LoadMaterial()
 {
-	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Gunner/Mesh/Material/M_Afterimage.M_Afterimage"));
+	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_Afterimage.M_Afterimage"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, Mesh);
 	Mesh->SetMaterial(0, DynMaterial);
 	Mesh->SetMaterial(1, DynMaterial);
+	Mesh->SetMaterial(2, DynMaterial);
+	Mesh->SetMaterial(4, DynMaterial);
+	Mesh->SetMaterial(5, DynMaterial);
+	Mesh->SetMaterial(7, DynMaterial);
 
 	DynMaterial->SetScalarParameterValue(FName("Opacity"), Opacity);
 }

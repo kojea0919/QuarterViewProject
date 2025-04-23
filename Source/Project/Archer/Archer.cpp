@@ -17,6 +17,7 @@
 #include "Project/Archer/Effect/MoveSkillFootDirt.h"
 #include "Project/WorldSubSystem/EffectObjectPool.h"
 #include "Project/Archer/Skill/SkillManagerComponent.h"
+#include "Project/Archer/Effect/AfterimageEffect.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
@@ -325,10 +326,6 @@ void AArcher::SpawnMoveSkillFootDecal()
 	//¿ÞÂÊ ¹ß ¹Ù´Ú À§Ä¡¿¡ »ý¼º
 	LeftFootDecal->SetActorLocation(HitResult.Location);
 	LeftFootDecal->SetActorRotation(GetActorRotation());
-
-	
-
-	UE_LOG(LogTemp, Warning, TEXT("good"));
 }
 
 void AArcher::RemoveMoveSkillFootDirt()
@@ -369,6 +366,27 @@ void AArcher::FlippingShot3()
 {
 	if (Bow)
 		Bow->FlippingShot3();
+}
+
+void AArcher::CreateAfterimage()
+{
+	FRotator ActorRotation = GetActorRotation();
+	FVector ActorLocation = GetActorLocation();
+	ActorLocation.Z = 0.0f;
+	ActorRotation += FRotator(0.0f, -90.0f, 0.0f);
+
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	AAfterimageEffect* AfterimageEffect = EffectObjPool->GetAfterimageEffect();
+	AfterimageEffect->SetActorLocation(ActorLocation);
+	AfterimageEffect->SetActorRotation(ActorRotation);
+	AfterimageEffect->SetOpacity(1.0f);
+
+	AfterimageEffect->SetOwner(this);
+	AfterimageEffect->CopyAnimationPos(GetMesh());
+	AfterimageEffect->SetActorTickEnabled(true);
 }
 
 void AArcher::RotateMouseDirection()

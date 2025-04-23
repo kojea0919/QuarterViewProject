@@ -18,10 +18,11 @@ class PROJECT_API UPlayerHUD : public UUserWidget
 public:
 	void SetQuickSlotSkill(class UBaseSkill* Skill, ESkillQuickSlot SlotKey);
 
-
 	void UseSkill(ESkillQuickSlot SlotKey);
 	void ReleaseSkill(ESkillQuickSlot SlotKey);
 
+public:
+	class USkillGaugeBar* GetSkillGaugeBar() const { return SkillGaugeBar; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -31,4 +32,6 @@ private:
 	UPROPERTY()
 	TArray<class USkillQuickSlot*> SkillQuickSlotArr;
 
+	UPROPERTY()
+	class USkillGaugeBar* SkillGaugeBar;
 };

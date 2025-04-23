@@ -3,6 +3,7 @@
 
 #include "PlayerHUD.h"
 #include "SkillQuickSlot.h"
+#include "SkillGaugeBar.h"
 #include "Project/SkillBase/BaseSkill.h"
 
 void UPlayerHUD::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
@@ -78,4 +79,13 @@ void UPlayerHUD::NativeConstruct()
 		SkillQuickSlotArr.Push(QuickSlot);
 		QuickSlot->SetSlotKeyText(TEXT("E"));
 	}
+
+	QuickSlot = Cast<USkillQuickSlot>(GetWidgetFromName(TEXT("UI_QuickSlotR")));
+	if(QuickSlot)
+	{
+		SkillQuickSlotArr.Push(QuickSlot);
+		QuickSlot->SetSlotKeyText(TEXT("R"));
+	}
+
+	SkillGaugeBar = Cast<USkillGaugeBar>(GetWidgetFromName(TEXT("UI_SkillGaugeBar")));
 }

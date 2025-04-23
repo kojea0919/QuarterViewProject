@@ -53,6 +53,7 @@ public:
 	UAnimMontage* GetDesperadoMontage() const { return DesperadoMontage; }
 	UAnimMontage* GetKickShotMontage() const { return KickShotMontage; }
 	UAnimMontage* GetFlippingArrowMontage() const { return FlippingArrowMontage; }
+	UAnimMontage* GetArrowShowerMontage() const { return ArrowShowerMontage; }
 	//-----------------------------
 
 public:
@@ -115,6 +116,9 @@ private:
 	UFUNCTION()
 	void AnimNotify_FlippingShot3();
 
+	UFUNCTION()
+	void AnimNotify_CreateAfterimage();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);
@@ -142,6 +146,9 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* FlippingArrowMontage;
 	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* ArrowShowerMontage;
+
 	class AArcher* Archer;
 
 	//현재 사용중인 Skill

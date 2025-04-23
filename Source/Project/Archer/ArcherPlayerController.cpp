@@ -7,6 +7,7 @@
 #include "Project/Archer/Archer.h"
 #include "Project/UI/PlayerHUD.h"
 #include "EnhancedInputComponent.h"
+#include "Project/UI/SkillGaugeBar.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr)
@@ -14,6 +15,10 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
 		PlayerHUDWidgetClass = UI_PLAYERHUD_C.Class;
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed"));
+	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
 	if (IA_SLOTQ_INPUTACTION.Succeeded())
@@ -26,6 +31,10 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTE_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotE.IA_UseQuickSlotE"));
 	if (IA_SLOTE_INPUTACTION.Succeeded())
 		SlotEInputAction = IA_SLOTE_INPUTACTION.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTR_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotR.IA_UseQuickSlotR"));
+	if (IA_SLOTR_INPUTACTION.Succeeded())
+		SlotRInputAction = IA_SLOTR_INPUTACTION.Object;
 }
 
 void AArcherPlayerController::BeginPlay()
@@ -58,6 +67,9 @@ void AArcherPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SlotEInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseESlot);
 		EnhancedInputComponent->BindAction(SlotEInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseESlot);
+
+		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseRSlot);
+		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseRSlot);
 	}
 
 
@@ -124,7 +136,6 @@ void AArcherPlayerController::UseQSlot()
 {
 	if (PlayerHUD)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("q"));
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotQ);
 	}
 }
@@ -167,4 +178,27 @@ void AArcherPlayerController::ReleaseESlot()
 	{
 		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotW);
 	}
+}
+
+void AArcherPlayerController::UseRSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotR);
+	}
+}
+
+void AArcherPlayerController::ReleaseRSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotR);
+	}
+}
+
+USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const
+{
+	if(PlayerHUD)
+		return PlayerHUD->GetSkillGaugeBar();
+	return nullptr;
 }
