@@ -182,6 +182,12 @@ void AArcher::SetMoveAble(bool Enable)
 		GetController()->StopMovement();
 }
 
+void AArcher::SetBowChargingEffect(bool Enable)
+{
+	if (Bow)
+		Bow->SetChargingEffect(Enable);
+}
+
 void AArcher::BasicAttackAction()
 {
 	//이동 스킬 중에는 공격 불가능
@@ -366,6 +372,12 @@ void AArcher::FlippingShot3()
 {
 	if (Bow)
 		Bow->FlippingShot3();
+}
+
+void AArcher::ArrowShowerShot()
+{
+	if (Bow)
+		Bow->ArrowShowerShot();
 }
 
 void AArcher::CreateAfterimage()

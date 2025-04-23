@@ -18,7 +18,6 @@ void USkillGaugeBar::NativeConstruct()
 	SkillGaugeBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PB_SkillGaugeBar")));
 
 	SkillGaugeBar->SetPercent(0);
-	SkillGaugeBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USkillGaugeBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

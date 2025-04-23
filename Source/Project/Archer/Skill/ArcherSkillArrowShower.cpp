@@ -16,10 +16,12 @@ bool UArcherSkillArrowShower::Use()
 	if (!Super::Use())
 		return false;
 
-	return false;
+	Archer->SetBowChargingEffect(true);
+
+	return true;
 }
 
 void UArcherSkillArrowShower::ReleaseEffect()
 {
-
+	Archer->SetBowChargingEffect(false);
 }

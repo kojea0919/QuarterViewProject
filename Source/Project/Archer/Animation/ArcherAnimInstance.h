@@ -119,6 +119,12 @@ private:
 	UFUNCTION()
 	void AnimNotify_CreateAfterimage();
 
+	UFUNCTION()
+	void AnimNotify_Pause();
+
+	UFUNCTION()
+	void AnimNotify_ArrowShowerShot();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);

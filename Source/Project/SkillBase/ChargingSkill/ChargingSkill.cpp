@@ -18,7 +18,7 @@ bool UChargingSkill::Use()
 	//Skill사용이 불가능한 상황이라면(다른 스킬 사용중) fasle return
 	if (!Super::Use())
 		return false;
-	
+
 	//스킬 게이지바 출력
 	if (SkillGaugeBar)
 	{
@@ -26,7 +26,6 @@ bool UChargingSkill::Use()
 		SkillGaugeBar->SetVisibility(ESlateVisibility::Visible);
 		SkillGaugeBar->SetPercent(0.0f);
 	}
-
 	
 	//이동 불가능 상태로 만들고 현재 이동 멈추기
 	//------------------------------------------------------
@@ -53,11 +52,10 @@ void UChargingSkill::ReleaseSkill()
 {
 	//ChargingSkill은 스킬키를 떼면 플레이어의 차징 상태를 확인해 전부 채웠으면
 	//애니메이션을 계속 재생하고 부족하면 애니메이션을 멈춘다.
-
 	if (!IsCharging)
 		return;
 
-	/*bool IsFullCharging;
+	bool IsFullCharging = SkillGaugeBar->GetPercent() >= 1.0f ? true : false;
 	if (IsFullCharging)
 	{
 		ResumeMontage();
@@ -66,7 +64,7 @@ void UChargingSkill::ReleaseSkill()
 	{
 		StopMontage();
 		Archer->SetMoveAble(true);
-	}*/
+	}
 	
 	ResetSkillState();
 }
@@ -88,7 +86,10 @@ void UChargingSkill::ResetSkillState()
 
 	//마우스 바라보게 하는 기능 Off
 	if (Archer)
+	{
 		Archer->SetLookMouseDirection(false);
+		Archer->SetUseSkill(false);
+	}
 
 	//UI끄기
 	if (SkillGaugeBar)

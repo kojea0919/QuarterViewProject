@@ -47,6 +47,7 @@ public:
 
 	void SetLookMouseDirection(bool Enable) { LookMouseDirection = Enable; }
 
+	void SetBowChargingEffect(bool Enable);
 public:
 	//기본 공격
 	//----------------------------------------------------
@@ -88,6 +89,8 @@ public:
 	void FlippingShot3();
 	//----------------------------------------------------
 
+	//ArrowShowerSkill
+	void ArrowShowerShot();
 
 public:
 	void CreateAfterimage();

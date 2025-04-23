@@ -9,6 +9,7 @@
 #include "ArcherSkillKickShot.h"
 #include "ArcherSkillFlippingArrow.h"
 #include "ArcherSkillArrowShower.h"
+#include "Project/UI/SkillGaugeBar.h"
 
 USkillManagerComponent::USkillManagerComponent()
 {

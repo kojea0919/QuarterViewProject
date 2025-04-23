@@ -144,7 +144,6 @@ void UArcherAnimInstance::AnimNotify_BasicAttackInputCheckStart()
 
 void UArcherAnimInstance::AnimNotify_BasicAttackShot()
 {
-	UE_LOG(LogTemp, Warning, TEXT("call"));
 	if (Archer)
 		Archer->BasicAttackShot();
 }
@@ -254,6 +253,19 @@ void UArcherAnimInstance::AnimNotify_CreateAfterimage()
 		Archer->CreateAfterimage();
 }
 
+void UArcherAnimInstance::AnimNotify_Pause()
+{
+	UAnimMontage * CurrentMontage = GetCurrentActiveMontage();
+	if (CurrentMontage)
+		Montage_Pause(CurrentMontage);
+}
+
+void UArcherAnimInstance::AnimNotify_ArrowShowerShot()
+{
+	if (Archer)
+		Archer->ArrowShowerShot();
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)
@@ -295,5 +307,12 @@ void UArcherAnimInstance::InitMontage()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> FLIPPINGARROW_MONTAGE(TEXT("/Game/Player/Archer/Animation/FlippingArrowMontage.FlippingArrowMontage"));
 	if (FLIPPINGARROW_MONTAGE.Succeeded())
 		FlippingArrowMontage = FLIPPINGARROW_MONTAGE.Object;
+	//-------------------------------------------
+
+	//ArrowShower Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ARROWSHOWER_MONTAGE(TEXT("/Game/Player/Archer/Animation/ArrowShowerMontage.ArrowShowerMontage"));
+	if (ARROWSHOWER_MONTAGE.Succeeded())
+		ArrowShowerMontage = ARROWSHOWER_MONTAGE.Object;
 	//-------------------------------------------
 }

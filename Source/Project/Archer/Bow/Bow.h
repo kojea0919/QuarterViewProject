@@ -17,6 +17,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -28,13 +30,27 @@ public:
 	void FlippingShot2();
 	void FlippingShot3();
 
+	void ArrowShowerShot();
+
+	void SetChargingEffect(bool Enable);
+
 private:
-	void SpawnArrow(class ANiagaraEffectActor* ArrowEffect);
+	//화살 Effect를 생성하는 함수
+	//--------------------------------------------------------------------------------------------------
+	void SpawnArrow(class ANiagaraEffectActor* ArrowEffect, bool UsePlayerDir = true);
+
+	//AddYawAngle만큼 화살 회전
+	//플레이어의 앞방향으로 쏘려면 UsePlayerDir을 true로
+	//활의 앞방향으로 쏘려면 false로
+	void SpawnArrowAddYawAngle(class ANiagaraEffectActor* ArrowEffect, float AddYawAngle, bool UsePlayerDir = true);
+	//--------------------------------------------------------------------------------------------------
 	void SpawnMuzzle(class ANiagaraEffectActor* MuzzleEffect);
 
-	void SpawnArrowAddYawAngle(class ANiagaraEffectActor* ArrowEffect, float AddYawAngle);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Pistol)
 	USkeletalMeshComponent* Bow;
+
+	UPROPERTY(VisibleAnywhere, Category = Material)
+	UMaterialInstanceDynamic* DynMaterial;
 };
