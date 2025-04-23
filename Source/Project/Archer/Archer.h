@@ -48,6 +48,12 @@ public:
 	void SetLookMouseDirection(bool Enable) { LookMouseDirection = Enable; }
 
 	void SetBowChargingEffect(bool Enable);
+
+	void RangeMarkOn(float Range);
+	void RangeMarkOff();
+
+	void SetAttackAreaMark(bool Enable);
+
 public:
 	//기본 공격
 	//----------------------------------------------------
@@ -119,6 +125,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* QuarterViewCamera;
 	//-----------------------------------------------------------------------------------------------
+
+	//스킬 사거리 표시 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Skill, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* SkillRangeMarkMesh;		//반지름 20짜리 실린더
+	//----------------------------------------
 
 	//스킬 관련 ActorComponent
 	UPROPERTY(VisibleAnywhere, Category = Skill)

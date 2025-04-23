@@ -9,6 +9,8 @@
 #include "Project/Archer/Effect/MoveSkillFootDirt.h"
 #include "Project/Archer/Effect/ArcherSpecialAttackArrowEffect.h"
 #include "Project/Archer/Effect/ArcherBigArrowEffect.h"
+#include "Project/Archer/Effect/ArcherArrowShowerSkillEffect.h"
+#include "Project/Archer/Effect/AfterimageEffect.h"
 
 UEffectObjectPool::UEffectObjectPool()
 {
@@ -114,4 +116,14 @@ AAfterimageEffect* UEffectObjectPool::GetAfterimageEffect()
 void UEffectObjectPool::ReturnAfterimageEffect(AAfterimageEffect* ReturnObj)
 {
 	ReturnEffectObject(AfterimageEffectArr, ReturnObj);
+}
+
+AArcherArrowShowerSkillEffect* UEffectObjectPool::GetArcherArrowShowerSkillEffect()
+{
+	return GetEffectObject(ArcherArrowShowerSkillEffectArr);
+}
+
+void UEffectObjectPool::ReturnArcherArrowShowerSkillEffect(AArcherArrowShowerSkillEffect* ReturnObj)
+{
+	ReturnEffectObject(ArcherArrowShowerSkillEffectArr, ReturnObj);
 }

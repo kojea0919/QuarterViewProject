@@ -8,6 +8,7 @@
 #include "Project/UI/PlayerHUD.h"
 #include "EnhancedInputComponent.h"
 #include "Project/UI/SkillGaugeBar.h"
+#include "Project/Archer/Effect/AttackAreaMarkEffect.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr)
@@ -15,10 +16,6 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
 		PlayerHUDWidgetClass = UI_PLAYERHUD_C.Class;
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed"));
-	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
 	if (IA_SLOTQ_INPUTACTION.Succeeded())
@@ -49,6 +46,10 @@ void AArcherPlayerController::BeginPlay()
 	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
 	//-------------------------------------------
+
+	AreaMarkEffect = GetWorld()->SpawnActor<AAttackAreaMarkEffect>(AAttackAreaMarkEffect::StaticClass());
+	AreaMarkEffect->SetController(this);
+	AreaMarkEffect->SetHidden(true);
 
 	InitPlayerHUD();
 }
@@ -201,4 +202,10 @@ USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const
 	if(PlayerHUD)
 		return PlayerHUD->GetSkillGaugeBar();
 	return nullptr;
+}
+
+void AArcherPlayerController::SetAreaMarkEffectVisible(bool Enable)
+{
+	if (AreaMarkEffect)
+		AreaMarkEffect->SetActorHiddenInGame(!Enable);
 }

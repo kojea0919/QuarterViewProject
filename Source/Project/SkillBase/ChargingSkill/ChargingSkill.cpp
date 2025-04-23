@@ -59,6 +59,7 @@ void UChargingSkill::ReleaseSkill()
 	if (IsFullCharging)
 	{
 		ResumeMontage();
+		CompleteChargingProc();
 	}
 	else
 	{

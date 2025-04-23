@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -30,6 +31,8 @@ AArcher::AArcher()
 	//---------------------------------------------
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	QuarterViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("QUARTERVIEWCAMERA"));
+	SkillRangeMarkMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SKILLRANGEMARK"));
+
 	SkillManager = CreateDefaultSubobject<USkillManagerComponent>(TEXT("SKILLMANAGER"));
 
 	AttackRotationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ATTACKROTATIONTIMELINE"));
@@ -70,6 +73,15 @@ AArcher::AArcher()
 	{
 		GetMesh()->SetSkeletalMesh(SK_ARCHER.Object);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SKILLRANGE(TEXT("/Game/Player/Archer/RangeMark/SM_RangeMarkMesh.SM_RangeMarkMesh"));
+	if (SM_SKILLRANGE.Succeeded())
+	{
+		SkillRangeMarkMesh->SetStaticMesh(SM_SKILLRANGE.Object);
+	}
+	SkillRangeMarkMesh->SetupAttachment(RootComponent);
+	SkillRangeMarkMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
+	SkillRangeMarkMesh->SetHiddenInGame(true);
 
 	GetMesh()->SetWorldRotation(FRotator(0.0f, -90.0f, 0.0f));
 	//---------------------------------------------
@@ -186,6 +198,29 @@ void AArcher::SetBowChargingEffect(bool Enable)
 {
 	if (Bow)
 		Bow->SetChargingEffect(Enable);
+}
+
+void AArcher::RangeMarkOn(float Range)
+{
+	//Range로 부터 반지름 20짜리 원을 얼만큼 늘릴지 계산
+	//ex Range가 20이면 scale 1
+	// Range : y = 20 : 1
+	// y = Range / 20;
+
+	float NewScale = Range / 20.0f;
+	SkillRangeMarkMesh->SetWorldScale3D(FVector(NewScale,NewScale,1.0f));
+	SkillRangeMarkMesh->SetHiddenInGame(false);
+}
+
+void AArcher::RangeMarkOff()
+{
+	SkillRangeMarkMesh->SetHiddenInGame(true);
+}
+
+void AArcher::SetAttackAreaMark(bool Enable)
+{
+	if (ArcherController)
+		ArcherController->SetAreaMarkEffectVisible(Enable);
 }
 
 void AArcher::BasicAttackAction()

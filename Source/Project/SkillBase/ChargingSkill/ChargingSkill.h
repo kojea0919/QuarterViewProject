@@ -30,6 +30,9 @@ public:
 	float GetChargingSpeed() const { return ChargingSpeed; }
 	float GetTotalChargingTime() const { return TotalChargingTime; }
 
+protected:
+	virtual void CompleteChargingProc() {};	//차징이 성공했을 때 필요한 작업을 하는 함수
+
 private:
 	void ResetSkillState();
 

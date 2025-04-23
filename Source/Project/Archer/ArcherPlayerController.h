@@ -49,6 +49,8 @@ public:
 
 	class USkillGaugeBar* GetSkillGaugeBar() const;
 
+	void SetAreaMarkEffectVisible(bool Enable);
+
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
@@ -78,4 +80,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotRInputAction;
+
+	UPROPERTY(VisibleAnywhere)
+	class AAttackAreaMarkEffect* AreaMarkEffect;
 };

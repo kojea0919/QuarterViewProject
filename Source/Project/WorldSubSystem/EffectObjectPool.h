@@ -46,6 +46,9 @@ public:
 	class AAfterimageEffect* GetAfterimageEffect();
 	void ReturnAfterimageEffect(class AAfterimageEffect* ReturnObj);
 
+	class AArcherArrowShowerSkillEffect* GetArcherArrowShowerSkillEffect();
+	void ReturnArcherArrowShowerSkillEffect(class AArcherArrowShowerSkillEffect* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -81,6 +84,9 @@ private:
 	
 	UPROPERTY()
 	TArray<class AAfterimageEffect*> AfterimageEffectArr;
+
+	UPROPERTY()
+	TArray<class AArcherArrowShowerSkillEffect*> ArcherArrowShowerSkillEffectArr;
 };
 
 

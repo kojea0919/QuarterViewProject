@@ -21,4 +21,9 @@ public:
 
 	virtual void ReleaseEffect();
 	
+protected:
+	virtual void CompleteChargingProc() override;	//차징 성공 처리 함수
+
+private:
+	float Range;
 };
