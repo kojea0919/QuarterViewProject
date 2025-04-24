@@ -3,7 +3,7 @@
 
 #include "AfterimageEffect.h"
 #include "Components/PoseableMeshComponent.h"
-#include "Project/WorldSubSystem/EffectObjectPool.h"
+#include "WorldSubSystem/EffectObjectPool.h"
 
 AAfterimageEffect::AAfterimageEffect()
 	: DynMaterial(nullptr), Opacity(1.0f), OpacitySpeed(2.0f)

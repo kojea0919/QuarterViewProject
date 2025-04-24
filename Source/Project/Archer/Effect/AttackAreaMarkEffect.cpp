@@ -3,10 +3,10 @@
 
 #include "AttackAreaMarkEffect.h"
 #include "Components/DecalComponent.h"
-#include "Project/Archer/ArcherPlayerController.h"
+#include "Archer/ArcherPlayerController.h"
 
 AAttackAreaMarkEffect::AAttackAreaMarkEffect()
-	: ArcherController(nullptr)
+	: ArcherController(nullptr), CurSkillRange(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -18,7 +18,20 @@ void AAttackAreaMarkEffect::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	SetActorLocation(ArcherController->GetMouseWorldLocation());
+	//액터가 스킬의 사거리를 넘어가지 못하게 만든다.
+	FVector MousePos = ArcherController->GetMouseWorldLocation();
+	FVector PlayerPos = ArcherController->GetCharacter()->GetActorLocation();
+
+	//마우스와 플레이어의 거리가 사거리 안이면 그대로 생성
+	double Length = (MousePos - PlayerPos).Length();
+	if(Length <= CurSkillRange)
+		SetActorLocation(MousePos);
+	//사거리 밖이면 마우스 방향으로 사거리 만큼 위치에 생성한다.
+	else
+	{
+		FVector PlayerToMouse = MousePos - PlayerPos;
+		SetActorLocation(PlayerToMouse.GetSafeNormal() * CurSkillRange + PlayerPos);
+	}
 }
 
 void AAttackAreaMarkEffect::LoadMaterial()

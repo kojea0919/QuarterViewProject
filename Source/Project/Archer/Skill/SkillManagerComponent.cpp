@@ -2,14 +2,14 @@
 
 
 #include "SkillManagerComponent.h"
-#include "Project/Archer/Archer.h"
-#include "Project/Archer/ArcherPlayerController.h"
-#include "Project/Archer/Animation/ArcherAnimInstance.h"
+#include "Archer/Archer.h"
+#include "Archer/ArcherPlayerController.h"
+#include "Archer/Animation/ArcherAnimInstance.h"
 #include "ArcherSkillDesperado.h"
 #include "ArcherSkillKickShot.h"
 #include "ArcherSkillFlippingArrow.h"
 #include "ArcherSkillArrowShower.h"
-#include "Project/UI/SkillGaugeBar.h"
+#include "UI/SkillGaugeBar.h"
 
 USkillManagerComponent::USkillManagerComponent()
 {

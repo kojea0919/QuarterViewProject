@@ -2,11 +2,12 @@
 
 
 #include "ArcherSkillArrowShower.h"
-#include "Project/Archer/Archer.h"
-#include "Project/Archer/ArcherPlayerController.h"
+#include "Archer/Archer.h"
+#include "Archer/ArcherPlayerController.h"
+#include "TimerManager.h"
 
 UArcherSkillArrowShower::UArcherSkillArrowShower()
-	: Range(700.0f)
+	: Range(700.0f), EffectTermTime(1)
 {
 	SetCharginSpeed(1.0f);
 	SetTotalChargingTime(1.0f);
@@ -21,6 +22,11 @@ bool UArcherSkillArrowShower::Use()
 	Archer->RangeMarkOn(Range);
 	Archer->SetAttackAreaMark(true);
 
+	AArcherPlayerController* PlayerController = Cast<AArcherPlayerController>(Archer->GetController());
+	if (nullptr == PlayerController)
+		return false;
+	PlayerController->SetAreaMarkEffectCurSkillRange(Range);
+
 	return true;
 }
 
@@ -29,6 +35,10 @@ void UArcherSkillArrowShower::ReleaseEffect()
 	Archer->SetBowChargingEffect(false);
 	Archer->RangeMarkOff();
 	Archer->SetAttackAreaMark(false);
+}
+
+void UArcherSkillArrowShower::CreateSkillEffect()
+{
 }
 
 void UArcherSkillArrowShower::CompleteChargingProc()
@@ -51,11 +61,11 @@ void UArcherSkillArrowShower::CompleteChargingProc()
 	double DorResult = FVector::DotProduct(PlayerForwardVector.GetSafeNormal(), PlayerToMouseVector.GetSafeNormal());
 	if (FMath::IsNearlyEqual(DorResult, 1,FLT_EPSILON))
 	{
-
+		
 	}
 	else
 	{
 		double Length = PlayerToMouseVector.Length();
 	}
-
+	///GetWorld()->GetTimerManager().SetTimer(EffectCreateTimer, this, &UArcherSkillArrowShower::CreateSkillEffect, EffectTermTime, false);
 }

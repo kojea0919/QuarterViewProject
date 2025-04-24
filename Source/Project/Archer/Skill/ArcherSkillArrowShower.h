@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/SkillBase/ChargingSkill/ChargingSkill.h"
+#include "SkillBase/ChargingSkill/ChargingSkill.h"
 #include "ArcherSkillArrowShower.generated.h"
 
 /**
@@ -21,9 +21,15 @@ public:
 
 	virtual void ReleaseEffect();
 	
+public:
+	void CreateSkillEffect();
+
 protected:
 	virtual void CompleteChargingProc() override;	//차징 성공 처리 함수
 
 private:
 	float Range;
+
+	FTimerHandle EffectCreateTimer;					//스킬 사용후 잠시후 이펙트 생성을 위한 Timer
+	float EffectTermTime;
 };

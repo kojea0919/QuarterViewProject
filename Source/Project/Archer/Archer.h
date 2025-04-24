@@ -99,7 +99,9 @@ public:
 	void ArrowShowerShot();
 
 public:
+	//잔상 생성
 	void CreateAfterimage();
+
 
 private:
 	//마우스 방향으로 회전하는 함수

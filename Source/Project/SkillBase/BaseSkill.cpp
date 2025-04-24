@@ -2,9 +2,9 @@
 
 
 #include "BaseSkill.h"
-#include "Project/Archer/Archer.h"
-#include "Project/Archer/Animation/ArcherAnimInstance.h"
-#include "Project/UI/SkillQuickSlot.h"
+#include "Archer/Archer.h"
+#include "Archer/Animation/ArcherAnimInstance.h"
+#include "UI/SkillQuickSlot.h"
 
 UBaseSkill::UBaseSkill()
 	: Archer(nullptr), IsUltimateSkill(false), CoolTime(1.0f), IsCoolDown(false), CurSlot(nullptr)

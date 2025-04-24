@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Project/UI/SlotKey.h"
+#include "UI/SlotKey.h"
 #include "BaseSkill.generated.h"
 
 /**

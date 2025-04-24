@@ -24,6 +24,10 @@ public:
 public:
 	class USkillGaugeBar* GetSkillGaugeBar() const { return SkillGaugeBar; }
 
+	void SetVisibilityIntersectionKey(bool Enable);
+	void SetVisibilityInventory();
+	void SetVisibilityStore();
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -34,4 +38,13 @@ private:
 
 	UPROPERTY()
 	class USkillGaugeBar* SkillGaugeBar;
+
+	UPROPERTY()
+	UUserWidget* IntersectionKey;
+
+	UPROPERTY()
+	class UInventory* Inventory;
+
+	UPROPERTY()
+	class UStore* Store;
 };

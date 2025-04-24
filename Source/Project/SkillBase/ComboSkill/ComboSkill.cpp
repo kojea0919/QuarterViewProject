@@ -2,8 +2,8 @@
 
 
 #include "ComboSkill.h"
-#include "Project/Archer/Archer.h"
-#include "Project/Archer/Animation/ArcherAnimInstance.h"
+#include "Archer/Archer.h"
+#include "Archer/Animation/ArcherAnimInstance.h"
 
 UComboSkill::UComboSkill()
 	: CurrentCombo(0), MaxCombo(0), ComboInput(false), CanNextCombo(false)

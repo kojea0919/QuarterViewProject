@@ -4,7 +4,9 @@
 #include "PlayerHUD.h"
 #include "SkillQuickSlot.h"
 #include "SkillGaugeBar.h"
-#include "Project/SkillBase/BaseSkill.h"
+#include "Inventory.h"
+#include "Store.h"
+#include "SkillBase/BaseSkill.h"
 
 void UPlayerHUD::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
 {
@@ -55,6 +57,34 @@ void UPlayerHUD::ReleaseSkill(ESkillQuickSlot SlotKey)
 	//------------------------------------------------------------------
 }
 
+void UPlayerHUD::SetVisibilityIntersectionKey(bool Enable)
+{
+	if (IntersectionKey)
+	{
+		if (Enable)
+			IntersectionKey->SetVisibility(ESlateVisibility::Visible);
+		else
+			IntersectionKey->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UPlayerHUD::SetVisibilityInventory()
+{
+	if (!Inventory->IsValidLowLevel())
+		return; 
+
+	if (Inventory->IsVisible())
+		Inventory->SetVisibility(ESlateVisibility::Hidden);
+	else
+		Inventory->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerHUD::SetVisibilityStore()
+{
+	if (Store->IsValidLowLevel())
+		Store->SetVisibility(ESlateVisibility::Visible);
+}
+
 void UPlayerHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -88,4 +118,29 @@ void UPlayerHUD::NativeConstruct()
 	}
 
 	SkillGaugeBar = Cast<USkillGaugeBar>(GetWidgetFromName(TEXT("UI_SkillGaugeBar")));
+
+	IntersectionKey = Cast<UUserWidget>(GetWidgetFromName(TEXT("UI_IntersectionKey")));
+	if (IntersectionKey)
+		IntersectionKey->SetVisibility(ESlateVisibility::Hidden);
+
+
+	//인벤토리 초기화
+	//---------------------------------------------------------------
+	Inventory = Cast<UInventory>(GetWidgetFromName(TEXT("UI_Inventory")));
+	if (Inventory)
+	{
+		Inventory->InitInventory();
+		Inventory->SetVisibility(ESlateVisibility::Hidden);
+	}
+	//---------------------------------------------------------------
+
+	//상점UI 초기화
+	//---------------------------------------------------------------
+	Store = Cast<UStore>(GetWidgetFromName(TEXT("UI_Store")));
+	if (Store)
+	{
+		Store->InitStore();
+		Store->SetVisibility(ESlateVisibility::Hidden);
+	}
+	//---------------------------------------------------------------
 }

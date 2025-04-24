@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/BaseEffectActor/DecalEffectActor.h"
+#include "BaseEffectActor/DecalEffectActor.h"
 #include "ArcherMoveSkillFootDecal.generated.h"
 
 /**

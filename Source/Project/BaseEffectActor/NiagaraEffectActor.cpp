@@ -4,7 +4,7 @@
 #include "NiagaraEffectActor.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Project/WorldSubSystem/EffectObjectPool.h"
+#include "WorldSubSystem/EffectObjectPool.h"
 
 void ANiagaraEffectActor::SpwanNiagaraEffect(const FTransform& Transform)
 {

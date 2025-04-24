@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/SkillBase/ComboSkill/ComboSkill.h"
+#include "SkillBase/ComboSkill/ComboSkill.h"
 #include "ArcherSkillFlippingArrow.generated.h"
 
 /**

@@ -2,9 +2,9 @@
 
 
 #include "ChargingSkill.h"
-#include "../../Archer/Archer.h"
-#include "../../Archer/ArcherPlayerController.h"
-#include "Project/UI/SkillGaugeBar.h"
+#include "Archer/Archer.h"
+#include "Archer/ArcherPlayerController.h"
+#include "UI/SkillGaugeBar.h"
 
 UChargingSkill::UChargingSkill()
 	: ChargingSpeed(0.0f), TotalChargingTime(0.0f), IsLookMouse(true),

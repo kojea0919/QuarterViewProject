@@ -4,11 +4,11 @@
 #include "ArcherPlayerController.h"
 #include "NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Project/Archer/Archer.h"
-#include "Project/UI/PlayerHUD.h"
+#include "Archer/Archer.h"
+#include "UI/PlayerHUD.h"
 #include "EnhancedInputComponent.h"
-#include "Project/UI/SkillGaugeBar.h"
-#include "Project/Archer/Effect/AttackAreaMarkEffect.h"
+#include "UI/SkillGaugeBar.h"
+#include "Archer/Effect/AttackAreaMarkEffect.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr)
@@ -32,6 +32,14 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTR_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotR.IA_UseQuickSlotR"));
 	if (IA_SLOTR_INPUTACTION.Succeeded())
 		SlotRInputAction = IA_SLOTR_INPUTACTION.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INVENTORY_INPUTACTION(TEXT("/Game/Player/Input/IA_Inventory.IA_Inventory"));
+	if (IA_INVENTORY_INPUTACTION.Succeeded())
+		InventoryKeyInputAction = IA_INVENTORY_INPUTACTION.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INTERACTION_INPUTACTION(TEXT("/Game/Player/Input/IA_Interaction.IA_Interaction"));
+	if (IA_INTERACTION_INPUTACTION.Succeeded())
+		InteractionInputAction = IA_INTERACTION_INPUTACTION.Object;
 }
 
 void AArcherPlayerController::BeginPlay()
@@ -71,6 +79,9 @@ void AArcherPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseRSlot);
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseRSlot);
+
+		EnhancedInputComponent->BindAction(InventoryKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInventoryKey);
+		EnhancedInputComponent->BindAction(InteractionInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInteractionKey);
 	}
 
 
@@ -130,6 +141,14 @@ void AArcherPlayerController::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSl
 	if (PlayerHUD)
 	{
 		PlayerHUD->SetQuickSlotSkill(Skill, SlotKey);
+	}
+}
+
+void AArcherPlayerController::SetVisibilityIntersectionKey(bool Enable)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetVisibilityIntersectionKey(Enable);
 	}
 }
 
@@ -197,6 +216,22 @@ void AArcherPlayerController::ReleaseRSlot()
 	}
 }
 
+void AArcherPlayerController::UseInventoryKey()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetVisibilityInventory();
+	}
+}
+
+void AArcherPlayerController::UseInteractionKey()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetVisibilityStore();
+	}
+}
+
 USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const
 {
 	if(PlayerHUD)
@@ -208,4 +243,15 @@ void AArcherPlayerController::SetAreaMarkEffectVisible(bool Enable)
 {
 	if (AreaMarkEffect)
 		AreaMarkEffect->SetActorHiddenInGame(!Enable);
+}
+
+void AArcherPlayerController::SetAreaMarkEffectCurSkillRange(float Range)
+{
+	if (AreaMarkEffect)
+		AreaMarkEffect->SetCurSkillRange(Range);
+}
+
+FVector AArcherPlayerController::GetAttakAreaMarkLocation() const
+{
+	return AreaMarkEffect->GetActorLocation();
 }

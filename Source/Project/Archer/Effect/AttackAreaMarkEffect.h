@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/BaseEffectActor/DecalEffectActor.h"
+#include "BaseEffectActor/DecalEffectActor.h"
 #include "AttackAreaMarkEffect.generated.h"
 
 /**
@@ -22,9 +22,13 @@ public:
 public:
 	void SetController(class AArcherPlayerController* Controller) { ArcherController = Controller; }
 
+	void SetCurSkillRange(float Range) { CurSkillRange = Range; }
+
 private:
 	virtual void LoadMaterial() override;
 
 private:
 	class AArcherPlayerController* ArcherController;
+
+	float CurSkillRange;
 };

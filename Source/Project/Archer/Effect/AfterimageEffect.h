@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/BaseEffectActor/MeshEffectActor.h"
+#include "BaseEffectActor/MeshEffectActor.h"
 #include "AfterimageEffect.generated.h"
 
 /**

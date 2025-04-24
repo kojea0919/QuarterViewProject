@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/SkillBase/BaseSkill.h"
+#include "SkillBase/BaseSkill.h"
 #include "ChargingSkill.generated.h"
 
 /**

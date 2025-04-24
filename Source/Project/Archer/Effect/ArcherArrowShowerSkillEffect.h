@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Project/BaseEffectActor/NiagaraEffectActor.h"
+#include "BaseEffectActor/NiagaraEffectActor.h"
 #include "ArcherArrowShowerSkillEffect.generated.h"
 
 /**

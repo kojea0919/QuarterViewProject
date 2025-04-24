@@ -1,6 +1,6 @@
 #include "SkillGaugeBar.h"
 #include "Components/ProgressBar.h"
-#include "Project/SkillBase/ChargingSkill/ChargingSkill.h"
+#include "SkillBase/ChargingSkill/ChargingSkill.h"
 
 void USkillGaugeBar::SetPercent(float Percent)
 {

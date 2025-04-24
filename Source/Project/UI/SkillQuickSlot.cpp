@@ -7,7 +7,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "DragImage.h"
 #include "SkillImageDragDropOperation.h"
-#include "Project/SkillBase/BaseSkill.h"
+#include "SkillBase/BaseSkill.h"
 
 void USkillQuickSlot::SetMaterial(UMaterialInstanceDynamic* Material)
 {

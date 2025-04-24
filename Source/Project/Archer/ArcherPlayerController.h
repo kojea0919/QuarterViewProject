@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Project/UI/SlotKey.h"
+#include "UI/SlotKey.h"
 #include "ArcherPlayerController.generated.h"
 
 /**
@@ -31,6 +31,7 @@ public:
 	//Skill Quick Slot Key Setting
 	void SetQuickSlotSkill(class UBaseSkill* Skill, ESkillQuickSlot SlotKey);
 
+	void SetVisibilityIntersectionKey(bool Enable);
 
 	//Skill Slot 바인드 함수
 	//-------------------------------------------------
@@ -47,9 +48,15 @@ public:
 	void ReleaseRSlot();
 	//-------------------------------------------------
 
+	void UseInventoryKey();
+	void UseInteractionKey();
+
 	class USkillGaugeBar* GetSkillGaugeBar() const;
 
 	void SetAreaMarkEffectVisible(bool Enable);
+	void SetAreaMarkEffectCurSkillRange(float Range);
+
+	FVector GetAttakAreaMarkLocation() const;
 
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
@@ -69,6 +76,8 @@ private:
 	class UPlayerHUD* PlayerHUD;
 	//-------------------------------------------------
 
+	//QuickSlot Key 관련 InputAction
+	//-------------------------------------------------
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotQInputAction;
 
@@ -80,7 +89,17 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotRInputAction;
+	//-------------------------------------------------
+
+	//인벤토리 키 InputAction
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* InventoryKeyInputAction;
+
+	//상호작용 키 InputAction
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* InteractionInputAction;
 
 	UPROPERTY(VisibleAnywhere)
 	class AAttackAreaMarkEffect* AreaMarkEffect;
+
 };
