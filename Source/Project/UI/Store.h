@@ -17,11 +17,14 @@ class PROJECT_API UStore : public UUserWidget
 public:
 	void InitStore();
 
+	UFUNCTION()
+	void ClickExit();
+
+	UFUNCTION()
+	void ClickDragDrop();
+
 protected:
 	virtual void NativeConstruct() override;
-
-private:
-	void ClickExit();
 
 
 private:
@@ -30,6 +33,9 @@ private:
 
 	UPROPERTY()
 	class UButton* ExitButton;
+
+	UPROPERTY()
+	class UButton* DragDropBarButton;
 
 	UPROPERTY()
 	TArray<class UStoreSlot*> SlotArr;

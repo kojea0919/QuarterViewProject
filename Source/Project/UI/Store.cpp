@@ -4,6 +4,7 @@
 #include "UI/Store.h"
 #include "Components/WrapBox.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanelSlot.h"
 #include "StoreSlot.h"
 
 void UStore::InitStore()
@@ -25,19 +26,29 @@ void UStore::NativeConstruct()
 	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("ExitStoreButton")));
 	if (ExitButton)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Success"));
 		ExitButton->OnClicked.AddDynamic(this, &UStore::ClickExit);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Fail"));
-	}
 	
+	DragDropBarButton = Cast<UButton>(GetWidgetFromName(TEXT("DragDropBar")));
+	if (DragDropBarButton)
+	{
+		DragDropBarButton->OnPressed.AddDynamic(this, &UStore::ClickDragDrop);
+	}
 }
 
 void UStore::ClickExit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Call"));
-
 	SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UStore::ClickDragDrop()
+{
+	FVector2D MousePos;
+	GetWorld()->GetFirstPlayerController()->GetMousePosition(MousePos.X, MousePos.Y);
+
+	UCanvasPanelSlot * CanvasPanelSlot = Cast<UCanvasPanelSlot>(Slot);
+	if (CanvasPanelSlot)
+	{
+		CanvasPanelSlot->SetPosition(MousePos);
+	}
 }
