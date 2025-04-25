@@ -28,6 +28,10 @@ public:
 	void SetVisibilityInventory();
 	void SetVisibilityStore();
 
+
+	//드롭되면 호출되는 함수
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 protected:
 	virtual void NativeConstruct() override;
 

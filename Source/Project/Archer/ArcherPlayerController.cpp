@@ -91,6 +91,7 @@ void AArcherPlayerController::SetupInputComponent()
 void AArcherPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
 }
 
 void AArcherPlayerController::MoveTargetAction()
@@ -228,6 +229,7 @@ void AArcherPlayerController::UseInteractionKey()
 {
 	if (PlayerHUD)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Call"));
 		PlayerHUD->SetVisibilityStore();
 	}
 }

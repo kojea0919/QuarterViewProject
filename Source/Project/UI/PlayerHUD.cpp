@@ -85,6 +85,13 @@ void UPlayerHUD::SetVisibilityStore()
 		Store->SetVisibility(ESlateVisibility::Visible);
 }
 
+bool UPlayerHUD::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UE_LOG(LogTemp, Warning, TEXT("test"));
+
+	return NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
+}
+
 void UPlayerHUD::NativeConstruct()
 {
 	Super::NativeConstruct();

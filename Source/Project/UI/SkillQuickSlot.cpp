@@ -152,9 +152,12 @@ void USkillQuickSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FP
 
 bool USkillQuickSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
 	USkillImageDragDropOperation* DragDropOperation = Cast<USkillImageDragDropOperation>(InOperation);
+	if (nullptr == DragDropOperation)
+		return false;
 	USkillQuickSlot* DragObject = DragDropOperation->GetDragObject();
 
 
