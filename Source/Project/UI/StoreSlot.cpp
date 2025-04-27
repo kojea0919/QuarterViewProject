@@ -77,11 +77,11 @@ void UStoreSlot::RemoveDescription()
 	ToolTip->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UStoreSlot::AddPurchaseWaitingList()
+void UStoreSlot::ClickedStoreSlot()
 {
 	if (CurrentStore && IsSetItem)
 	{
-		CurrentStore->SetPurchaseSlot(Item);
+		CurrentStore->ClickedStoreSlot(Item);
 	}
 }
 
@@ -102,7 +102,7 @@ void UStoreSlot::NativeConstruct()
 	{
 		StoreSlotButton->OnHovered.AddDynamic(this, &UStoreSlot::ShowDescription);
 		StoreSlotButton->OnUnhovered.AddDynamic(this, &UStoreSlot::RemoveDescription);
-		StoreSlotButton->OnClicked.AddDynamic(this, &UStoreSlot::AddPurchaseWaitingList);
+		StoreSlotButton->OnClicked.AddDynamic(this, &UStoreSlot::ClickedStoreSlot);
 	}
 
 	ToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipWidgetClass);

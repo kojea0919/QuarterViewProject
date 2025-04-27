@@ -3,6 +3,11 @@
 
 #include "Item/WeaponItem.h"
 
+UWeaponItem::UWeaponItem()
+	: UBaseItem(EItemListType::Weapon)
+{
+}
+
 void UWeaponItem::SetItemInfo(FString ItemName, FString Description,int Price, int AttackStat, int CriticalStat)
 {
 	ItemInfo.ItemName = ItemName;

@@ -3,6 +3,11 @@
 
 #include "Item/PotionItem.h"
 
+UPotionItem::UPotionItem()
+	: UBaseItem(EItemListType::Potion)
+{
+}
+
 void UPotionItem::SetItemInfo(FString ItemName, FString Description, int Price, int HealAmount)
 {
 	ItemInfo.ItemName = ItemName;

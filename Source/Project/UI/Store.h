@@ -8,18 +8,6 @@
 #include "Item/ItemStruct.h"
 #include "Store.generated.h"
 
-
-//현재 선택된 아이템 타입
-//------------------------------
-enum class EItemListType
-{
-	WeaponButton = 0,
-	ArmorButton,
-	PotionButton,
-	Max
-};
-//------------------------------
-
 /**
  * 
  */
@@ -53,7 +41,7 @@ public:
 	void SetStoreNPC(class AStoreNPC* Npc) { CurrentNPC = Npc; }
 	void SetItemSlot();
 
-	void SetPurchaseSlot(const class UBaseItem * Item);
+	void ClickedStoreSlot(const class UBaseItem * Item);		//StoreSlot이 클릭되면 호출될 함수 Item은 클릭된 아이템
 
 protected:
 	virtual void NativeConstruct() override;
@@ -118,6 +106,15 @@ private:
 
 	const int PurchaseSlotNum = 5;
 	int PurchaseSlotIdx = 0;
+	//-----------------------------------------------
+
+	//Item 개수 선택 UI
+	//-----------------------------------------------
+	UPROPERTY()
+	class UPurchaseQuantitySelector* PurchaseQuantitySelector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UPurchaseQuantitySelector> PurchaseQuantitySelectorClass;
 	//-----------------------------------------------
 
 	class AStoreNPC* CurrentNPC;	//현재 아이템을 팔 NPC

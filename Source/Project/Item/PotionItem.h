@@ -15,6 +15,8 @@ class PROJECT_API UPotionItem : public UBaseItem
 {
 	GENERATED_BODY()
 	
+public:
+	UPotionItem();
 
 public:
 	void SetItemInfo(FString ItemName, FString Description, int Price, int HealAmount);

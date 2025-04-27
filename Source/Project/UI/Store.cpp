@@ -15,6 +15,7 @@
 #include "Item/ArmorItem.h"
 #include "Item/PotionItem.h"
 #include "ItemPurchaseSlot.h"
+#include "PurchaseQuantitySelector.h"
 
 void UStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -42,6 +43,10 @@ void UStore::InitStore()
 			ItemPurchaseWaitingWrapBox->AddChild(PurchaseSlot);
 	}
 
+	PurchaseQuantitySelector = CreateWidget<UPurchaseQuantitySelector>(GetWorld(), PurchaseQuantitySelectorClass);
+	if (PurchaseQuantitySelector)
+		PurchaseQuantitySelector->SetVisibility(ESlateVisibility::Hidden);
+
 	PurchaseSlotIdx = 0;
 }
 
@@ -51,13 +56,13 @@ void UStore::SetItemSlot()
 	{
 		switch (CurrentItemButtonType)
 		{
-		case EItemListType::WeaponButton:
+		case EItemListType::Weapon:
 			SetItemSlot<UWeaponItem>(CurrentNPC->WeaponItemArr);
 			break;
-		case EItemListType::ArmorButton:
+		case EItemListType::Armor:
 			SetItemSlot<UArmorItem>(CurrentNPC->ArmorItemArr);
 			break;
-		case EItemListType::PotionButton:
+		case EItemListType::Potion:
 			SetItemSlot<UPotionItem>(CurrentNPC->PotionItemArr);
 			break;
 		default:
@@ -67,12 +72,21 @@ void UStore::SetItemSlot()
 	}
 }
 
-void UStore::SetPurchaseSlot(const UBaseItem* Item)
+void UStore::ClickedStoreSlot(const UBaseItem* Item)
 {
 	if (PurchaseSlotIdx == PurchaseSlotNum)
 		return;
 
-	PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item);
+	//포션이 아닌 경우에만 바로 추가
+	if(CurrentItemButtonType != EItemListType::Potion)
+		PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item);
+	//포션인 경우에는 개수 선택 UI 보여주기
+	else
+	{
+		PurchaseQuantitySelector->SetVisibility(ESlateVisibility::Visible);
+
+	}
+
 
 }
 
@@ -109,7 +123,7 @@ void UStore::NativeConstruct()
 	ItemPurchaseWaitingWrapBox = Cast<UWrapBox>(GetWidgetFromName(TEXT("ItemPurchaseWaitingWrapBox")));
 
 	CurrentNPC = nullptr;
-	CurrentItemButtonType = EItemListType::WeaponButton;
+	CurrentItemButtonType = EItemListType::Weapon;
 }
 
 FReply UStore::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -150,19 +164,19 @@ void UStore::ClickExit()
 
 void UStore::ClickWeapon()
 {
-	CurrentItemButtonType = EItemListType::WeaponButton;
+	CurrentItemButtonType = EItemListType::Weapon;
 	SetItemSlot();
 }
 
 void UStore::ClickArmor()
 {
-	CurrentItemButtonType = EItemListType::ArmorButton;
+	CurrentItemButtonType = EItemListType::Armor;
 	SetItemSlot();
 }
 
 void UStore::ClickPotion()
 {
-	CurrentItemButtonType = EItemListType::PotionButton;
+	CurrentItemButtonType = EItemListType::Potion;
 	SetItemSlot();
 }
 

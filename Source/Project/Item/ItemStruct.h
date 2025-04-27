@@ -5,6 +5,17 @@
 #include "CoreMinimal.h"
 #include "ItemStruct.generated.h"
 
+//현재 아이템 타입
+//------------------------------
+enum class EItemListType
+{
+	Weapon = 0,
+	Armor,
+	Potion,
+	Max
+};
+//------------------------------
+
 /**
  * 
  */

@@ -38,7 +38,7 @@ public:
 
 	//구매 리스트에 현재 아이템 이미지를 추가
 	UFUNCTION()
-	void AddPurchaseWaitingList();
+	void ClickedStoreSlot();
 
 protected:
 	virtual void NativeConstruct() override;

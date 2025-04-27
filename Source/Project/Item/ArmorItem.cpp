@@ -3,6 +3,11 @@
 
 #include "Item/ArmorItem.h"
 
+UArmorItem::UArmorItem()
+	: UBaseItem(EItemListType::Armor)
+{
+}
+
 void UArmorItem::SetItemInfo(FString ItemName, FString Description, int Price, int ArmorStat)
 {
 	ItemInfo.ItemName = ItemName;

@@ -16,6 +16,9 @@ class PROJECT_API UArmorItem : public UBaseItem
 	GENERATED_BODY()
 
 public:
+	UArmorItem();
+
+public:
 	void SetItemInfo(FString ItemName, FString Description, int Price, int ArmorStat);
 
 private:

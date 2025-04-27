@@ -6,3 +6,8 @@
 UBaseItem::UBaseItem()
 {
 }
+
+UBaseItem::UBaseItem(EItemListType Type)
+	: ItemType(Type)
+{
+}

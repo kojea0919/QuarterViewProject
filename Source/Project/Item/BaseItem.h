@@ -17,15 +17,19 @@ class PROJECT_API UBaseItem : public UObject
 
 public:
 	UBaseItem();
-
+	UBaseItem(EItemListType Type);
 public:
 	void SetTexture(UTexture2D* Texture) { ItemTexture = Texture; }
 	UTexture2D* GetTexture() const { return ItemTexture; }
 
 	const FBaseItemInfoStruct& GetItemInfo() const { return *CurrentItemInfo; }
 
+	EItemListType GetItemType() const { return ItemType; }
+
 protected:
 	UTexture2D* ItemTexture;
 
 	FBaseItemInfoStruct* CurrentItemInfo;
+
+	EItemListType ItemType;
 };
