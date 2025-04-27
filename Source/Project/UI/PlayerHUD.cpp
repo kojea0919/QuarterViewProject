@@ -7,6 +7,7 @@
 #include "Inventory.h"
 #include "Store.h"
 #include "SkillBase/BaseSkill.h"
+#include "StoreWidgetDrag.h"
 
 void UPlayerHUD::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
 {
@@ -82,14 +83,33 @@ void UPlayerHUD::SetVisibilityInventory()
 void UPlayerHUD::SetVisibilityStore()
 {
 	if (Store->IsValidLowLevel())
+	{
+		//NPC의 아이템 리스트를 읽어서 Slot에 Setting
+		Store->SetItemSlot();
+
 		Store->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 bool UPlayerHUD::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("test"));
+	UStoreWidgetDrag * WidgetDrag = Cast<UStoreWidgetDrag>(InOperation);
+	UUserWidget* WidgetReference = WidgetDrag->GetReference();
+	FVector2D DragOffset = WidgetDrag->GetDragOffset();
 
-	return NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
+	FVector2D Pos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
+
+	WidgetReference->RemoveFromParent();
+	WidgetReference->AddToViewport();
+	WidgetReference->SetPositionInViewport(Pos - DragOffset, false);
+
+	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+}
+
+void UPlayerHUD::SetupStoreUI(AStoreNPC* Npc)
+{
+	if(nullptr != Store)
+		Store->SetStoreNPC(Npc);
 }
 
 void UPlayerHUD::NativeConstruct()

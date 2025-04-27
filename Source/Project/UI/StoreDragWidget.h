@@ -15,6 +15,8 @@ class PROJECT_API UStoreDragWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	void SetWidgetReference(UUserWidget* Reference) { WidgetReference = Reference; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* WidgetReference;
 	

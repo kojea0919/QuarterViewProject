@@ -18,7 +18,8 @@ AAfterimageEffect::AAfterimageEffect()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_MESH(TEXT("/Game/Player/Archer/Mesh/Player.Player"));
 	if (SK_MESH.Succeeded())
 	{
-		Mesh->SetSkeletalMesh(SK_MESH.Object);
+		//Mesh->SetSkeletalMesh(SK_MESH.Object);
+		Mesh->SetSkinnedAssetAndUpdate(SK_MESH.Object);
 	}
 	//----------------------------------------
 }

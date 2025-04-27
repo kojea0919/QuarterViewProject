@@ -11,7 +11,7 @@
 #include "Archer/Effect/AttackAreaMarkEffect.h"
 
 AArcherPlayerController::AArcherPlayerController()
-	: PlayerHUD(nullptr)
+	: PlayerHUD(nullptr), IsSetStoreNPC(false)
 {
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
@@ -229,8 +229,8 @@ void AArcherPlayerController::UseInteractionKey()
 {
 	if (PlayerHUD)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Call"));
-		PlayerHUD->SetVisibilityStore();
+		if(IsSetStoreNPC)
+			PlayerHUD->SetVisibilityStore();
 	}
 }
 
@@ -256,4 +256,14 @@ void AArcherPlayerController::SetAreaMarkEffectCurSkillRange(float Range)
 FVector AArcherPlayerController::GetAttakAreaMarkLocation() const
 {
 	return AreaMarkEffect->GetActorLocation();
+}
+
+void AArcherPlayerController::SetupStoreUI(AStoreNPC* Npc)
+{
+	if (nullptr == Npc)
+		IsSetStoreNPC = false;
+	else
+		IsSetStoreNPC = true;
+
+	PlayerHUD->SetupStoreUI(Npc);
 }

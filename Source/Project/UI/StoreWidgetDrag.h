@@ -15,6 +15,13 @@ class PROJECT_API UStoreWidgetDrag : public UDragDropOperation
 	GENERATED_BODY()
 
 public:
+	void SetWidgetReference(UUserWidget* Reference) { WidgetReference = Reference; }
+	void SetDragOffset(FVector2D Pos) { DragOffset = Pos; }
+
+	UUserWidget* GetReference() { return WidgetReference; }
+	FVector2D GetDragOffset() const { return DragOffset; }
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* WidgetReference;
 

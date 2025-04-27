@@ -10,6 +10,11 @@
 #include "DragImage.h"
 #include "StoreDragWidget.h"
 #include "StoreWidgetDrag.h"
+#include "NPC/StoreNPC.h"
+#include "Item/WeaponItem.h"
+#include "Item/ArmorItem.h"
+#include "Item/PotionItem.h"
+#include "ItemPurchaseSlot.h"
 
 void UStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -22,8 +27,53 @@ void UStore::InitStore()
 	{
 		UStoreSlot* StoreSlot = CreateWidget<UStoreSlot>(GetWorld(), StoreSlotClass);
 		SlotArr.Push(StoreSlot);
-		WrapBox->AddChild(StoreSlot);
+		StoreSlot->SetStore(this);
+		if(WrapBox)
+			WrapBox->AddChild(StoreSlot);
 	}
+	
+	for (size_t i = 0; i < PurchaseSlotNum; ++i)
+	{
+		UItemPurchaseSlot* PurchaseSlot = CreateWidget<UItemPurchaseSlot>(GetWorld(), ItemPurchaseSlotClass);
+		PurchaseSlot->SetSlotIdx(i);
+		PurchaseSlot->SetStore(this);
+		PurchaseSlotArr.Push(PurchaseSlot);
+		if(ItemPurchaseWaitingWrapBox)
+			ItemPurchaseWaitingWrapBox->AddChild(PurchaseSlot);
+	}
+
+	PurchaseSlotIdx = 0;
+}
+
+void UStore::SetItemSlot()
+{
+	if (CurrentNPC)
+	{
+		switch (CurrentItemButtonType)
+		{
+		case EItemListType::WeaponButton:
+			SetItemSlot<UWeaponItem>(CurrentNPC->WeaponItemArr);
+			break;
+		case EItemListType::ArmorButton:
+			SetItemSlot<UArmorItem>(CurrentNPC->ArmorItemArr);
+			break;
+		case EItemListType::PotionButton:
+			SetItemSlot<UPotionItem>(CurrentNPC->PotionItemArr);
+			break;
+		default:
+			break;
+		}
+		
+	}
+}
+
+void UStore::SetPurchaseSlot(const UBaseItem* Item)
+{
+	if (PurchaseSlotIdx == PurchaseSlotNum)
+		return;
+
+	PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item);
+
 }
 
 void UStore::NativeConstruct()
@@ -37,10 +87,29 @@ void UStore::NativeConstruct()
 	{
 		ExitButton->OnClicked.AddDynamic(this, &UStore::ClickExit);
 	}
-	
-	DragDropBarButton = Cast<UButton>(GetWidgetFromName(TEXT("DragDropBar")));
 
-	CanDrag = false;
+	WeaponButton = Cast<UButton>(GetWidgetFromName(TEXT("WeaponButton")));
+	if (WeaponButton)
+	{
+		WeaponButton->OnClicked.AddDynamic(this, &UStore::ClickWeapon);
+	}
+
+	ArmorButton = Cast<UButton>(GetWidgetFromName(TEXT("ArmorButton")));
+	if (ArmorButton)
+	{
+		ArmorButton->OnClicked.AddDynamic(this, &UStore::ClickArmor);
+	}
+
+	PotionButton = Cast<UButton>(GetWidgetFromName(TEXT("PotionButton")));
+	if (PotionButton)
+	{
+		PotionButton->OnClicked.AddDynamic(this, &UStore::ClickPotion);
+	}
+
+	ItemPurchaseWaitingWrapBox = Cast<UWrapBox>(GetWidgetFromName(TEXT("ItemPurchaseWaitingWrapBox")));
+
+	CurrentNPC = nullptr;
+	CurrentItemButtonType = EItemListType::WeaponButton;
 }
 
 FReply UStore::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -49,6 +118,7 @@ FReply UStore::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPoint
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		DragOffset = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+
 		FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 		return ReplyResult.NativeReply;
 	}
@@ -60,25 +130,17 @@ void UStore::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEve
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	UStoreDragWidget * DragWidget = CreateWidget<UStoreDragWidget>(GetOwningPlayer(), StoreDragWidgetClass);
-	UStoreWidgetDrag* WidgetDrag = NewObject<UStoreWidgetDrag>(StoreWidgetDragClass);
+	//UDragImage* test = CreateWidget<UDragImage>(GetOwningPlayer(), TEST);
+	//UStoreDragWidget * DragWidget = CreateWidget<UStoreDragWidget>(GetOwningPlayer(), StoreDragWidgetClass);
+	//DragWidget->SetWidgetReference(this);
+	UStoreWidgetDrag* WidgetDrag = NewObject<UStoreWidgetDrag>();
+	WidgetDrag->SetWidgetReference(this);
+	WidgetDrag->SetDragOffset(DragOffset);
 
-	WidgetDrag->DefaultDragVisual = DragWidget;
+	WidgetDrag->DefaultDragVisual = this;
 	WidgetDrag->Pivot = EDragPivot::MouseDown;
-	WidgetDrag->Offset = DragOffset;
 
 	OutOperation = WidgetDrag;
-}
-
-bool UStore::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Call"));
-	double MouseX, MouseY;
-	GetOwningPlayer()->GetMousePosition(MouseX, MouseY);
-
-	SetRenderTranslation(FVector2D(MouseX, MouseY));
-
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
 
 void UStore::ClickExit()
@@ -86,14 +148,30 @@ void UStore::ClickExit()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-//void UStore::PressedDragDrop()
-//{
-//	IsPressedDragDropBar = true;
-//	UE_LOG(LogTemp, Warning, TEXT("press"));
-//}
-//
-//void UStore::ReleasedDragDrop()
-//{
-//	IsPressedDragDropBar = false;
-//	UE_LOG(LogTemp, Warning, TEXT("release"));
-//}
+void UStore::ClickWeapon()
+{
+	CurrentItemButtonType = EItemListType::WeaponButton;
+	SetItemSlot();
+}
+
+void UStore::ClickArmor()
+{
+	CurrentItemButtonType = EItemListType::ArmorButton;
+	SetItemSlot();
+}
+
+void UStore::ClickPotion()
+{
+	CurrentItemButtonType = EItemListType::PotionButton;
+	SetItemSlot();
+}
+
+void UStore::UpdatePurchaseSlot(int Idx)
+{
+	for (int idx = Idx + 1; idx < PurchaseSlotIdx; ++idx)
+	{
+		PurchaseSlotArr[idx - 1]->SetItem(PurchaseSlotArr[idx]->GetItem());
+	}
+	PurchaseSlotArr[PurchaseSlotIdx - 1]->ClearSlot();
+	--PurchaseSlotIdx;
+}
