@@ -49,6 +49,9 @@ public:
 	void ClickedStoreSlot(const class UBaseItem * Item);		//StoreSlot이 클릭되면 호출될 함수 Item은 클릭된 아이템
 	void AddPurchaseSlot(const class UBaseItem* Item, int Quantity = 1);
 	
+	void ShowItemToolTip(UTexture2D* Image, const FBaseItemInfoStruct& ItemInfo);
+	void HideItemToolTip();
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -127,6 +130,14 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UPurchaseQuantitySelector> PurchaseQuantitySelectorClass;
+	//-----------------------------------------------
+
+	//ToolTip
+	//-----------------------------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UItemToolTip> ItemToolTipWidgetClass;
+
+	class UItemToolTip* ToolTip;
 	//-----------------------------------------------
 
 	UPROPERTY()

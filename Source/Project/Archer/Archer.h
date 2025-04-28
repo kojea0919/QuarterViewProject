@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/TimelineComponent.h"
+#include "Item/ItemStruct.h"
 #include "Archer.generated.h"
 
 
@@ -63,7 +64,9 @@ public:
 	void UnEquipPants();
 	void UnEquipGlove();
 	void UnEquipWeapon();
-
+	
+	const UBaseItem* GetWeaponItem() const;
+	const UBaseItem* GetArmorItem(EArmorType ArmorType) const;
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템

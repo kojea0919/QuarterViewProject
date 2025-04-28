@@ -22,6 +22,7 @@
 #include "Item/WeaponItem.h"
 #include "Item/PotionItem.h"
 #include "Item/ArmorItem.h"
+#include "ItemToolTip.h"
 
 void UStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -116,6 +117,23 @@ void UStore::AddPurchaseSlot(const UBaseItem* Item, int Quantity)
 
 }
 
+void UStore::ShowItemToolTip(UTexture2D* Image, const FBaseItemInfoStruct& ItemInfo)
+{
+	if (ToolTip)
+	{
+		ToolTip->SetItemToolTip(Image, ItemInfo);
+		ToolTip->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UStore::HideItemToolTip()
+{
+	if (ToolTip)
+	{
+		ToolTip->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void UStore::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -154,6 +172,14 @@ void UStore::NativeConstruct()
 	if (PurchaseButton)
 	{
 		PurchaseButton->OnClicked.AddDynamic(this, &UStore::ClickPurchase);
+	}
+
+	ToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipWidgetClass);
+	if (ToolTip)
+	{
+		ToolTip->AddToViewport(1);
+		ToolTip->SetOffset({ 5,0 });
+		ToolTip->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	CurrentNPC = nullptr;
@@ -272,6 +298,9 @@ void UStore::ClickPurchase()
 
 void UStore::UpdatePurchaseSlot(int Idx)
 {	
+	if (PurchaseSlotIdx == 0)
+		return;
+
 	DecreaseCost(PurchaseSlotArr[Idx]->GetItem()->GetPrice(), PurchaseSlotArr[Idx]->GetQuantity());
 
 	for (int idx = Idx + 1; idx < PurchaseSlotIdx; ++idx)

@@ -18,8 +18,13 @@ class PROJECT_API UItemToolTip : public UUserWidget
 public:
 	void SetItemToolTip(UTexture2D* ItemTexture, const FBaseItemInfoStruct& ItemInfo);
 
+	void SetOffset(const FVector2D& NewOffset) { Offset = NewOffset; }
+
+	void SetEquipTextOn();
+
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 private:
 	UPROPERTY()
@@ -33,4 +38,9 @@ private:
 
 	UPROPERTY()
 	class UTextBlock* ItemStatTextBlock;
+
+	UPROPERTY()
+	class UTextBlock* EquipText;
+
+	FVector2D Offset;
 };

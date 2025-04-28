@@ -78,6 +78,7 @@ void UInventorySlot::NativeConstruct()
 	{
 		SlotButton->OnClicked.AddDynamic(this, &UInventorySlot::ClickButton);
 		SlotButton->OnHovered.AddDynamic(this, &UInventorySlot::HoveredButton);
+		SlotButton->OnUnhovered.AddDynamic(this, &UInventorySlot::UnHoveredButton);
 	}
 
 	Quantity = 0;
@@ -137,5 +138,17 @@ void UInventorySlot::HoveredButton()
 	if (Empty)
 		return;
 
-	
+	if (Inventory)
+	{
+		Inventory->ShowInventoryItemToolTip(Item);
+	}
+}
+
+void UInventorySlot::UnHoveredButton()
+{
+	if (Empty)
+		return;
+
+	if (Inventory)
+		Inventory->HideInventoryItemToolTip();
 }

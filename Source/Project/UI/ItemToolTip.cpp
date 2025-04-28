@@ -18,6 +18,15 @@ void UItemToolTip::SetItemToolTip(UTexture2D * ItemTexture, const FBaseItemInfoS
 
 	if (ItemStatTextBlock)
 		ItemStatTextBlock->SetText(FText::FromString(ItemInfo.GetItemStat()));
+
+	double X, Y;
+	GetOwningPlayer()->GetMousePosition(X, Y);
+	SetPositionInViewport(FVector2D(X, Y) + Offset);
+}
+
+void UItemToolTip::SetEquipTextOn()
+{
+	EquipText->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UItemToolTip::NativeConstruct()
@@ -28,4 +37,16 @@ void UItemToolTip::NativeConstruct()
 	ItemNameTextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemName")));
 	ItemDescriptionTextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemDescription")));
 	ItemStatTextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemStat")));
+	EquipText = Cast<UTextBlock>(GetWidgetFromName(TEXT("EquipText")));
+	if (EquipText)
+		EquipText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UItemToolTip::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	double X, Y;
+	GetOwningPlayer()->GetMousePosition(X, Y);
+	SetPositionInViewport(FVector2D(X, Y) + Offset);
 }

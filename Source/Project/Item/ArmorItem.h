@@ -7,18 +7,6 @@
 #include "ItemStruct.h"
 #include "ArmorItem.generated.h"
 
-//현재 아이템 타입
-//------------------------------
-enum class EArmorType
-{
-	Hat = 0,
-	Chest,
-	Pants,
-	Glove,
-	Max
-};
-//------------------------------
-
 /**
  * 
  */

@@ -289,6 +289,20 @@ void AArcher::UnEquipWeapon()
 		Equip->UnEquipWeapon();
 }
 
+const UBaseItem* AArcher::GetWeaponItem() const
+{
+	if (Equip)
+		return Equip->GetWeapon();
+	return nullptr;
+}
+
+const UBaseItem* AArcher::GetArmorItem(EArmorType ArmorType) const
+{
+	if (Equip)
+		return Equip->GetArmor(ArmorType);
+	return nullptr;
+}
+
 void AArcher::EquipItem(UBaseItem* Item)
 {
 	if (!Equip)

@@ -24,7 +24,7 @@ public:
 	void SetQuantity(int Num);
 
 	void SetInventory(class UInventory* Inven) { Inventory = Inven; }
-
+	void SetIndex(int Idx) { SlotIdx = Idx; }
 protected:
 	virtual void NativeConstruct() override;
 
@@ -37,6 +37,9 @@ private:
 
 	UFUNCTION()
 	void HoveredButton();	//아이템 툴팁 보여주기
+
+	UFUNCTION()
+	void UnHoveredButton();	//아이템 툴팁 숨기기
 
 private:
 	UPROPERTY()
@@ -55,4 +58,6 @@ private:
 	int Quantity;
 
 	bool Empty;
+
+	int SlotIdx;
 };

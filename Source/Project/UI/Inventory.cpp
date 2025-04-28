@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "InventorySlot.h"
 #include "Item/BaseItem.h"
+#include "Item/ArmorItem.h"
 #include "Archer/Archer.h"
 #include "ItemToolTip.h"
 
@@ -15,6 +16,7 @@ void UInventory::InitInventory()
 	{
 		UInventorySlot * InventorySlot = CreateWidget<UInventorySlot>(GetWorld(), InventorySlotClass);
 		InventorySlot->SetInventory(this);
+		InventorySlot->SetIndex(i);
 		SlotArr.Push(InventorySlot);
 		WrapBox->AddChild(InventorySlot);
 	}
@@ -91,9 +93,47 @@ void UInventory::EquipItem(UBaseItem* Item)
 	}
 }
 
-void UInventory::SetVisibilityItemToolTip(bool Enable)
+void UInventory::ShowInventoryItemToolTip(UBaseItem* Item)
 {
-	
+	if (nullptr == Item)
+		return;
+
+	if (InventoryItemToolTip && Item)
+	{
+		InventoryItemToolTip->SetVisibility(ESlateVisibility::Visible);
+		InventoryItemToolTip->SetItemToolTip(Item->GetTexture(), Item->GetItemInfo());
+	}
+
+	//해당 아이템 부위에 장착중인 아이템이 존재하면 장착중인 아이템 관련된 ToolTip 옆에 보여주기
+	if (Item->GetItemType() == EItemListType::Weapon)
+	{
+		const UBaseItem * TargetItem = CurrentPlayer->GetWeaponItem();
+		if (TargetItem)
+		{
+			EquipItemToolTip->SetVisibility(ESlateVisibility::Visible);
+			EquipItemToolTip->SetItemToolTip(TargetItem->GetTexture(), TargetItem->GetItemInfo());
+		}
+	}
+	else
+	{
+		const UBaseItem* TargetItem = CurrentPlayer->GetArmorItem(Cast<UArmorItem>(Item)->GetArmorType());
+		if (TargetItem)
+		{
+			EquipItemToolTip->SetVisibility(ESlateVisibility::Visible);
+			EquipItemToolTip->SetItemToolTip(TargetItem->GetTexture(), TargetItem->GetItemInfo());
+		}
+	}
+}
+
+void UInventory::HideInventoryItemToolTip()
+{
+	if (InventoryItemToolTip)
+		InventoryItemToolTip->SetVisibility(ESlateVisibility::Hidden);
+
+	if (EquipItemToolTip)
+	{
+		EquipItemToolTip->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void UInventory::NativeConstruct()
@@ -106,18 +146,21 @@ void UInventory::NativeConstruct()
 	if (ExitButton)
 		ExitButton->OnClicked.AddDynamic(this, &UInventory::ClickExitButton);
 
-	EquipItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipClass);
+	EquipItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipWidgetClass);
 	if (EquipItemToolTip)
 	{
+		EquipItemToolTip->AddToViewport(4);
+		EquipItemToolTip->SetEquipTextOn();
 		EquipItemToolTip->SetVisibility(ESlateVisibility::Hidden);
-		EquipItemToolTip->AddToViewport();
+		EquipItemToolTip->SetOffset({ 200,0 });
 	}
 
-	InventoryItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipClass);
+	InventoryItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipWidgetClass);
 	if (InventoryItemToolTip)
 	{
 		InventoryItemToolTip->SetVisibility(ESlateVisibility::Hidden);
-		InventoryItemToolTip->AddToViewport();
+		InventoryItemToolTip->SetOffset({ 5,0 });
+		InventoryItemToolTip->AddToViewport(4);
 	}
 
 }

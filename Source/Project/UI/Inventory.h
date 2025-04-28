@@ -25,8 +25,9 @@ public:
 
 	bool IsCanAdd() { return  CurrentItemNum < InventorySlotNum; }
 
-	void SetVisibilityItemToolTip(bool Enable);
-
+	void ShowInventoryItemToolTip(class UBaseItem * Item);
+	void HideInventoryItemToolTip();
+	
 protected:
 	virtual void NativeConstruct() override;
 
@@ -54,7 +55,7 @@ private:
 	//ToolTime
 	//---------------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSubclassOf<class UItemToolTip> ItemToolTipClass;
+	TSubclassOf<class UItemToolTip> ItemToolTipWidgetClass;
 
 	UPROPERTY()
 	class UItemToolTip* EquipItemToolTip;		//ภๅย๘วั พฦภฬลÛ ล๘ฦม

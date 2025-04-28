@@ -65,16 +65,16 @@ void UStoreSlot::SetHiddenGoldImage()
 void UStoreSlot::ShowDescription()
 {
 	//아이템이 세팅돼 있으면 해당 아이템의 ToolTip을 생성
-	if (IsSetItem)
+	if (IsSetItem && CurrentStore)
 	{
-		ToolTip->SetItemToolTip(ItemTexture, Item->GetItemInfo());
-		ToolTip->SetVisibility(ESlateVisibility::Visible);
+		CurrentStore->ShowItemToolTip(ItemTexture, Item->GetItemInfo());
 	}
 }
 
 void UStoreSlot::RemoveDescription()
 {
-	ToolTip->SetVisibility(ESlateVisibility::Hidden);
+	if (CurrentStore)
+		CurrentStore->HideItemToolTip();
 }
 
 void UStoreSlot::ClickedStoreSlot()
@@ -103,24 +103,5 @@ void UStoreSlot::NativeConstruct()
 		StoreSlotButton->OnHovered.AddDynamic(this, &UStoreSlot::ShowDescription);
 		StoreSlotButton->OnUnhovered.AddDynamic(this, &UStoreSlot::RemoveDescription);
 		StoreSlotButton->OnClicked.AddDynamic(this, &UStoreSlot::ClickedStoreSlot);
-	}
-
-	ToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipWidgetClass);
-	if (ToolTip)
-	{
-		ToolTip->AddToViewport(1);
-		ToolTip->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
-void UStoreSlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (ToolTip && ToolTip->IsVisible())
-	{
-		double X, Y;
-		GetOwningPlayer()->GetMousePosition(X, Y);
-		ToolTip->SetPositionInViewport(FVector2D(X, Y) + ToolTipOffset);
 	}
 }

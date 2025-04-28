@@ -8,7 +8,8 @@
 #include "Archer/Archer.h"
 
 UEquipmentComponent::UEquipmentComponent()
-	: EquipWidget(nullptr)
+	: EquipWidget(nullptr), CurWeapon(nullptr), CurHat(nullptr),
+	CurChest(nullptr), CurPants(nullptr), CurGlove(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -142,6 +143,28 @@ void UEquipmentComponent::UnEquipGlove()
 		Archer->AddItem(CurGlove);
 
 		CurGlove = nullptr;
+	}
+}
+
+const UBaseItem* UEquipmentComponent::GetWeapon() const
+{
+	 return CurWeapon;
+}
+
+const UBaseItem* UEquipmentComponent::GetArmor(EArmorType ArmorType) const
+{
+	switch (ArmorType)
+	{
+	case EArmorType::Hat:
+		return CurHat;
+	case EArmorType::Chest:
+		return CurChest;
+	case EArmorType::Pants:
+		return CurPants;
+	case EArmorType::Glove:
+		return CurGlove;
+	default:
+		return nullptr;
 	}
 }
 

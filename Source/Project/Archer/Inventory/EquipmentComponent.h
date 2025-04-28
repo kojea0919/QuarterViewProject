@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Item/ItemStruct.h"
 #include "EquipmentComponent.generated.h"
 
 
@@ -26,6 +27,9 @@ public:
 	void UnEquipChest();
 	void UnEquipPants();
 	void UnEquipGlove();
+	
+	const class UBaseItem* GetWeapon() const;
+	const class UBaseItem* GetArmor(EArmorType ArmorType) const;
 
 protected:
 	virtual void BeginPlay() override;

@@ -42,7 +42,6 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
 private:
 	UPROPERTY()
@@ -61,17 +60,10 @@ private:
 	class UButton* StoreSlotButton;
 
 	bool IsSetItem;	//현재 슬롯에 아이템이 들어있는지 나타내는 변수
-
 	const class UBaseItem* Item;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UItemToolTip> ItemToolTipWidgetClass;
-
-	class UItemToolTip* ToolTip;
-
-	const FVector2D ToolTipOffset = { 5,0 };
 
 	UTexture2D* ItemTexture;
 
 	class UStore* CurrentStore;
+
 };
