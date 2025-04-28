@@ -8,6 +8,7 @@
 #include "UI/PlayerHUD.h"
 #include "EnhancedInputComponent.h"
 #include "UI/SkillGaugeBar.h"
+#include "UI/Inventory.h"
 #include "Archer/Effect/AttackAreaMarkEffect.h"
 
 AArcherPlayerController::AArcherPlayerController()
@@ -37,9 +38,14 @@ AArcherPlayerController::AArcherPlayerController()
 	if (IA_INVENTORY_INPUTACTION.Succeeded())
 		InventoryKeyInputAction = IA_INVENTORY_INPUTACTION.Object;
 
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_EQUIPMENT_INPUTACTION(TEXT("/Game/Player/Input/IA_Equipment.IA_Equipment"));
+	if (IA_EQUIPMENT_INPUTACTION.Succeeded())
+		EquipmentKeyInputAction = IA_EQUIPMENT_INPUTACTION.Object;
+
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INTERACTION_INPUTACTION(TEXT("/Game/Player/Input/IA_Interaction.IA_Interaction"));
 	if (IA_INTERACTION_INPUTACTION.Succeeded())
 		InteractionInputAction = IA_INTERACTION_INPUTACTION.Object;
+
 }
 
 void AArcherPlayerController::BeginPlay()
@@ -80,7 +86,9 @@ void AArcherPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseRSlot);
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseRSlot);
 
+		
 		EnhancedInputComponent->BindAction(InventoryKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInventoryKey);
+		EnhancedInputComponent->BindAction(EquipmentKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseEquipmentKey);
 		EnhancedInputComponent->BindAction(InteractionInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInteractionKey);
 	}
 
@@ -225,6 +233,14 @@ void AArcherPlayerController::UseInventoryKey()
 	}
 }
 
+void AArcherPlayerController::UseEquipmentKey()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetVisibilityEquipment();
+	}
+}
+
 void AArcherPlayerController::UseInteractionKey()
 {
 	if (PlayerHUD)
@@ -258,12 +274,22 @@ FVector AArcherPlayerController::GetAttakAreaMarkLocation() const
 	return AreaMarkEffect->GetActorLocation();
 }
 
-void AArcherPlayerController::SetupStoreUI(AStoreNPC* Npc)
+void AArcherPlayerController::SetupStoreUI(AStoreNPC* Npc,AArcher * TargetPlayer)
 {
 	if (nullptr == Npc)
 		IsSetStoreNPC = false;
 	else
 		IsSetStoreNPC = true;
+	
+	PlayerHUD->SetupStoreUI(Npc, TargetPlayer);
+}
 
-	PlayerHUD->SetupStoreUI(Npc);
+UInventory* AArcherPlayerController::GetInventory()
+{
+	return PlayerHUD->GetInventory();
+}
+
+UEquipment* AArcherPlayerController::GetEquipment()
+{
+	return PlayerHUD->GetEquipment();
 }

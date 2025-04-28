@@ -34,6 +34,9 @@ public:
 	UFUNCTION()
 	void ClickPotion();
 
+	UFUNCTION()
+	void ClickPurchase();
+
 	//Idx+1 부터 PurchaseSlotIdx까지 앞으로 한칸 씩 이동
 	void UpdatePurchaseSlot(int Idx);
 
@@ -41,8 +44,11 @@ public:
 	void SetStoreNPC(class AStoreNPC* Npc) { CurrentNPC = Npc; }
 	void SetItemSlot();
 
-	void ClickedStoreSlot(const class UBaseItem * Item);		//StoreSlot이 클릭되면 호출될 함수 Item은 클릭된 아이템
+	void SetPlayer(class AArcher* Player) { CurrentPlayer = Player; }
 
+	void ClickedStoreSlot(const class UBaseItem * Item);		//StoreSlot이 클릭되면 호출될 함수 Item은 클릭된 아이템
+	void AddPurchaseSlot(const class UBaseItem* Item, int Quantity = 1);
+	
 protected:
 	virtual void NativeConstruct() override;
 
@@ -54,6 +60,9 @@ protected:
 private:
 	template<typename T>
 	void SetItemSlot(const TArray<T*>& ItemArr);
+
+	void IncreaseCost(int Price, int Quantity);
+	void DecreaseCost(int Price, int Quantity);
 
 private:
 	//Slot
@@ -68,7 +77,10 @@ private:
 	TSubclassOf<class UStoreSlot> StoreSlotClass;
 
 	const int StoreSlotNum = 6;
-			
+	//-----------------------------------------------
+
+	//Drag
+	//-----------------------------------------------
 	FVector2D DragOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -117,7 +129,15 @@ private:
 	TSubclassOf<class UPurchaseQuantitySelector> PurchaseQuantitySelectorClass;
 	//-----------------------------------------------
 
+	UPROPERTY()
+	class UTextBlock* CostText;		//총 비용
+
+	UPROPERTY()
+	class UButton* PurchaseButton;	//구매 버튼
+	
 	class AStoreNPC* CurrentNPC;	//현재 아이템을 팔 NPC
+	
+	class AArcher* CurrentPlayer;	//현재 구매중인 Player
 
 	EItemListType CurrentItemButtonType;
 };

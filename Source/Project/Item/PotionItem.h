@@ -18,11 +18,11 @@ class PROJECT_API UPotionItem : public UBaseItem
 public:
 	UPotionItem();
 
+	virtual class UBaseItem* GetCopyItem() const override;
+
 public:
 	void SetItemInfo(FString ItemName, FString Description, int Price, int HealAmount);
 
 private:
 	FConsumptionItemInfoStruct ItemInfo;
-
-	int Quantity;			//회복아이템 개수
 };

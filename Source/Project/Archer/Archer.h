@@ -54,6 +54,21 @@ public:
 
 	void SetAttackAreaMark(bool Enable);
 
+	void AddItem(class UBaseItem* Item);
+
+	bool IsCanAddItem();
+
+	void UnEquipHat();
+	void UnEquipChest();
+	void UnEquipPants();
+	void UnEquipGlove();
+	void UnEquipWeapon();
+
+public:
+	//장비 장착 함수
+	//인자는 새로 장착할 아이템
+	void EquipItem(class UBaseItem* Item);
+
 public:
 	//기본 공격
 	//----------------------------------------------------
@@ -137,6 +152,14 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Skill)
 	class USkillManagerComponent* SkillManager;
 
+	//인벤토리 ActorComponent
+	UPROPERTY(VisibleAnywhere, Category = Inventory)
+	class UInventoryComponent* Inventory;
+
+	//장비템 ActorComponent
+	UPROPERTY(VisibleAnywhere, Category = Equip)
+	class UEquipmentComponent* Equip;
+
 	//Enhanced input system
 	//-----------------------------------------------------------------------------------------------
 	UPROPERTY(VisibleAnywhere, Category = Input)
@@ -165,7 +188,6 @@ private:
 	bool IsCanRotate;
 	//-----------------------------------------------------------------------------------------------
 
-
 	class AArcherPlayerController* ArcherController;
 
 	UPROPERTY()
@@ -181,6 +203,7 @@ private:
 	class AArcherMoveSkillFootDecal* RightFootDecal;
 
 	class AMoveSkillFootDirt* FootDirtEffect;
+
 
 private:
 	//SpringArm 기본 길이

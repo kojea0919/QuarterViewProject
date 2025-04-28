@@ -8,7 +8,7 @@ UArmorItem::UArmorItem()
 {
 }
 
-void UArmorItem::SetItemInfo(FString ItemName, FString Description, int Price, int ArmorStat)
+void UArmorItem::SetItemInfo(FString ItemName, FString Description, int Price, int ArmorStat, EArmorType Type)
 {
 	ItemInfo.ItemName = ItemName;
 	ItemInfo.Description = Description;
@@ -16,4 +16,18 @@ void UArmorItem::SetItemInfo(FString ItemName, FString Description, int Price, i
 	ItemInfo.ArmorStat = ArmorStat;
 
 	CurrentItemInfo = &ItemInfo;
+
+	ArmorType = Type;
+}
+
+UBaseItem* UArmorItem::GetCopyItem() const
+{
+	UArmorItem* NewItem = NewObject<UArmorItem>();
+	NewItem->ItemInfo = ItemInfo;
+	NewItem->CurrentItemInfo = &NewItem->ItemInfo;
+	NewItem->ItemTexture = ItemTexture;
+
+	NewItem->ArmorType = ArmorType;
+
+	return NewItem;
 }

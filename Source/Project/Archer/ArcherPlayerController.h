@@ -49,6 +49,7 @@ public:
 	//-------------------------------------------------
 
 	void UseInventoryKey();
+	void UseEquipmentKey();
 	void UseInteractionKey();
 
 	class USkillGaugeBar* GetSkillGaugeBar() const;
@@ -58,8 +59,11 @@ public:
 
 	FVector GetAttakAreaMarkLocation() const;
 
-	void SetupStoreUI(class AStoreNPC* Npc);
+	void SetupStoreUI(class AStoreNPC* Npc,class AArcher * TargetPlayer);
 
+	class UInventory* GetInventory();
+	class UEquipment* GetEquipment();
+	
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
@@ -96,6 +100,10 @@ private:
 	//인벤토리 키 InputAction
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* InventoryKeyInputAction;
+
+	//장비창 키 InputAction
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* EquipmentKeyInputAction;
 
 	//상호작용 키 InputAction
 	UPROPERTY(VisibleAnywhere, Category = Input)

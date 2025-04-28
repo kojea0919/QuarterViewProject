@@ -15,7 +15,7 @@ class PROJECT_API UItemPurchaseSlot : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetItem(const class UBaseItem* Item);
+	void SetItem(const class UBaseItem* Item, int Quantity = 1);
 	void SetImage(UTexture2D * Texture);
 	void SetSlotIdx(int Idx) { CurSlotIdx = Idx; }
 	void ClearSlot();
@@ -24,6 +24,7 @@ public:
 
 	const class UBaseItem* GetItem() const { return CurItem; }
 
+	int GetQuantity() const { return CurrentQuantity; }
 protected:
 	virtual void NativeConstruct() override;
 
@@ -31,7 +32,11 @@ protected:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 private:
+	UPROPERTY()
 	class UImage* ItemImage;
+
+	UPROPERTY()
+	class UTextBlock* QuantityText;
 
 	const class UBaseItem* CurItem;
 
@@ -40,4 +45,6 @@ private:
 	int CurSlotIdx;
 
 	class UStore* CurrentStore;
+
+	int CurrentQuantity;
 };

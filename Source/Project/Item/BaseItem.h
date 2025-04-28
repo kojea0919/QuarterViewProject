@@ -18,6 +18,7 @@ class PROJECT_API UBaseItem : public UObject
 public:
 	UBaseItem();
 	UBaseItem(EItemListType Type);
+
 public:
 	void SetTexture(UTexture2D* Texture) { ItemTexture = Texture; }
 	UTexture2D* GetTexture() const { return ItemTexture; }
@@ -26,10 +27,25 @@ public:
 
 	EItemListType GetItemType() const { return ItemType; }
 
+	virtual int GetQuantity() const { return Quantity; }
+
+	virtual void SetQuantity(int Num) { Quantity = Num; }
+
+	int GetPrice() const { return CurrentItemInfo->Price; }
+
+	virtual class UBaseItem* GetCopyItem() const
+	{
+		return nullptr;
+	}
+
+	const FString& GetItemName() const { return CurrentItemInfo->ItemName; }
+
 protected:
 	UTexture2D* ItemTexture;
 
 	FBaseItemInfoStruct* CurrentItemInfo;
 
 	EItemListType ItemType;
+
+	int Quantity = 1;			//아이템 개수
 };

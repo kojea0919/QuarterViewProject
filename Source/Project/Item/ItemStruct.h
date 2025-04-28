@@ -52,7 +52,6 @@ struct FWeaponItemInfoStruct : public FBaseItemInfoStruct
 	GENERATED_USTRUCT_BODY()
 
 public:
-
 	virtual FString GetItemStat() const override
 	{
 		return FString(TEXT("공격력 : +")) + FString::FromInt(AttackStat) + FString(TEXT("  치명타 확률 : +")) + FString::FromInt(CriticalStat) + FString(TEXT("%"));

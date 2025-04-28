@@ -27,7 +27,7 @@ public:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor);
 	virtual void NotifyActorEndOverlap(AActor* OtherActor);
 
-	void SetupStoreUI();		//Store UI에 NPC가 가지고 있는 Item Arr 정보를 넘기는 함수
+	//void SetupStoreUI();		//Store UI에 NPC가 가지고 있는 Item Arr 정보를 넘기는 함수
 
 private:
 	void InitWeaponItemList();

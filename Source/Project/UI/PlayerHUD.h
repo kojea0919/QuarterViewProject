@@ -26,13 +26,16 @@ public:
 
 	void SetVisibilityIntersectionKey(bool Enable);
 	void SetVisibilityInventory();
+	void SetVisibilityEquipment();
 	void SetVisibilityStore();
 
+	class UInventory* GetInventory() { return Inventory; }
+	class UEquipment* GetEquipment() { return Equipment; }
 
 	//드롭되면 호출되는 함수
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
-	void SetupStoreUI(class AStoreNPC * Npc);
+	void SetupStoreUI(class AStoreNPC * Npc,class AArcher * Player);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -50,6 +53,12 @@ private:
 
 	UPROPERTY()
 	class UInventory* Inventory;
+
+	UPROPERTY()
+	class UEquipment* Equipment;
+
+	UPROPERTY(EditAnywhere, Category = Equipment, meta = (AllowPrivateAccess = " true"))
+	TSubclassOf<class UEquipment> EquipmentWidgetClass;
 
 	UPROPERTY()
 	class UStore* Store;

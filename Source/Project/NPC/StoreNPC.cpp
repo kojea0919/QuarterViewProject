@@ -48,7 +48,7 @@ void AStoreNPC::NotifyActorBeginOverlap(AActor* OtherActor)
 		{
 			PlayerController->SetVisibilityIntersectionKey(true);
 		
-			PlayerController->SetupStoreUI(this);
+			PlayerController->SetupStoreUI(this,Archer);
 		}
 	}
 }
@@ -67,18 +67,18 @@ void AStoreNPC::NotifyActorEndOverlap(AActor* OtherActor)
 		{
 			PlayerController->SetVisibilityIntersectionKey(false);
 
-			PlayerController->SetupStoreUI(nullptr);
+			PlayerController->SetupStoreUI(nullptr,nullptr);
 		}
 	}
 }
 
-void AStoreNPC::SetupStoreUI()
-{
-	if (ArcherController)
-	{
-		ArcherController->SetupStoreUI(this);
-	}
-}
+//void AStoreNPC::SetupStoreUI()
+//{
+//	if (ArcherController)
+//	{
+//		ArcherController->SetupStoreUI(this,A);
+//	}
+//}
 
 void AStoreNPC::InitWeaponItemList()
 {
@@ -132,7 +132,7 @@ void AStoreNPC::InitArmorItemList()
 	UArmorItem* NewItem = NewObject<UArmorItem>();
 	if (NewItem->IsValidLowLevel())
 	{
-		NewItem->SetItemInfo(TEXT("갑옷"), TEXT("갑옷"), 300, 10);
+		NewItem->SetItemInfo(TEXT("갑옷"), TEXT("갑옷"), 300, 10, EArmorType::Chest);
 
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Chest.T_Chest"));
 		if (ItemTexture->IsValidLowLevel())
@@ -143,7 +143,7 @@ void AStoreNPC::InitArmorItemList()
 	NewItem = NewObject<UArmorItem>();
 	if (NewItem->IsValidLowLevel())
 	{
-		NewItem->SetItemInfo(FString(TEXT("장갑")), FString(TEXT("장갑")), 200, 10);
+		NewItem->SetItemInfo(FString(TEXT("장갑")), FString(TEXT("장갑")), 200, 10, EArmorType::Glove);
 
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Glove.T_Glove"));
 		if (ItemTexture->IsValidLowLevel())
@@ -154,7 +154,7 @@ void AStoreNPC::InitArmorItemList()
 	NewItem = NewObject<UArmorItem>();
 	if (NewItem->IsValidLowLevel())
 	{
-		NewItem->SetItemInfo(FString(TEXT("모자")), FString(TEXT("모자")), 200, 100);
+		NewItem->SetItemInfo(FString(TEXT("모자")), FString(TEXT("모자")), 200, 100, EArmorType::Hat);
 
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Hat.T_Hat"));
 		if (ItemTexture->IsValidLowLevel())
@@ -165,7 +165,7 @@ void AStoreNPC::InitArmorItemList()
 	NewItem = NewObject<UArmorItem>();
 	if (NewItem->IsValidLowLevel())
 	{
-		NewItem->SetItemInfo(FString(TEXT("바지")), FString(TEXT("바지")), 300, 100);
+		NewItem->SetItemInfo(FString(TEXT("바지")), FString(TEXT("바지")), 300, 100, EArmorType::Pants);
 
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Pants.T_Pants"));
 		if (ItemTexture->IsValidLowLevel())

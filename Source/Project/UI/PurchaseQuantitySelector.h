@@ -13,13 +13,29 @@ UCLASS()
 class PROJECT_API UPurchaseQuantitySelector : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	void SetStore(class UStore* Store) { CurrentStore = Store; }
+	void SetItem(const class UBaseItem* Item) { CurrentItem = Item; }
+
 protected:
 	virtual void NativeConstruct() override;
 
 private:
 	UFUNCTION()
 	void ChangeEditTextBox(const FText & Text);
+
+	UFUNCTION()
+	void ClickedIncreaseButton();
+
+	UFUNCTION()
+	void ClickedDecreaseButton();
+
+	UFUNCTION()
+	void ClickedCancelButton();
+
+	UFUNCTION()
+	void ClickedPurchaseButton();
 
 private:
 	UPROPERTY()
@@ -36,4 +52,11 @@ private:
 
 	UPROPERTY()
 	class UButton* CancelButton;
+
+	int CurrentQuantity;		//현재 입력 받은 개수
+	const int MaxQuantity = 99;
+
+	class UStore* CurrentStore;
+
+	const class UBaseItem* CurrentItem;
 };

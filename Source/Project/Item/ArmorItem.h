@@ -7,6 +7,18 @@
 #include "ItemStruct.h"
 #include "ArmorItem.generated.h"
 
+//현재 아이템 타입
+//------------------------------
+enum class EArmorType
+{
+	Hat = 0,
+	Chest,
+	Pants,
+	Glove,
+	Max
+};
+//------------------------------
+
 /**
  * 
  */
@@ -19,8 +31,13 @@ public:
 	UArmorItem();
 
 public:
-	void SetItemInfo(FString ItemName, FString Description, int Price, int ArmorStat);
+	void SetItemInfo(FString ItemName, FString Description, int Price, int ArmorStat,EArmorType Type);
+
+	virtual class UBaseItem* GetCopyItem() const override;
+	EArmorType GetArmorType() { return ArmorType; }
 
 private:
 	FArmorItemInfoStruct ItemInfo;
+
+	EArmorType ArmorType;
 };

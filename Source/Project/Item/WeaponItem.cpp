@@ -18,3 +18,13 @@ void UWeaponItem::SetItemInfo(FString ItemName, FString Description,int Price, i
 
 	CurrentItemInfo = &ItemInfo;
 }
+
+UBaseItem* UWeaponItem::GetCopyItem() const
+{
+	UWeaponItem* NewItem = NewObject<UWeaponItem>();
+	NewItem->ItemInfo = ItemInfo;
+	NewItem->CurrentItemInfo = &NewItem->ItemInfo;
+	NewItem->ItemTexture = ItemTexture;
+
+	return NewItem;
+}

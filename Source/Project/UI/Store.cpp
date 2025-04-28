@@ -5,6 +5,7 @@
 #include "Components/WrapBox.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/TextBlock.h"
 #include "StoreSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "DragImage.h"
@@ -16,6 +17,11 @@
 #include "Item/PotionItem.h"
 #include "ItemPurchaseSlot.h"
 #include "PurchaseQuantitySelector.h"
+#include "Misc/DefaultValueHelper.h"
+#include "Archer/Archer.h"
+#include "Item/WeaponItem.h"
+#include "Item/PotionItem.h"
+#include "Item/ArmorItem.h"
 
 void UStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -45,7 +51,11 @@ void UStore::InitStore()
 
 	PurchaseQuantitySelector = CreateWidget<UPurchaseQuantitySelector>(GetWorld(), PurchaseQuantitySelectorClass);
 	if (PurchaseQuantitySelector)
+	{
+		PurchaseQuantitySelector->AddToViewport(1);
 		PurchaseQuantitySelector->SetVisibility(ESlateVisibility::Hidden);
+		PurchaseQuantitySelector->SetStore(this);
+	}
 
 	PurchaseSlotIdx = 0;
 }
@@ -78,15 +88,31 @@ void UStore::ClickedStoreSlot(const UBaseItem* Item)
 		return;
 
 	//포션이 아닌 경우에만 바로 추가
-	if(CurrentItemButtonType != EItemListType::Potion)
+	if (CurrentItemButtonType != EItemListType::Potion)
+	{
 		PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item);
+		IncreaseCost(Item->GetPrice(), 1);
+	}
 	//포션인 경우에는 개수 선택 UI 보여주기
 	else
 	{
 		PurchaseQuantitySelector->SetVisibility(ESlateVisibility::Visible);
+		PurchaseQuantitySelector->SetItem(Item);
 
+		double X, Y;
+		GetOwningPlayer()->GetMousePosition(X, Y);
+		PurchaseQuantitySelector->SetPositionInViewport(FVector2D(X, Y));
 	}
 
+}
+
+void UStore::AddPurchaseSlot(const UBaseItem* Item, int Quantity)
+{
+	if (PurchaseSlotIdx == PurchaseSlotNum)
+		return;
+
+	PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item, Quantity);
+	IncreaseCost(Item->GetPrice(), Quantity);
 
 }
 
@@ -121,6 +147,14 @@ void UStore::NativeConstruct()
 	}
 
 	ItemPurchaseWaitingWrapBox = Cast<UWrapBox>(GetWidgetFromName(TEXT("ItemPurchaseWaitingWrapBox")));
+
+	CostText = Cast<UTextBlock>(GetWidgetFromName(TEXT("Cost")));
+
+	PurchaseButton = Cast<UButton>(GetWidgetFromName(TEXT("PurchaseButton")));
+	if (PurchaseButton)
+	{
+		PurchaseButton->OnClicked.AddDynamic(this, &UStore::ClickPurchase);
+	}
 
 	CurrentNPC = nullptr;
 	CurrentItemButtonType = EItemListType::Weapon;
@@ -157,6 +191,32 @@ void UStore::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEve
 	OutOperation = WidgetDrag;
 }
 
+void UStore::IncreaseCost(int Price, int Quantity)
+{
+	FString CostStr = CostText->GetText().ToString();
+	
+	//쉼표 제거 FText에서 자동으로 생성
+	CostStr = CostStr.Replace(TEXT(","), TEXT(""));
+
+	int CurrentCost;
+	FDefaultValueHelper::ParseInt(CostStr, CurrentCost);
+
+	CurrentCost += Quantity * Price;
+	CostText->SetText(FText::AsNumber(CurrentCost));
+}
+
+void UStore::DecreaseCost(int Price, int Quantity)
+{
+	FString CostStr = CostText->GetText().ToString();
+	CostStr= CostStr.Replace(TEXT(","), TEXT(""));
+
+	int CurrentCost; 
+	FDefaultValueHelper::ParseInt(CostStr,CurrentCost);
+
+	CurrentCost -= Quantity * Price;
+	CostText->SetText(FText::AsNumber(CurrentCost));
+}
+
 void UStore::ClickExit()
 {
 	SetVisibility(ESlateVisibility::Hidden);
@@ -180,12 +240,45 @@ void UStore::ClickPotion()
 	SetItemSlot();
 }
 
-void UStore::UpdatePurchaseSlot(int Idx)
+void UStore::ClickPurchase()
 {
+	if (CurrentPlayer)
+	{
+		//구매 대기 리스트에 있는 아이템들을 복사해서 Player에게 Add시켜준다.
+		//---------------------------------------------------------------
+		size_t Size = PurchaseSlotIdx;
+		for (size_t Idx = 0; Idx < Size; ++Idx)
+		{
+			UItemPurchaseSlot* CurrentSlot = PurchaseSlotArr[Idx];
+			if (CurrentSlot)
+			{
+				UBaseItem* CopyItem = CurrentSlot->GetItem()->GetCopyItem();
+				if (CurrentPlayer)
+				{
+					if (CopyItem->GetItemType() == EItemListType::Potion)
+						CopyItem->SetQuantity(CurrentSlot->GetQuantity());
+					CurrentPlayer->AddItem(CopyItem);
+				}
+
+			}
+			CurrentSlot->ClearSlot();
+		}
+		//---------------------------------------------------------------
+		PurchaseSlotIdx = 0;
+		CostText->SetText(FText::FromString(TEXT("0")));
+
+	}
+}
+
+void UStore::UpdatePurchaseSlot(int Idx)
+{	
+	DecreaseCost(PurchaseSlotArr[Idx]->GetItem()->GetPrice(), PurchaseSlotArr[Idx]->GetQuantity());
+
 	for (int idx = Idx + 1; idx < PurchaseSlotIdx; ++idx)
 	{
-		PurchaseSlotArr[idx - 1]->SetItem(PurchaseSlotArr[idx]->GetItem());
+		PurchaseSlotArr[idx - 1]->SetItem(PurchaseSlotArr[idx]->GetItem(),PurchaseSlotArr[idx]->GetQuantity());
 	}
 	PurchaseSlotArr[PurchaseSlotIdx - 1]->ClearSlot();
 	--PurchaseSlotIdx;
+
 }

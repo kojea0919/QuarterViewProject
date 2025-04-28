@@ -8,6 +8,16 @@ UPotionItem::UPotionItem()
 {
 }
 
+UBaseItem* UPotionItem::GetCopyItem()const
+{
+	UPotionItem* NewItem = NewObject<UPotionItem>();
+	NewItem->ItemInfo = ItemInfo;
+	NewItem->CurrentItemInfo = &NewItem->ItemInfo;
+	NewItem->ItemTexture = ItemTexture;
+
+	return NewItem;
+}
+
 void UPotionItem::SetItemInfo(FString ItemName, FString Description, int Price, int HealAmount)
 {
 	ItemInfo.ItemName = ItemName;

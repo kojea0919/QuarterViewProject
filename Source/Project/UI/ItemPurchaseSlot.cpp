@@ -3,11 +3,12 @@
 
 #include "UI/ItemPurchaseSlot.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Item/BaseItem.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Store.h"
 
-void UItemPurchaseSlot::SetItem(const UBaseItem* Item)
+void UItemPurchaseSlot::SetItem(const UBaseItem* Item,int Quantity)
 {
 	if (nullptr == Item)
 		return;
@@ -17,6 +18,18 @@ void UItemPurchaseSlot::SetItem(const UBaseItem* Item)
 	if (ItemImage)
 	{
 		ItemImage->SetBrushFromTexture(Item->GetTexture());
+		
+		CurrentQuantity = Quantity;
+		//포션인 경우에만 개수 Text 보여주기
+		if (Item->GetItemType() == EItemListType::Potion)
+		{
+			QuantityText->SetVisibility(ESlateVisibility::Visible);
+			QuantityText->SetText(FText::AsNumber(Quantity));
+		}
+		else
+		{
+			QuantityText->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
@@ -31,8 +44,8 @@ void UItemPurchaseSlot::SetImage(UTexture2D* Texture)
 void UItemPurchaseSlot::ClearSlot()
 {
 	ItemImage->SetBrushFromTexture(BaseTexture);
+	QuantityText->SetVisibility(ESlateVisibility::Hidden);
 	CurItem = nullptr;
-
 }
 
 void UItemPurchaseSlot::NativeConstruct()
@@ -40,6 +53,9 @@ void UItemPurchaseSlot::NativeConstruct()
 	Super::NativeConstruct();
 
 	ItemImage = Cast<UImage>(GetWidgetFromName(TEXT("ItemImage")));
+	QuantityText = Cast<UTextBlock>(GetWidgetFromName(TEXT("QuantityText")));
+	if(QuantityText)
+		QuantityText->SetVisibility(ESlateVisibility::Hidden);
 
 	BaseTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/UITexture/TX_InventoryBackGroundImage.TX_InventoryBackGroundImage"));
 }

@@ -5,6 +5,7 @@
 #include "SkillQuickSlot.h"
 #include "SkillGaugeBar.h"
 #include "Inventory.h"
+#include "Equipment.h"
 #include "Store.h"
 #include "SkillBase/BaseSkill.h"
 #include "StoreWidgetDrag.h"
@@ -80,6 +81,17 @@ void UPlayerHUD::SetVisibilityInventory()
 		Inventory->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UPlayerHUD::SetVisibilityEquipment()
+{
+	if (!Equipment->IsValidLowLevel())
+		return;
+
+	if (Equipment->IsVisible())
+		Equipment->SetVisibility(ESlateVisibility::Hidden);
+	else
+		Equipment->SetVisibility(ESlateVisibility::Visible);
+}
+
 void UPlayerHUD::SetVisibilityStore()
 {
 	if (Store->IsValidLowLevel())
@@ -106,10 +118,13 @@ bool UPlayerHUD::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent&
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
 
-void UPlayerHUD::SetupStoreUI(AStoreNPC* Npc)
+void UPlayerHUD::SetupStoreUI(AStoreNPC* Npc,AArcher * Player)
 {
-	if(nullptr != Store)
+	if (nullptr != Store)
+	{
 		Store->SetStoreNPC(Npc);
+		Store->SetPlayer(Player);
+	}
 }
 
 void UPlayerHUD::NativeConstruct()
@@ -161,6 +176,16 @@ void UPlayerHUD::NativeConstruct()
 	}
 	//---------------------------------------------------------------
 
+	//장비창 초기화
+	//---------------------------------------------------------------
+	Equipment = CreateWidget<UEquipment>(GetWorld(),EquipmentWidgetClass);
+	if (Equipment)
+	{
+		Equipment->AddToViewport(2);
+		Equipment->SetVisibility(ESlateVisibility::Hidden);
+	}
+	//---------------------------------------------------------------
+	
 	//상점UI 초기화
 	//---------------------------------------------------------------
 	Store = Cast<UStore>(GetWidgetFromName(TEXT("UI_Store")));

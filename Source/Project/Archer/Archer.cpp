@@ -19,6 +19,12 @@
 #include "WorldSubSystem/EffectObjectPool.h"
 #include "Archer/Skill/SkillManagerComponent.h"
 #include "Archer/Effect/AfterimageEffect.h"
+#include "Archer/Inventory/InventoryComponent.h"
+#include "Archer/Inventory/EquipmentComponent.h"
+#include "UI/Inventory.h"
+#include "Item/BaseItem.h"
+#include "Item/WeaponItem.h"
+#include "Item/ArmorItem.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
@@ -34,6 +40,8 @@ AArcher::AArcher()
 	SkillRangeMarkMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SKILLRANGEMARK"));
 
 	SkillManager = CreateDefaultSubobject<USkillManagerComponent>(TEXT("SKILLMANAGER"));
+	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("INVENTORY"));
+	Equip = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EQUIP"));
 
 	AttackRotationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ATTACKROTATIONTIMELINE"));
 	//---------------------------------------------
@@ -105,6 +113,7 @@ AArcher::AArcher()
 	if (ARCHER_ANIM.Succeeded())
 		GetMesh()->SetAnimInstanceClass(ARCHER_ANIM.Class);
 	//---------------------------------------------
+
 }
 
 void AArcher::BeginPlay()
@@ -130,13 +139,25 @@ void AArcher::BeginPlay()
 	AttackRotationTimeline->AddInterpFloat(RotationCurve, RotateTimelineProgress);
 	//----------------------------------------------
 
-	APlayerController * PlayerController = GetController<APlayerController>();
+	AArcherPlayerController* PlayerController = GetController<AArcherPlayerController>();
 	if (PlayerController)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			SubSystem->AddMappingContext(InputMappingContext, 0);
 		}
+
+		//Inventory Setting
+		//---------------------------------------------
+		if (Inventory)
+			Inventory->SetInventory(PlayerController->GetInventory());
+		//---------------------------------------------
+
+		//Equipment Setting
+		//---------------------------------------------
+		if (Equip)
+			Equip->SetEquip(PlayerController->GetEquipment());
+		//---------------------------------------------
 	}
 }
 
@@ -181,7 +202,9 @@ void AArcher::PossessedBy(AController* PossessedController)
 
 	AArcherPlayerController* NewController = Cast<AArcherPlayerController>(PossessedController);
 	if (NewController)
+	{
 		ArcherController = NewController;
+	}
 }
 
 void AArcher::SetMoveAble(bool Enable)
@@ -221,6 +244,65 @@ void AArcher::SetAttackAreaMark(bool Enable)
 {
 	if (ArcherController)
 		ArcherController->SetAreaMarkEffectVisible(Enable);
+}
+
+void AArcher::AddItem(UBaseItem* Item)
+{
+	if (Inventory)
+		Inventory->AddItem(Item);
+}
+
+bool AArcher::IsCanAddItem()
+{
+	if (Inventory)
+		return Inventory->IsCanAddItem();
+	return false;
+}
+
+void AArcher::UnEquipHat()
+{
+	if (Equip)
+		Equip->UnEquipHat();
+}
+
+void AArcher::UnEquipChest()
+{
+	if (Equip)
+		Equip->UnEquipChest();
+}
+
+void AArcher::UnEquipPants()
+{
+	if (Equip)
+		Equip->UnEquipPants();
+}
+
+void AArcher::UnEquipGlove()
+{
+	if (Equip)
+		Equip->UnEquipGlove();
+}
+
+void AArcher::UnEquipWeapon()
+{
+	if (Equip)
+		Equip->UnEquipWeapon();
+}
+
+void AArcher::EquipItem(UBaseItem* Item)
+{
+	if (!Equip)
+		return;
+
+	if (Item->GetItemType() == EItemListType::Weapon)
+	{
+		Equip->EquipWeapon(Cast<UWeaponItem>(Item));
+	}
+	else if (Item->GetItemType() == EItemListType::Armor)
+	{
+		Equip->EquipArmor(Cast<UArmorItem>(Item));
+	}
+
 }
 
 void AArcher::BasicAttackAction()
