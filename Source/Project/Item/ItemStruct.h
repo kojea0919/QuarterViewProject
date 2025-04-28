@@ -12,7 +12,7 @@ enum class EItemListType
 	Weapon = 0,
 	Armor,
 	Potion,
-	Max
+	None
 };
 //------------------------------
 
@@ -24,7 +24,7 @@ enum class EArmorType
 	Chest,
 	Pants,
 	Glove,
-	Max
+	None
 };
 //------------------------------
 
@@ -44,6 +44,10 @@ struct FBaseItemInfoStruct
 	GENERATED_USTRUCT_BODY()
 
 public:
+	FBaseItemInfoStruct()
+		: Price(0)
+	{}
+
 	virtual FString GetItemStat() const { return FString(); };
 	virtual ~FBaseItemInfoStruct() {};
 
@@ -64,6 +68,11 @@ struct FWeaponItemInfoStruct : public FBaseItemInfoStruct
 	GENERATED_USTRUCT_BODY()
 
 public:
+	FWeaponItemInfoStruct()
+		: AttackStat(0), CriticalStat(0)
+	{}
+
+public:
 	virtual FString GetItemStat() const override
 	{
 		return FString(TEXT("공격력 : +")) + FString::FromInt(AttackStat) + FString(TEXT("  치명타 확률 : +")) + FString::FromInt(CriticalStat) + FString(TEXT("%"));
@@ -82,6 +91,10 @@ struct FArmorItemInfoStruct : public FBaseItemInfoStruct
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+	FArmorItemInfoStruct()
+		: ArmorStat(0)
+	{}
 
 public:
 	virtual FString GetItemStat() const override
@@ -99,6 +112,10 @@ struct FConsumptionItemInfoStruct : public FBaseItemInfoStruct
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+	FConsumptionItemInfoStruct()
+		: HealAmount(0)
+	{}
 
 public:
 	virtual FString GetItemStat() const override
