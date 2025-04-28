@@ -35,6 +35,9 @@ private:
 	UFUNCTION()
 	void ClickButton();	//아이템 사용 버튼 클릭
 
+	UFUNCTION()
+	void HoveredButton();	//아이템 툴팁 보여주기
+
 private:
 	UPROPERTY()
 	class UImage* ItemImage;

@@ -75,7 +75,10 @@ void UInventorySlot::NativeConstruct()
 
 	SlotButton = Cast<UButton>(GetWidgetFromName(TEXT("SlotButton")));
 	if (SlotButton)
+	{
 		SlotButton->OnClicked.AddDynamic(this, &UInventorySlot::ClickButton);
+		SlotButton->OnHovered.AddDynamic(this, &UInventorySlot::HoveredButton);
+	}
 
 	Quantity = 0;
 	Empty = true;
@@ -127,4 +130,12 @@ void UInventorySlot::ClickButton()
 
 	ClearSlot();
 
+}
+
+void UInventorySlot::HoveredButton()
+{
+	if (Empty)
+		return;
+
+	
 }

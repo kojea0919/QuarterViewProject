@@ -25,6 +25,8 @@ public:
 
 	bool IsCanAdd() { return  CurrentItemNum < InventorySlotNum; }
 
+	void SetVisibilityItemToolTip(bool Enable);
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -33,6 +35,8 @@ private:
 	void ClickExitButton();	//나가기 버튼 클릭
 
 private:
+	//Slot
+	//---------------------------------------------------
 	UPROPERTY()
 	class UWrapBox* WrapBox;
 
@@ -42,11 +46,27 @@ private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UInventorySlot> InventorySlotClass;
 
-	UPROPERTY()
-	class UButton* ExitButton;
-
 	const int InventorySlotNum = 20;
 	int CurrentItemNum = 0;
+	//---------------------------------------------------
+
+	
+	//ToolTime
+	//---------------------------------------------------
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UItemToolTip> ItemToolTipClass;
+
+	UPROPERTY()
+	class UItemToolTip* EquipItemToolTip;		//장착한 아이템 툴팁
+
+	UPROPERTY()
+	class UItemToolTip* InventoryItemToolTip;	//인벤토리에 있는 아이템 툴팁
+
+	//---------------------------------------------------
+
+
+	UPROPERTY()
+	class UButton* ExitButton;
 
 	class AArcher* CurrentPlayer;
 };

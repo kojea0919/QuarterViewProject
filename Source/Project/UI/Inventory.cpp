@@ -7,6 +7,7 @@
 #include "InventorySlot.h"
 #include "Item/BaseItem.h"
 #include "Archer/Archer.h"
+#include "ItemToolTip.h"
 
 void UInventory::InitInventory()
 {
@@ -18,6 +19,8 @@ void UInventory::InitInventory()
 		WrapBox->AddChild(InventorySlot);
 	}
 	CurrentItemNum = 0;
+
+
 }
 
 void UInventory::AddItem(UBaseItem* Item)
@@ -88,6 +91,11 @@ void UInventory::EquipItem(UBaseItem* Item)
 	}
 }
 
+void UInventory::SetVisibilityItemToolTip(bool Enable)
+{
+	
+}
+
 void UInventory::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -97,6 +105,20 @@ void UInventory::NativeConstruct()
 	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("ExitButton")));
 	if (ExitButton)
 		ExitButton->OnClicked.AddDynamic(this, &UInventory::ClickExitButton);
+
+	EquipItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipClass);
+	if (EquipItemToolTip)
+	{
+		EquipItemToolTip->SetVisibility(ESlateVisibility::Hidden);
+		EquipItemToolTip->AddToViewport();
+	}
+
+	InventoryItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipClass);
+	if (InventoryItemToolTip)
+	{
+		InventoryItemToolTip->SetVisibility(ESlateVisibility::Hidden);
+		InventoryItemToolTip->AddToViewport();
+	}
 
 }
 
