@@ -75,6 +75,8 @@ void UStoreSlot::RemoveDescription()
 {
 	if (CurrentStore)
 		CurrentStore->HideItemToolTip();
+
+	UE_LOG(LogTemp, Warning, TEXT("UnHover"));
 }
 
 void UStoreSlot::ClickedStoreSlot()
@@ -93,6 +95,9 @@ void UStoreSlot::NativeConstruct()
 	IsSetItem = false;
 
 	ItemImage = Cast<UImage>(GetWidgetFromName(TEXT("ItemImage")));
+	if(ItemImage)
+		ItemImage->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
 	ItemNameTextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemName")));
 	ItemPriceTextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemPrice")));
 	GoldImage = Cast<UImage>(GetWidgetFromName(TEXT("GoldImage")));

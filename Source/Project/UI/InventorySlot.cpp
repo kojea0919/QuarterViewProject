@@ -99,6 +99,10 @@ void UInventorySlot::ClearSlot()
 		ItemImage->SetBrushFromTexture(nullptr);
 		ItemImage->SetVisibility(ESlateVisibility::Hidden);
 	}
+
+	if (Inventory)
+		Inventory->HideInventoryItemToolTip();
+	
 }
 
 void UInventorySlot::ClickButton()
@@ -116,6 +120,7 @@ void UInventorySlot::ClickButton()
 		{
 			return;
 		}
+		ClearSlot();
 	}
 
 	//장비 아이템 장착
@@ -124,13 +129,21 @@ void UInventorySlot::ClickButton()
 	{
 		if (Inventory)
 		{
-			Inventory->EquipItem(Item);
+			UBaseItem * PrevItem = Inventory->EquipItem(Item);
+			if (PrevItem)
+			{
+				Inventory->UpdateInventoryItemToolTip(PrevItem);
+				Inventory->UpdateEquipItemToolTip(Item);
+				SetItem(PrevItem);
+			}
+			else
+			{
+				ClearSlot();
+				Inventory->HideInventoryItemToolTip();
+			}
 		}
 	}
 	//-----------------------------------------------
-
-	ClearSlot();
-
 }
 
 void UInventorySlot::HoveredButton()

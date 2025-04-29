@@ -43,10 +43,12 @@ void AStoreNPC::NotifyActorBeginOverlap(AActor* OtherActor)
 	AArcher * Archer = Cast<AArcher>(OtherActor);
 	if (Archer)
 	{
+		//Archer
+		Archer->SetVisibleInteractionUI(true);
+
 		AArcherPlayerController * PlayerController = Archer->GetController<AArcherPlayerController>();
 		if (PlayerController)
 		{
-			PlayerController->SetVisibilityIntersectionKey(true);
 		
 			PlayerController->SetupStoreUI(this,Archer);
 		}
@@ -60,6 +62,8 @@ void AStoreNPC::NotifyActorEndOverlap(AActor* OtherActor)
 	AArcher* Archer = Cast<AArcher>(OtherActor);
 	if (Archer)
 	{
+		Archer->SetVisibleInteractionUI(false);
+
 		ArcherController = nullptr;
 
 		AArcherPlayerController* PlayerController = Archer->GetController<AArcherPlayerController>();
@@ -118,7 +122,7 @@ void AStoreNPC::InitWeaponItemList()
 	NewItem = NewObject<UWeaponItem>();
 	if (NewItem->IsValidLowLevel())
 	{
-		NewItem->SetItemInfo(FString(TEXT("명장의 활")), FString(TEXT("크리티컬 확률이 크게 상승하고, 전투에서 강력한 성능을 발휘한다.")), 800, 2000, 40);
+		NewItem->SetItemInfo(FString(TEXT("명장의 활")), FString(TEXT("크리티컬 확률이 크게 상승하고, 전투에서 강력한 성능을 발휘한다.")), 800, 200, 40);
 
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Weapon/Texture/LegendaryBow.LegendaryBow"));
 		if (ItemTexture->IsValidLowLevel())

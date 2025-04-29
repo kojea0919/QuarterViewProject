@@ -9,6 +9,8 @@
 #include "Item/ArmorItem.h"
 #include "Archer/Archer.h"
 #include "ItemToolTip.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "StoreWidgetDrag.h"
 
 void UInventory::InitInventory()
 {
@@ -84,18 +86,19 @@ void UInventory::AddItem(UBaseItem* Item)
 	}
 }
 
-void UInventory::EquipItem(UBaseItem* Item)
+class UBaseItem* UInventory::EquipItem(UBaseItem* Item)
 {
 	if (CurrentPlayer)
 	{
 		--CurrentItemNum;
-		CurrentPlayer->EquipItem(Item);
+		return CurrentPlayer->EquipItem(Item);
 	}
+	return nullptr;
 }
 
 void UInventory::ShowInventoryItemToolTip(UBaseItem* Item)
 {
-	if (nullptr == Item)
+	if (nullptr == Item && nullptr == CurrentPlayer)
 		return;
 
 	if (InventoryItemToolTip && Item)
@@ -114,7 +117,7 @@ void UInventory::ShowInventoryItemToolTip(UBaseItem* Item)
 			EquipItemToolTip->SetItemToolTip(TargetItem->GetTexture(), TargetItem->GetItemInfo());
 		}
 	}
-	else
+	else if(Item->GetItemType() == EItemListType::Armor)
 	{
 		const UBaseItem* TargetItem = CurrentPlayer->GetArmorItem(Cast<UArmorItem>(Item)->GetArmorType());
 		if (TargetItem)
@@ -131,9 +134,19 @@ void UInventory::HideInventoryItemToolTip()
 		InventoryItemToolTip->SetVisibility(ESlateVisibility::Hidden);
 
 	if (EquipItemToolTip)
-	{
 		EquipItemToolTip->SetVisibility(ESlateVisibility::Hidden);
-	}
+}
+
+void UInventory::UpdateInventoryItemToolTip(UBaseItem* Item)
+{
+	if (InventoryItemToolTip)
+		InventoryItemToolTip->SetItemToolTip(Item->GetTexture(), Item->GetItemInfo());
+}
+
+void UInventory::UpdateEquipItemToolTip(UBaseItem* Item)
+{
+	if (EquipItemToolTip)
+		EquipItemToolTip->SetItemToolTip(Item->GetTexture(), Item->GetItemInfo());
 }
 
 void UInventory::NativeConstruct()
@@ -152,17 +165,48 @@ void UInventory::NativeConstruct()
 		EquipItemToolTip->AddToViewport(4);
 		EquipItemToolTip->SetEquipTextOn();
 		EquipItemToolTip->SetVisibility(ESlateVisibility::Hidden);
-		EquipItemToolTip->SetOffset({ 200,0 });
+		FVector2D Offset;
+		Offset.X = 10;
+		Offset.Y = EquipItemToolTip->GetHeight() - 30;
+		EquipItemToolTip->SetOffset(Offset);
 	}
 
 	InventoryItemToolTip = CreateWidget<UItemToolTip>(GetWorld(), ItemToolTipWidgetClass);
 	if (InventoryItemToolTip)
 	{
 		InventoryItemToolTip->SetVisibility(ESlateVisibility::Hidden);
-		InventoryItemToolTip->SetOffset({ 5,0 });
+		InventoryItemToolTip->SetOffset({ 10,0 });
 		InventoryItemToolTip->AddToViewport(4);
 	}
 
+}
+
+FReply UInventory::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	// 왼쪽 마우스 버튼이 눌렸을 때의 처리
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		DragOffset = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+
+		FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
+		return ReplyResult.NativeReply;
+	}
+
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+}
+
+void UInventory::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	UStoreWidgetDrag* WidgetDrag = NewObject<UStoreWidgetDrag>();
+	WidgetDrag->SetWidgetReference(this);
+	WidgetDrag->SetDragOffset(DragOffset);
+
+	WidgetDrag->DefaultDragVisual = this;
+	WidgetDrag->Pivot = EDragPivot::TopCenter;
+	//WidgetDrag->Offset = FVector2D(-0.08,-0.1);
+	OutOperation = WidgetDrag;
 }
 
 void UInventory::ClickExitButton()

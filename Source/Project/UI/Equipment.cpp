@@ -4,6 +4,7 @@
 #include "UI/Equipment.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Item/WeaponItem.h"
 #include "Item/ArmorItem.h"
 #include "Archer/Archer.h"
@@ -17,28 +18,42 @@ void UEquipment::SetWeapon(UWeaponItem* NewWeapon)
 		//텍스쳐 바꾸기
 		WeaponEquipImage->SetBrushFromTexture(NewWeapon->GetTexture());
 		WeaponIsEmpty = false;
+
+		int AttackStat = NewWeapon->GetAttackStat();
+		int CriticalStat = NewWeapon->GetCriticalStat();
+
+		AddAttackStat(AttackStat);
+		AddCriticalStat(CriticalStat);
+
+		WeaponAttackStat = AttackStat;
+		WeaponCriticalStat = CriticalStat;
 	}
 }
 
 void UEquipment::SetArmor(UArmorItem* NewArmor)
 {
 	UImage* TargetImage = nullptr;
+	int ArmorStat = NewArmor->GetArmorStat();
 	switch (NewArmor->GetArmorType())
 	{
 	case EArmorType::Hat:
 		TargetImage = HatEquipImage;
+		HatArmorStat = ArmorStat;
 		HatIsEmpty = false;
 		break;
 	case EArmorType::Chest:
 		TargetImage = ChestEquipImage;
+		ChestArmorStat = ArmorStat;
 		ChestIsEmpty = false;
 		break;
 	case EArmorType::Pants:
 		TargetImage = PantsEquipImage;
+		PantsArmorStat = ArmorStat;
 		PantsIsEmpty = false;
 		break;
 	case EArmorType::Glove:
 		TargetImage = GloveEquipImage;
+		GloveArmorStat = ArmorStat;
 		GloveIsEmpty = false;
 		break;
 	default:
@@ -52,7 +67,24 @@ void UEquipment::SetArmor(UArmorItem* NewArmor)
 
 	//텍스쳐 바꾸기
 	TargetImage->SetBrushFromTexture(NewArmor->GetTexture());
+
+	AddArmorStat(NewArmor->GetArmorStat());
 	
+}
+
+void UEquipment::AddAttackStat(int Num)
+{
+	AddStatText(AttackStatText, Num);
+}
+
+void UEquipment::AddArmorStat(int Num)
+{
+	AddStatText(ArmorStatText, Num);
+}
+
+void UEquipment::AddCriticalStat(int Num)
+{
+	AddStatText(CriticalStatText, Num);
 }
 
 void UEquipment::NativeConstruct()
@@ -123,6 +155,33 @@ void UEquipment::NativeConstruct()
 
 	WeaponIsEmpty = true;
 	//----------------------------------------------------------------------------
+
+	
+	//StatText
+	//----------------------------------------------------------------------------
+	AttackStatText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AttackStatText")));
+	ArmorStatText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ArmorStatText")));
+	CriticalStatText = Cast<UTextBlock>(GetWidgetFromName(TEXT("CriticalStatText")));
+	//----------------------------------------------------------------------------
+
+	WeaponAttackStat = 0;
+	WeaponCriticalStat = 0;
+
+	HatArmorStat = 0;
+	ChestArmorStat = 0;
+	PantsArmorStat = 0;
+	GloveArmorStat = 0;
+}
+
+void UEquipment::AddStatText(UTextBlock* Text, int Stat)
+{
+	if (Text)
+	{
+		FText StatText = Text->GetText();
+		int PrevStat = FCString::Atoi(*StatText.ToString());
+
+		Text->SetText(FText::AsNumber(PrevStat + Stat));
+	}
 }
 
 void UEquipment::ClickExit()
@@ -137,6 +196,9 @@ void UEquipment::ClickHat()
 
 	if (CurrentPlayer && CurrentPlayer->IsCanAddItem())
 	{
+		AddArmorStat(-HatArmorStat);
+		HatArmorStat = 0;
+
 		CurrentPlayer->UnEquipHat();
 		HatEquipImage->SetBrushFromTexture(nullptr);
 		HatEquipImage->SetVisibility(ESlateVisibility::Hidden);
@@ -152,6 +214,9 @@ void UEquipment::ClickChest()
 
 	if (CurrentPlayer && CurrentPlayer->IsCanAddItem())
 	{
+		AddArmorStat(-ChestArmorStat);
+		ChestArmorStat = 0;
+
 		CurrentPlayer->UnEquipChest();
 		ChestEquipImage->SetBrushFromTexture(nullptr);
 		ChestEquipImage->SetVisibility(ESlateVisibility::Hidden);
@@ -167,6 +232,9 @@ void UEquipment::ClickPants()
 
 	if (CurrentPlayer && CurrentPlayer->IsCanAddItem())
 	{
+		AddArmorStat(-PantsArmorStat);
+		PantsArmorStat = 0;
+
 		CurrentPlayer->UnEquipPants();
 		PantsEquipImage->SetBrushFromTexture(nullptr);
 		PantsEquipImage->SetVisibility(ESlateVisibility::Hidden);
@@ -182,6 +250,9 @@ void UEquipment::ClickGlove()
 
 	if (CurrentPlayer && CurrentPlayer->IsCanAddItem())
 	{
+		AddArmorStat(-GloveArmorStat);
+		GloveArmorStat = 0;
+
 		CurrentPlayer->UnEquipGlove();
 		GloveEquipImage->SetBrushFromTexture(nullptr);
 		GloveEquipImage->SetVisibility(ESlateVisibility::Hidden);
@@ -197,6 +268,9 @@ void UEquipment::ClickWeapon()
 
 	if (CurrentPlayer && CurrentPlayer->IsCanAddItem())
 	{
+		AddAttackStat(-WeaponAttackStat);
+		AddCriticalStat(-WeaponCriticalStat);
+
 		CurrentPlayer->UnEquipWeapon();
 		WeaponEquipImage->SetBrushFromTexture(nullptr);
 		WeaponEquipImage->SetVisibility(ESlateVisibility::Hidden);

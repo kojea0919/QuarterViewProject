@@ -19,8 +19,8 @@ public:
 public:
 	void SetEquip(class UEquipment* Equip);
 
-	void EquipWeapon(class UWeaponItem* WeaponItem);
-	void EquipArmor(class UArmorItem* WeaponItem);
+	class UBaseItem* EquipWeapon(class UWeaponItem* WeaponItem);
+	class UBaseItem* EquipArmor(class UArmorItem* WeaponItem);
 
 	void UnEquipWeapon();
 	void UnEquipHat();

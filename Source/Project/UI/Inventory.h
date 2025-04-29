@@ -21,16 +21,22 @@ public:
 
 	void SetPlayer(class AArcher* Player) { CurrentPlayer = Player; }
 
-	void EquipItem(class UBaseItem* Item);
+	class UBaseItem* EquipItem(class UBaseItem* Item);
 
 	bool IsCanAdd() { return  CurrentItemNum < InventorySlotNum; }
 
 	void ShowInventoryItemToolTip(class UBaseItem * Item);
 	void HideInventoryItemToolTip();
-	
+	void UpdateInventoryItemToolTip(class UBaseItem* Item);
+	void UpdateEquipItemToolTip(class UBaseItem* Item);
+
 protected:
 	virtual void NativeConstruct() override;
+	
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	//드래그가 감지되면 호출되는 함수
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 private:
 	UFUNCTION()
 	void ClickExitButton();	//나가기 버튼 클릭
@@ -52,7 +58,7 @@ private:
 	//---------------------------------------------------
 
 	
-	//ToolTime
+	//ToolTip
 	//---------------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UItemToolTip> ItemToolTipWidgetClass;
@@ -62,7 +68,6 @@ private:
 
 	UPROPERTY()
 	class UItemToolTip* InventoryItemToolTip;	//인벤토리에 있는 아이템 툴팁
-
 	//---------------------------------------------------
 
 
@@ -70,4 +75,6 @@ private:
 	class UButton* ExitButton;
 
 	class AArcher* CurrentPlayer;
+
+	FVector2D DragOffset;
 };

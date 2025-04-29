@@ -24,30 +24,30 @@ void UEquipmentComponent::SetEquip(UEquipment* Equip)
 	}
 }
 
-void UEquipmentComponent::EquipWeapon(UWeaponItem* WeaponItem)
+UBaseItem* UEquipmentComponent::EquipWeapon(UWeaponItem* WeaponItem)
 {
+	UWeaponItem* PrevItem = nullptr;
 	if (WeaponItem)
 	{
-		UWeaponItem* PrevItem = CurWeapon;
+		PrevItem = CurWeapon;
 		CurWeapon = WeaponItem;
 
 		if (EquipWidget)
-			EquipWidget->SetWeapon(WeaponItem);
-
-		//이전 아이템이 존재하면 원래 Inventory로 이동
-		if (PrevItem)
 		{
-			AArcher* Archer = GetOwner<AArcher>();
-			if (Archer)
+			EquipWidget->SetWeapon(WeaponItem);
+			if (PrevItem)
 			{
-				Archer->AddItem(PrevItem);
+				EquipWidget->AddAttackStat(-PrevItem->GetAttackStat());
+				EquipWidget->AddCriticalStat(-PrevItem->GetCriticalStat());
 			}
 		}
 	}
+	return PrevItem;
 }
 
-void UEquipmentComponent::EquipArmor(UArmorItem* ArmorItem)
+UBaseItem* UEquipmentComponent::EquipArmor(UArmorItem* ArmorItem)
 {
+	UArmorItem* PrevItem = nullptr;
 	if (ArmorItem)
 	{
 		UArmorItem* TargetArmor = nullptr;
@@ -73,21 +73,20 @@ void UEquipmentComponent::EquipArmor(UArmorItem* ArmorItem)
 			break;
 		}
 
-		UArmorItem* PrevItem = TargetArmor;
+		PrevItem = TargetArmor;
 
 		if (EquipWidget)
+		{
 			EquipWidget->SetArmor(ArmorItem);
 
-		//이전 아이템이 존재하면 원래 Inventory로 이동
-		if (PrevItem)
-		{
-			AArcher* Archer = GetOwner<AArcher>();
-			if (Archer)
+			if (PrevItem)
 			{
-				Archer->AddItem(PrevItem);
+				EquipWidget->AddArmorStat(-PrevItem->GetArmorStat());
 			}
 		}
+
 	}
+	return PrevItem;
 }
 
 void UEquipmentComponent::UnEquipWeapon()

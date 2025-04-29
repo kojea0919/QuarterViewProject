@@ -64,6 +64,8 @@ public:
 	class UInventory* GetInventory();
 	class UEquipment* GetEquipment();
 	
+	void SetFocusWidget(UUserWidget* Widget);
+
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
@@ -113,5 +115,14 @@ private:
 	class AAttackAreaMarkEffect* AreaMarkEffect;
 
 	bool IsSetStoreNPC;		//현재 Store에 NPC가 배정이 됐는지 나타내는 변수
+
+	//현재 포커스 중인 UI
+	//-------------------------------------
+	UUserWidget* CurrentFocusWidget;
+
+	const int PrevZOrder = 4;
+	const int FocusZOrder = 5;
+	
+	//-------------------------------------
 
 };

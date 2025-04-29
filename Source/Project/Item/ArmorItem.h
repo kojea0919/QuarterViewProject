@@ -24,6 +24,8 @@ public:
 	virtual class UBaseItem* GetCopyItem() const override;
 	EArmorType GetArmorType() { return ArmorType; }
 
+	int GetArmorStat() const { return ItemInfo.ArmorStat; }
+
 private:
 	FArmorItemInfoStruct ItemInfo;
 

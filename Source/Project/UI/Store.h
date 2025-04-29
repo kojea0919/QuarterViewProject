@@ -85,12 +85,6 @@ private:
 	//Drag
 	//-----------------------------------------------
 	FVector2D DragOffset;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UStoreWidgetDrag> StoreWidgetDragClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UStoreDragWidget> StoreDragWidgetClass;
 	//-----------------------------------------------
 
 	//버튼 종류

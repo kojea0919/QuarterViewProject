@@ -57,9 +57,6 @@ private:
 	UPROPERTY()
 	class UEquipment* Equipment;
 
-	UPROPERTY(EditAnywhere, Category = Equipment, meta = (AllowPrivateAccess = " true"))
-	TSubclassOf<class UEquipment> EquipmentWidgetClass;
-
 	UPROPERTY()
 	class UStore* Store;
 };

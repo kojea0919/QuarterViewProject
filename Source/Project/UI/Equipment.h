@@ -20,8 +20,15 @@ public:
 
 	void SetPlayer(class AArcher* Player) { CurrentPlayer = Player; }
 
+	void AddAttackStat(int Stat);
+	void AddArmorStat(int Stat);
+	void AddCriticalStat(int Stat);
+
 protected:
 	virtual void NativeConstruct() override;
+
+private:
+	void AddStatText(class UTextBlock* Text, int Stat);
 
 private:
 	UFUNCTION()
@@ -55,6 +62,8 @@ private:
 	class UImage* HatEquipImage;
 
 	bool HatIsEmpty;
+
+	int HatArmorStat;
 	//----------------------------
 
 
@@ -67,6 +76,8 @@ private:
 	class UImage* ChestEquipImage;
 
 	bool ChestIsEmpty;
+
+	int ChestArmorStat;
 	//----------------------------
 
 	//Pants
@@ -78,6 +89,8 @@ private:
 	class UImage* PantsEquipImage;
 
 	bool PantsIsEmpty;
+
+	int PantsArmorStat;
 	//----------------------------
 
 	//Glove
@@ -89,6 +102,8 @@ private:
 	class UImage* GloveEquipImage;
 
 	bool GloveIsEmpty;
+
+	int GloveArmorStat;
 	//----------------------------
 
 	//Weapon
@@ -100,6 +115,22 @@ private:
 	class UImage* WeaponEquipImage;
 
 	bool WeaponIsEmpty;
+
+	int WeaponAttackStat;
+	int WeaponCriticalStat;
+	//----------------------------
+
+	//StatText
+	//----------------------------
+	UPROPERTY()
+	class UTextBlock* AttackStatText;
+
+	UPROPERTY()
+	class UTextBlock* CriticalStatText;
+
+	UPROPERTY()
+	class UTextBlock* ArmorStatText;
+
 	//----------------------------
 
 	class AArcher* CurrentPlayer;

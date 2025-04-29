@@ -22,6 +22,8 @@ public:
 
 	void SetEquipTextOn();
 
+	int GetHeight();
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -41,6 +43,9 @@ private:
 
 	UPROPERTY()
 	class UTextBlock* EquipText;
+
+	UPROPERTY()
+	class USizeBox* SizeBox;
 
 	FVector2D Offset;
 };

@@ -178,10 +178,9 @@ void UPlayerHUD::NativeConstruct()
 
 	//장비창 초기화
 	//---------------------------------------------------------------
-	Equipment = CreateWidget<UEquipment>(GetWorld(),EquipmentWidgetClass);
+	Equipment = Cast<UEquipment>(GetWidgetFromName(TEXT("UI_Equipment")));
 	if (Equipment)
 	{
-		Equipment->AddToViewport(2);
 		Equipment->SetVisibility(ESlateVisibility::Hidden);
 	}
 	//---------------------------------------------------------------

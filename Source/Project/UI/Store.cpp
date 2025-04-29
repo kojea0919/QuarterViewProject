@@ -9,7 +9,6 @@
 #include "StoreSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "DragImage.h"
-#include "StoreDragWidget.h"
 #include "StoreWidgetDrag.h"
 #include "NPC/StoreNPC.h"
 #include "Item/WeaponItem.h"
@@ -178,7 +177,7 @@ void UStore::NativeConstruct()
 	if (ToolTip)
 	{
 		ToolTip->AddToViewport(1);
-		ToolTip->SetOffset({ 5,0 });
+		ToolTip->SetOffset({ 10,0 });
 		ToolTip->SetVisibility(ESlateVisibility::Hidden);
 	}
 
@@ -204,9 +203,6 @@ void UStore::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEve
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	//UDragImage* test = CreateWidget<UDragImage>(GetOwningPlayer(), TEST);
-	//UStoreDragWidget * DragWidget = CreateWidget<UStoreDragWidget>(GetOwningPlayer(), StoreDragWidgetClass);
-	//DragWidget->SetWidgetReference(this);
 	UStoreWidgetDrag* WidgetDrag = NewObject<UStoreWidgetDrag>();
 	WidgetDrag->SetWidgetReference(this);
 	WidgetDrag->SetDragOffset(DragOffset);

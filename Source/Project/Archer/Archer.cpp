@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -22,9 +23,11 @@
 #include "Archer/Inventory/InventoryComponent.h"
 #include "Archer/Inventory/EquipmentComponent.h"
 #include "UI/Inventory.h"
+#include "UI/ArcherInteractionUI.h"
 #include "Item/BaseItem.h"
 #include "Item/WeaponItem.h"
 #include "Item/ArmorItem.h"
+
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
@@ -44,6 +47,8 @@ AArcher::AArcher()
 	Equip = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EQUIP"));
 
 	AttackRotationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ATTACKROTATIONTIMELINE"));
+
+	InteractionUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("INTERACTION"));
 	//---------------------------------------------
 
 	//Input Setting
@@ -92,12 +97,22 @@ AArcher::AArcher()
 	SkillRangeMarkMesh->SetHiddenInGame(true);
 
 	GetMesh()->SetWorldRotation(FRotator(0.0f, -90.0f, 0.0f));
+
+	static ConstructorHelpers::FClassFinder<UArcherInteractionUI> INTERACTIONUI(TEXT("/Game/Player/UI/UI_ArcherInteraction.UI_ArcherInteraction_C"));
+	if (INTERACTIONUI.Succeeded())
+	{
+		InteractionUI->SetWidgetClass(INTERACTIONUI.Class);
+	}
+	InteractionUI->SetupAttachment(GetMesh());
+	InteractionUI->SetHiddenInGame(true);
+
 	//---------------------------------------------
 
 	//Camera Setting
 	//---------------------------------------------
 	bUseControllerRotationYaw = false;
 	SpringArm->bInheritYaw = false;
+	SpringArm->bDoCollisionTest = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
@@ -158,6 +173,7 @@ void AArcher::BeginPlay()
 		if (Equip)
 			Equip->SetEquip(PlayerController->GetEquipment());
 		//---------------------------------------------
+
 	}
 }
 
@@ -303,20 +319,43 @@ const UBaseItem* AArcher::GetArmorItem(EArmorType ArmorType) const
 	return nullptr;
 }
 
-void AArcher::EquipItem(UBaseItem* Item)
+void AArcher::SetVisibleInteractionUI(bool Enable)
+{
+	if (InteractionUI)
+	{
+		if (Enable)
+		{
+			InteractionUI->SetHiddenInGame(!Enable);
+			UArcherInteractionUI * UI = Cast<UArcherInteractionUI>(InteractionUI->GetWidget());
+			if (UI)
+				UI->PlayScaleUpAnimation();
+
+		}
+		else
+		{
+			UArcherInteractionUI* UI = Cast<UArcherInteractionUI>(InteractionUI->GetWidget());
+			if (UI)
+				UI->PlayScaleDownAnimation();
+		}
+	}
+}
+
+UBaseItem* AArcher::EquipItem(UBaseItem* Item)
 {
 	if (!Equip)
-		return;
+		return nullptr;
+
+	UBaseItem* PrevItem = nullptr;
 
 	if (Item->GetItemType() == EItemListType::Weapon)
 	{
-		Equip->EquipWeapon(Cast<UWeaponItem>(Item));
+		PrevItem = Equip->EquipWeapon(Cast<UWeaponItem>(Item));
 	}
 	else if (Item->GetItemType() == EItemListType::Armor)
 	{
-		Equip->EquipArmor(Cast<UArmorItem>(Item));
+		PrevItem = Equip->EquipArmor(Cast<UArmorItem>(Item));
 	}
-
+	return PrevItem;
 }
 
 void AArcher::BasicAttackAction()

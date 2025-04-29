@@ -4,6 +4,7 @@
 #include "UI/ItemToolTip.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/SizeBox.h"
 
 void UItemToolTip::SetItemToolTip(UTexture2D * ItemTexture, const FBaseItemInfoStruct& ItemInfo)
 {
@@ -29,6 +30,13 @@ void UItemToolTip::SetEquipTextOn()
 	EquipText->SetVisibility(ESlateVisibility::Visible);
 }
 
+int UItemToolTip::GetHeight()
+{
+	if(SizeBox)
+		return SizeBox->GetHeightOverride();
+	return -1;
+}
+
 void UItemToolTip::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -40,6 +48,8 @@ void UItemToolTip::NativeConstruct()
 	EquipText = Cast<UTextBlock>(GetWidgetFromName(TEXT("EquipText")));
 	if (EquipText)
 		EquipText->SetVisibility(ESlateVisibility::Hidden);
+
+	SizeBox = Cast<USizeBox>(GetWidgetFromName(TEXT("ToolTipSizeBox")));
 }
 
 void UItemToolTip::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

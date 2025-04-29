@@ -67,10 +67,13 @@ public:
 	
 	const UBaseItem* GetWeaponItem() const;
 	const UBaseItem* GetArmorItem(EArmorType ArmorType) const;
+
+	void SetVisibleInteractionUI(bool Enable);
+
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
-	void EquipItem(class UBaseItem* Item);
+	class UBaseItem* EquipItem(class UBaseItem* Item);
 
 public:
 	//기본 공격
@@ -171,6 +174,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* MoveSkillInputAction;
 	//-----------------------------------------------------------------------------------------------
+
+	//UI
+	//-----------------------------------------------------------------------------------------------
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* InteractionUI;
+	//-----------------------------------------------------------------------------------------------
+
 
 	//캐릭터 공격시 회전
 	//-----------------------------------------------------------------------------------------------

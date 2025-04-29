@@ -22,6 +22,10 @@ public:
 	void SetItemInfo(FString ItemName, FString Description,int Price, int AttackStat, int CriticalStat);
 	
 	virtual class UBaseItem* GetCopyItem() const override;
+
+	int GetAttackStat() const { return ItemInfo.AttackStat; }
+	int GetCriticalStat() const { return ItemInfo.CriticalStat; }
+
 private:
 	FWeaponItemInfoStruct ItemInfo;
 };
