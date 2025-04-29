@@ -46,7 +46,6 @@ void UPurchaseQuantitySelector::ChangeEditTextBox(const FText& Text)
 			CurrentQuantity = MaxQuantity;
 			QuantityEditTextBox->SetText(FText::AsNumber(CurrentQuantity));
 		}
-
 	}
 	else
 	{
@@ -91,12 +90,12 @@ void UPurchaseQuantitySelector::ClickedPurchaseButton()
 
 	SetVisibility(ESlateVisibility::Hidden);
 
-	if (CurrentStore && CurrentItem)
-		CurrentStore->AddPurchaseSlot(CurrentItem,CurrentQuantity);
+	if (CurrentStore)
+		CurrentStore->AddPurchaseSlot(CurrentItemName,CurrentQuantity);
 
 	CurrentQuantity = 0;
 	if (QuantityEditTextBox)
 		QuantityEditTextBox->SetText(FText::AsNumber(CurrentQuantity));
 
-	CurrentItem = nullptr;
+	CurrentItemName = TEXT("");
 }

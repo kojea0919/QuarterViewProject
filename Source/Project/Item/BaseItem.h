@@ -23,7 +23,8 @@ public:
 	void SetTexture(UTexture2D* Texture) { ItemTexture = Texture; }
 	UTexture2D* GetTexture() const { return ItemTexture; }
 
-	const FBaseItemInfoStruct& GetItemInfo() const { return *CurrentItemInfo; }
+	//const FBaseItemInfoStruct& GetItemInfo() const { return *CurrentItemInfo; }
+	const FBaseItemInfoStruct& GetItemInfo() const;
 
 	EItemListType GetItemType() const { return ItemType; }
 
@@ -38,9 +39,11 @@ public:
 		return nullptr;
 	}
 
-	const FString& GetItemName() const { return CurrentItemInfo->ItemName; }
+	//const FString& GetItemName() const { return CurrentItemInfo->ItemName; }
+	const FString& GetItemName() const;
 
 protected:
+	UPROPERTY()
 	UTexture2D* ItemTexture;
 
 	FBaseItemInfoStruct* CurrentItemInfo;

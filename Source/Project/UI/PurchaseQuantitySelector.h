@@ -16,7 +16,7 @@ class PROJECT_API UPurchaseQuantitySelector : public UUserWidget
 
 public:
 	void SetStore(class UStore* Store) { CurrentStore = Store; }
-	void SetItem(const class UBaseItem* Item) { CurrentItem = Item; }
+	void SetItemName(const FString & ItemName) { CurrentItemName = ItemName; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -58,5 +58,5 @@ private:
 
 	class UStore* CurrentStore;
 
-	const class UBaseItem* CurrentItem;
+	FString CurrentItemName;
 };

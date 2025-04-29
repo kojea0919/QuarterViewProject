@@ -11,3 +11,13 @@ UBaseItem::UBaseItem(EItemListType Type)
 	: ItemType(Type)
 {
 }
+
+const FBaseItemInfoStruct& UBaseItem::GetItemInfo() const
+{
+	return *CurrentItemInfo;
+}
+
+const FString& UBaseItem::GetItemName() const
+{
+	return CurrentItemInfo->ItemName;
+}

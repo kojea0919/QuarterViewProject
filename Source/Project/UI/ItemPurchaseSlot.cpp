@@ -8,20 +8,17 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Store.h"
 
-void UItemPurchaseSlot::SetItem(const UBaseItem* Item,int Quantity)
+void UItemPurchaseSlot::SetPotionItem(UTexture2D * Texture,int Quantity, const FString & ItemName)
 {
-	if (nullptr == Item)
-		return;
+	CurrentQuantity = Quantity;
+	CurrentItemName = ItemName;
 
-	CurItem = Item;
-
-	if (ItemImage)
+	if (ItemImage && nullptr != Texture)
 	{
-		ItemImage->SetBrushFromTexture(Item->GetTexture());
+		ItemImage->SetBrushFromTexture(Texture);
 		
-		CurrentQuantity = Quantity;
 		//포션인 경우에만 개수 Text 보여주기
-		if (Item->GetItemType() == EItemListType::Potion)
+		if (QuantityText)
 		{
 			QuantityText->SetVisibility(ESlateVisibility::Visible);
 			QuantityText->SetText(FText::AsNumber(Quantity));
@@ -30,6 +27,19 @@ void UItemPurchaseSlot::SetItem(const UBaseItem* Item,int Quantity)
 		{
 			QuantityText->SetVisibility(ESlateVisibility::Hidden);
 		}
+	}
+}
+
+void UItemPurchaseSlot::SetEquipItem(UTexture2D* Texture,const FString & ItemName)
+{
+	CurrentItemName = ItemName;
+
+	if (ItemImage && nullptr != Texture)
+	{
+		ItemImage->SetBrushFromTexture(Texture);
+
+		if(QuantityText)
+			QuantityText->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -45,7 +55,13 @@ void UItemPurchaseSlot::ClearSlot()
 {
 	ItemImage->SetBrushFromTexture(BaseTexture);
 	QuantityText->SetVisibility(ESlateVisibility::Hidden);
-	CurItem = nullptr;
+	CurrentQuantity = 0;
+	CurrentItemName = TEXT("");
+}
+
+int UItemPurchaseSlot::GetQuantity() const
+{
+	return CurrentQuantity;
 }
 
 void UItemPurchaseSlot::NativeConstruct()

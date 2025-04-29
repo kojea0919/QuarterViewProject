@@ -8,6 +8,7 @@
 #include "Item/WeaponItem.h"
 #include "Item/ArmorItem.h"
 #include "Item/PotionItem.h"
+#include "Item/BaseItem.h"
 
 AStoreNPC::AStoreNPC()
 	: ArcherController(nullptr)
@@ -76,13 +77,23 @@ void AStoreNPC::NotifyActorEndOverlap(AActor* OtherActor)
 	}
 }
 
-//void AStoreNPC::SetupStoreUI()
-//{
-//	if (ArcherController)
-//	{
-//		ArcherController->SetupStoreUI(this,A);
-//	}
-//}
+const UBaseItem* AStoreNPC::GetItem(const FString& ItemName)
+{
+	UWeaponItem ** WeapopnItem = WeaponItemMap.Find(ItemName);
+
+	if (WeapopnItem)
+		return *WeapopnItem;
+
+	UArmorItem** ArmorItem = ArmorItemMap.Find(ItemName);
+	if (ArmorItem)
+		return *ArmorItem;
+
+	UPotionItem** PotionItem = PotionItemMap.Find(ItemName);
+	if (PotionItem)
+		return *PotionItem;
+
+	return nullptr;
+}
 
 void AStoreNPC::InitWeaponItemList()
 {
@@ -94,7 +105,7 @@ void AStoreNPC::InitWeaponItemList()
 		UTexture2D * ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Weapon/Texture/BasicBow.BasicBow"));
 		if(ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		WeaponItemArr.Add(NewItem);
+		WeaponItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UWeaponItem>();
@@ -105,7 +116,7 @@ void AStoreNPC::InitWeaponItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Weapon/Texture/RareBow.RareBow"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		WeaponItemArr.Add(NewItem);
+		WeaponItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UWeaponItem>();
@@ -116,7 +127,7 @@ void AStoreNPC::InitWeaponItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Weapon/Texture/EpicBow.EpicBow"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		WeaponItemArr.Add(NewItem);
+		WeaponItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UWeaponItem>();
@@ -127,7 +138,7 @@ void AStoreNPC::InitWeaponItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Weapon/Texture/LegendaryBow.LegendaryBow"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		WeaponItemArr.Add(NewItem);
+		WeaponItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 }
 
@@ -141,7 +152,7 @@ void AStoreNPC::InitArmorItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Chest.T_Chest"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		ArmorItemArr.Add(NewItem);
+		ArmorItemMap.Add(NewItem->GetItemName(),NewItem);
 	}
 
 	NewItem = NewObject<UArmorItem>();
@@ -152,7 +163,7 @@ void AStoreNPC::InitArmorItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Glove.T_Glove"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		ArmorItemArr.Add(NewItem);
+		ArmorItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UArmorItem>();
@@ -163,7 +174,7 @@ void AStoreNPC::InitArmorItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Hat.T_Hat"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		ArmorItemArr.Add(NewItem);
+		ArmorItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UArmorItem>();
@@ -174,7 +185,7 @@ void AStoreNPC::InitArmorItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Armor/Texture/T_Pants.T_Pants"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		ArmorItemArr.Add(NewItem);
+		ArmorItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 }
 
@@ -188,7 +199,7 @@ void AStoreNPC::InitPotionItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Potion/Texture/HPPotion1.HPPotion1"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		PotionItemArr.Add(NewItem);
+		PotionItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UPotionItem>();
@@ -199,7 +210,7 @@ void AStoreNPC::InitPotionItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Potion/Texture/HPPotion2.HPPotion2"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		PotionItemArr.Add(NewItem);
+		PotionItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UPotionItem>();
@@ -210,7 +221,7 @@ void AStoreNPC::InitPotionItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Potion/Texture/HPPotion3.HPPotion3"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		PotionItemArr.Add(NewItem);
+		PotionItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 
 	NewItem = NewObject<UPotionItem>();
@@ -221,7 +232,7 @@ void AStoreNPC::InitPotionItemList()
 		UTexture2D* ItemTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Item/Potion/Texture/HPPotion4.HPPotion4"));
 		if (ItemTexture->IsValidLowLevel())
 			NewItem->SetTexture(ItemTexture);
-		PotionItemArr.Add(NewItem);
+		PotionItemMap.Add(NewItem->GetItemName(), NewItem);
 	}
 }
 

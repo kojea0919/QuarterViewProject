@@ -55,9 +55,7 @@ private:
 	
 	class UInventory* Inventory;
 
-	int Quantity;
+	bool Empty;				//슬롯의 상태
 
-	bool Empty;
-
-	int SlotIdx;
+	int SlotIdx;			//현재 Slot의 인덱스
 };

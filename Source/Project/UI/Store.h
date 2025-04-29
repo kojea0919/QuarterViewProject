@@ -46,10 +46,10 @@ public:
 
 	void SetPlayer(class AArcher* Player) { CurrentPlayer = Player; }
 
-	void ClickedStoreSlot(const class UBaseItem * Item);		//StoreSlot이 클릭되면 호출될 함수 Item은 클릭된 아이템
-	void AddPurchaseSlot(const class UBaseItem* Item, int Quantity = 1);
+	void ClickedStoreSlot(const FString & ItemName);		//StoreSlot이 클릭되면 호출될 함수 Item은 클릭된 아이템
+	void AddPurchaseSlot(const FString& ItemName, int Quantity = 1);
 	
-	void ShowItemToolTip(UTexture2D* Image, const FBaseItemInfoStruct& ItemInfo);
+	void ShowItemToolTip(FString ItemName);
 	void HideItemToolTip();
 
 protected:
@@ -62,7 +62,7 @@ protected:
 
 private:
 	template<typename T>
-	void SetItemSlot(const TArray<T*>& ItemArr);
+	void SetItemSlot(const TMap<FString, T*>& ItemMap);
 
 	void IncreaseCost(int Price, int Quantity);
 	void DecreaseCost(int Price, int Quantity);
@@ -148,19 +148,22 @@ private:
 };
 
 template<typename T>
-inline void UStore::SetItemSlot(const TArray<T*>& ItemArr)
+inline void UStore::SetItemSlot(const TMap<FString,T*>& ItemMap)
 {
-	size_t ItemNum = ItemArr.Num();
-	for (size_t i = 0; i < ItemNum; ++i)
-	{
-		UTexture2D* ItemTexture =  ItemArr[i]->GetTexture();
-		const FBaseItemInfoStruct& ItemInfo = ItemArr[i]->GetItemInfo();
+	size_t ItemNum = ItemMap.Num();
+	int Idx = 0;
 
-		SlotArr[i]->SetItemImage(ItemTexture);
-		SlotArr[i]->SetItemNameText(ItemInfo.ItemName);
-		SlotArr[i]->SetItemPriceText(ItemInfo.Price);
-		SlotArr[i]->SetItemInfo(ItemArr[i]);
-		SlotArr[i]->SetIsSetItem(true);
+	for (const TPair<FString, T*>& Item : ItemMap)
+	{
+		T* TargetItem = Item.Value;
+		UTexture2D* ItemTexture = TargetItem->GetTexture();
+		const FBaseItemInfoStruct& ItemInfo = TargetItem->GetItemInfo();
+
+		SlotArr[Idx]->SetItemImage(ItemTexture);
+		SlotArr[Idx]->SetItemNameText(ItemInfo.ItemName);
+		SlotArr[Idx]->SetItemPriceText(ItemInfo.Price);
+		SlotArr[Idx]->SetIsSetItem(true);
+		++Idx;
 	}
 
 	for (size_t i = ItemNum; i < StoreSlotNum; ++i)

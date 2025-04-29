@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Item/ItemStruct.h"
 #include "StoreSlot.generated.h"
 
 /**
@@ -25,8 +26,6 @@ public:
 	void SetHiddenGoldImage();
 
 	void SetIsSetItem(bool IsSet) { IsSetItem = IsSet; }
-
-	void SetItemInfo(const class UBaseItem* BaseItem) { Item = BaseItem; }
 
 	void SetStore(class UStore* Store) { CurrentStore = Store; }
 
@@ -60,10 +59,11 @@ private:
 	class UButton* StoreSlotButton;
 
 	bool IsSetItem;	//현재 슬롯에 아이템이 들어있는지 나타내는 변수
-	const class UBaseItem* Item;
 
 	UTexture2D* ItemTexture;
 
 	class UStore* CurrentStore;
+
+	FString CurrentItemName;
 
 };

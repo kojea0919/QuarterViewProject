@@ -15,16 +15,19 @@ class PROJECT_API UItemPurchaseSlot : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetItem(const class UBaseItem* Item, int Quantity = 1);
+	void SetPotionItem(UTexture2D* Texture, int Quantity,const FString & ItemName);
+	void SetEquipItem(UTexture2D* Texture, const FString & ItemName);
+
 	void SetImage(UTexture2D * Texture);
 	void SetSlotIdx(int Idx) { CurSlotIdx = Idx; }
 	void ClearSlot();
 
 	void SetStore(class UStore* Store) { CurrentStore = Store; }
 
-	const class UBaseItem* GetItem() const { return CurItem; }
+	int GetQuantity() const;
 
-	int GetQuantity() const { return CurrentQuantity; }
+	const FString& GetItemName() { return CurrentItemName; }
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -38,7 +41,7 @@ private:
 	UPROPERTY()
 	class UTextBlock* QuantityText;
 
-	const class UBaseItem* CurItem;
+	FString CurrentItemName;
 
 	UTexture2D* BaseTexture;
 

@@ -24,6 +24,7 @@ void UStoreSlot::SetItemNameText(FString ItemName)
 {
 	if (ItemNameTextBlock)
 	{
+		CurrentItemName = ItemName;
 		ItemNameTextBlock->SetText(FText::FromString(ItemName));
 		ItemNameTextBlock->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -67,7 +68,7 @@ void UStoreSlot::ShowDescription()
 	//아이템이 세팅돼 있으면 해당 아이템의 ToolTip을 생성
 	if (IsSetItem && CurrentStore)
 	{
-		CurrentStore->ShowItemToolTip(ItemTexture, Item->GetItemInfo());
+		CurrentStore->ShowItemToolTip(CurrentItemName);
 	}
 }
 
@@ -75,15 +76,13 @@ void UStoreSlot::RemoveDescription()
 {
 	if (CurrentStore)
 		CurrentStore->HideItemToolTip();
-
-	UE_LOG(LogTemp, Warning, TEXT("UnHover"));
 }
 
 void UStoreSlot::ClickedStoreSlot()
 {
 	if (CurrentStore && IsSetItem)
 	{
-		CurrentStore->ClickedStoreSlot(Item);
+		CurrentStore->ClickedStoreSlot(CurrentItemName);
 	}
 }
 

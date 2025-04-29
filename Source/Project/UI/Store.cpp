@@ -67,13 +67,13 @@ void UStore::SetItemSlot()
 		switch (CurrentItemButtonType)
 		{
 		case EItemListType::Weapon:
-			SetItemSlot<UWeaponItem>(CurrentNPC->WeaponItemArr);
+			SetItemSlot<UWeaponItem>(CurrentNPC->WeaponItemMap);
 			break;
 		case EItemListType::Armor:
-			SetItemSlot<UArmorItem>(CurrentNPC->ArmorItemArr);
+			SetItemSlot<UArmorItem>(CurrentNPC->ArmorItemMap);
 			break;
 		case EItemListType::Potion:
-			SetItemSlot<UPotionItem>(CurrentNPC->PotionItemArr);
+			SetItemSlot<UPotionItem>(CurrentNPC->PotionItemMap);
 			break;
 		default:
 			break;
@@ -82,7 +82,7 @@ void UStore::SetItemSlot()
 	}
 }
 
-void UStore::ClickedStoreSlot(const UBaseItem* Item)
+void UStore::ClickedStoreSlot(const FString & ItemName)
 {
 	if (PurchaseSlotIdx == PurchaseSlotNum)
 		return;
@@ -90,14 +90,21 @@ void UStore::ClickedStoreSlot(const UBaseItem* Item)
 	//포션이 아닌 경우에만 바로 추가
 	if (CurrentItemButtonType != EItemListType::Potion)
 	{
-		PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item);
-		IncreaseCost(Item->GetPrice(), 1);
+		if (CurrentNPC)
+		{
+			const UBaseItem* Item = CurrentNPC->GetItem(ItemName);
+			if (nullptr == Item)
+				return;
+
+			PurchaseSlotArr[PurchaseSlotIdx++]->SetEquipItem(Item->GetTexture(), Item->GetItemName());
+			IncreaseCost(Item->GetPrice(), 1);
+		}
 	}
 	//포션인 경우에는 개수 선택 UI 보여주기
 	else
 	{
 		PurchaseQuantitySelector->SetVisibility(ESlateVisibility::Visible);
-		PurchaseQuantitySelector->SetItem(Item);
+		PurchaseQuantitySelector->SetItemName(ItemName);
 
 		double X, Y;
 		GetOwningPlayer()->GetMousePosition(X, Y);
@@ -106,22 +113,29 @@ void UStore::ClickedStoreSlot(const UBaseItem* Item)
 
 }
 
-void UStore::AddPurchaseSlot(const UBaseItem* Item, int Quantity)
+void UStore::AddPurchaseSlot(const FString & ItemName, int Quantity)
 {
 	if (PurchaseSlotIdx == PurchaseSlotNum)
 		return;
 
-	PurchaseSlotArr[PurchaseSlotIdx++]->SetItem(Item, Quantity);
-	IncreaseCost(Item->GetPrice(), Quantity);
+	if (CurrentNPC)
+	{
+		const UBaseItem* Item = CurrentNPC->GetItem(ItemName);
+		if (nullptr == Item)
+			return;
 
+		PurchaseSlotArr[PurchaseSlotIdx++]->SetPotionItem(Item->GetTexture(), Quantity,Item->GetItemName());
+		IncreaseCost(Item->GetPrice(), Quantity);
+	}
 }
 
-void UStore::ShowItemToolTip(UTexture2D* Image, const FBaseItemInfoStruct& ItemInfo)
+void UStore::ShowItemToolTip(FString ItemName)
 {
-	if (ToolTip)
-	{
-		ToolTip->SetItemToolTip(Image, ItemInfo);
-		ToolTip->SetVisibility(ESlateVisibility::Visible);
+	if (ToolTip && CurrentNPC)
+	{	
+		const UBaseItem * TargetItem = CurrentNPC->GetItem(ItemName);
+		ToolTip->SetItemToolTip(TargetItem->GetTexture(), TargetItem->GetItemInfo());
+		ToolTip->SetVisibility(ESlateVisibility::Visible);	
 	}
 }
 
@@ -264,7 +278,7 @@ void UStore::ClickPotion()
 
 void UStore::ClickPurchase()
 {
-	if (CurrentPlayer)
+	if (CurrentPlayer && CurrentNPC)
 	{
 		//구매 대기 리스트에 있는 아이템들을 복사해서 Player에게 Add시켜준다.
 		//---------------------------------------------------------------
@@ -274,14 +288,15 @@ void UStore::ClickPurchase()
 			UItemPurchaseSlot* CurrentSlot = PurchaseSlotArr[Idx];
 			if (CurrentSlot)
 			{
-				UBaseItem* CopyItem = CurrentSlot->GetItem()->GetCopyItem();
-				if (CurrentPlayer)
-				{
-					if (CopyItem->GetItemType() == EItemListType::Potion)
-						CopyItem->SetQuantity(CurrentSlot->GetQuantity());
-					CurrentPlayer->AddItem(CopyItem);
-				}
+				const UBaseItem* TargetItem = nullptr;
+				TargetItem = CurrentNPC->GetItem(CurrentSlot->GetItemName());
+				
+				UBaseItem * CopyItem = TargetItem->GetCopyItem();				
+				
+				if (CopyItem->GetItemType() == EItemListType::Potion)
+					CopyItem->SetQuantity(CurrentSlot->GetQuantity());
 
+				CurrentPlayer->AddItem(CopyItem);		
 			}
 			CurrentSlot->ClearSlot();
 		}
@@ -294,14 +309,22 @@ void UStore::ClickPurchase()
 
 void UStore::UpdatePurchaseSlot(int Idx)
 {	
-	if (PurchaseSlotIdx == 0)
+	if (PurchaseSlotIdx == 0 || nullptr == CurrentNPC)
 		return;
 
-	DecreaseCost(PurchaseSlotArr[Idx]->GetItem()->GetPrice(), PurchaseSlotArr[Idx]->GetQuantity());
+	const UBaseItem * Item = CurrentNPC->GetItem(PurchaseSlotArr[Idx]->GetItemName());
+	if (nullptr == Item)
+		return;
+
+	DecreaseCost(Item->GetPrice(), PurchaseSlotArr[Idx]->GetQuantity());
 
 	for (int idx = Idx + 1; idx < PurchaseSlotIdx; ++idx)
 	{
-		PurchaseSlotArr[idx - 1]->SetItem(PurchaseSlotArr[idx]->GetItem(),PurchaseSlotArr[idx]->GetQuantity());
+		Item = CurrentNPC->GetItem(PurchaseSlotArr[idx]->GetItemName());
+		if (Item->GetItemType() != EItemListType::Potion)
+			PurchaseSlotArr[idx - 1]->SetEquipItem(Item->GetTexture(), Item->GetItemName());
+		else
+			PurchaseSlotArr[idx - 1]->SetPotionItem(Item->GetTexture(), PurchaseSlotArr[idx]->GetQuantity(), Item->GetItemName());
 	}
 	PurchaseSlotArr[PurchaseSlotIdx - 1]->ClearSlot();
 	--PurchaseSlotIdx;

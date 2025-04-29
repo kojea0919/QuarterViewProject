@@ -25,6 +25,8 @@ UBaseItem* UWeaponItem::GetCopyItem() const
 	NewItem->ItemInfo = ItemInfo;
 	NewItem->CurrentItemInfo = &NewItem->ItemInfo;
 	NewItem->ItemTexture = ItemTexture;
+	NewItem->Quantity = Quantity;
+	NewItem->ItemType = ItemType;
 
 	return NewItem;
 }

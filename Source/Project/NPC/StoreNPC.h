@@ -29,6 +29,8 @@ public:
 
 	//void SetupStoreUI();		//Store UI에 NPC가 가지고 있는 Item Arr 정보를 넘기는 함수
 
+	const class UBaseItem* GetItem(const FString& ItemName);
+
 private:
 	void InitWeaponItemList();
 	void InitArmorItemList();
@@ -37,13 +39,13 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = ItemList, meta = (AllowPrivateAccess = "true"))
-	TArray<class UWeaponItem*> WeaponItemArr;
+	TMap<FString,class UWeaponItem*> WeaponItemMap;
 
 	UPROPERTY(EditAnywhere, Category = ItemList, meta = (AllowPrivateAccess = "true"))
-	TArray<class UArmorItem*> ArmorItemArr;
+	TMap<FString, class UArmorItem*> ArmorItemMap;
 
 	UPROPERTY(EditAnywhere, Category = ItemList, meta = (AllowPrivateAccess = "true"))
-	TArray<class UPotionItem*> PotionItemArr;
+	TMap<FString, class UPotionItem*> PotionItemMap;
 
 	class AArcherPlayerController* ArcherController;
 };

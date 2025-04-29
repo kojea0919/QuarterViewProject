@@ -18,7 +18,6 @@ void UInventorySlot::SetItem(UBaseItem* NewItem)
 			ItemImage->SetVisibility(ESlateVisibility::Visible);
 		}
 		Empty = false;
-		Quantity = NewItem->GetQuantity();
 		Item = NewItem;
 
 		//포션인 경우에만 개수 표기
@@ -27,7 +26,7 @@ void UInventorySlot::SetItem(UBaseItem* NewItem)
 		{
 			if (QuantityText)
 			{
-				QuantityText->SetText(FText::AsNumber(Quantity));
+				QuantityText->SetText(FText::AsNumber(NewItem->GetQuantity()));
 				QuantityText->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
@@ -46,7 +45,7 @@ int UInventorySlot::GetQuantity()
 {
 	if (Item)
 		return Item->GetQuantity();
-	return -1;
+	return 0;
 }
 
 void UInventorySlot::SetQuantity(int Num)
@@ -81,14 +80,12 @@ void UInventorySlot::NativeConstruct()
 		SlotButton->OnUnhovered.AddDynamic(this, &UInventorySlot::UnHoveredButton);
 	}
 
-	Quantity = 0;
 	Empty = true;
 }
 
 void UInventorySlot::ClearSlot()
 {
 	Empty = true;
-	Quantity = 0;
 	Item = nullptr;
 
 	if(QuantityText)
