@@ -9,6 +9,7 @@
 #include "ArcherSkillKickShot.h"
 #include "ArcherSkillFlippingArrow.h"
 #include "ArcherSkillArrowShower.h"
+#include "ArcherSkillPulseShot.h"
 #include "UI/SkillGaugeBar.h"
 
 USkillManagerComponent::USkillManagerComponent()
@@ -97,6 +98,19 @@ void USkillManagerComponent::Init()
 	ArrowShower->SetMaterial(TEXT("/Game/Player/UI/Skill/M_ArrowShower.M_ArrowShower"));
 
 	PlayerController->SetQuickSlotSkill(ArrowShower, ESkillQuickSlot::SlotR);
+	//---------------------------------------------------------
+
+	//PulseShot Setting
+	//---------------------------------------------------------
+	UArcherSkillPulseShot* PulseShot = NewObject<UArcherSkillPulseShot>();
+	SkillArr.Push(PulseShot);
+	PulseShot->SetAnimInstance(Anim);
+	PulseShot->SetMontage(Anim->GetPulseShotMontage());
+	PulseShot->SetBaseClass(Archer);
+	PulseShot->SetQuickSlotKey(ESkillQuickSlot::SlotF);
+	PulseShot->SetMaterial(TEXT("/Game/Player/UI/Skill/M_PulseShot.M_PulseShot"));
+
+	PlayerController->SetQuickSlotSkill(PulseShot, ESkillQuickSlot::SlotF);
 	//---------------------------------------------------------
 }
 

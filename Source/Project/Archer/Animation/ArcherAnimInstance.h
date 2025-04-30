@@ -54,6 +54,7 @@ public:
 	UAnimMontage* GetKickShotMontage() const { return KickShotMontage; }
 	UAnimMontage* GetFlippingArrowMontage() const { return FlippingArrowMontage; }
 	UAnimMontage* GetArrowShowerMontage() const { return ArrowShowerMontage; }
+	UAnimMontage* GetPulseShotMontage() const { return PulseShotMontage; }
 	//-----------------------------
 
 public:
@@ -154,6 +155,9 @@ private:
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* ArrowShowerMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* PulseShotMontage;
 
 	class AArcher* Archer;
 

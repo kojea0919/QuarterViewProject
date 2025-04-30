@@ -43,4 +43,6 @@ private:
 	float CurScale;			//현재 크기
 	//-----------------------------
 
+	float ScaleDecreaseSpeed;	//스케일 감소 속도
+
 };

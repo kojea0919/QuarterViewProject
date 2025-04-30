@@ -34,6 +34,13 @@ AArcherPlayerController::AArcherPlayerController()
 	if (IA_SLOTR_INPUTACTION.Succeeded())
 		SlotRInputAction = IA_SLOTR_INPUTACTION.Object;
 
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTF_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotF.IA_UseQuickSlotF"));
+	if (IA_SLOTF_INPUTACTION.Succeeded())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Con"));
+		SlotFInputAction = IA_SLOTF_INPUTACTION.Object;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INVENTORY_INPUTACTION(TEXT("/Game/Player/Input/IA_Inventory.IA_Inventory"));
 	if (IA_INVENTORY_INPUTACTION.Succeeded())
 		InventoryKeyInputAction = IA_INVENTORY_INPUTACTION.Object;
@@ -45,6 +52,7 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INTERACTION_INPUTACTION(TEXT("/Game/Player/Input/IA_Interaction.IA_Interaction"));
 	if (IA_INTERACTION_INPUTACTION.Succeeded())
 		InteractionInputAction = IA_INTERACTION_INPUTACTION.Object;
+
 
 }
 
@@ -86,6 +94,8 @@ void AArcherPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseRSlot);
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseRSlot);
 
+		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseFSlot);
+		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseFSlot);
 		
 		EnhancedInputComponent->BindAction(InventoryKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInventoryKey);
 		EnhancedInputComponent->BindAction(EquipmentKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseEquipmentKey);
@@ -222,6 +232,22 @@ void AArcherPlayerController::ReleaseRSlot()
 	if (PlayerHUD)
 	{
 		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotR);
+	}
+}
+
+void AArcherPlayerController::UseFSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotF);
+	}
+}
+
+void AArcherPlayerController::ReleaseFSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotF);
 	}
 }
 

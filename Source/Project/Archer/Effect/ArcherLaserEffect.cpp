@@ -6,7 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 
 AArcherLaserEffect::AArcherLaserEffect()
-	: DynMaterial(nullptr) ,InitLength(30.0f), InitScale(2.0f), CurScale(2.0f)
+	: DynMaterial(nullptr) ,InitLength(30.0f), InitScale(2.0f), CurScale(2.0f),
+	ScaleDecreaseSpeed(2.5f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -30,12 +31,14 @@ AArcherLaserEffect::AArcherLaserEffect()
 
 	//LaserBeam Setting
 	//--------------------------------------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_BEAM(TEXT("/Game/Player/Gunner/Particle/P_GunnerLaserBeam.P_GunnerLaserBeam"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_BEAM(TEXT("/Game/Player/Archer/Effect/Particle/P_Beam.P_Beam"));
 	if (P_BEAM.Succeeded())
 	{
 		LaserBeam->SetTemplate(P_BEAM.Object);
 	}
 	//--------------------------------------------------------------------------
+
+	SetTickEnable(true);
 }
 
 void AArcherLaserEffect::Tick(float DeltaTime)
@@ -50,7 +53,7 @@ void AArcherLaserEffect::Tick(float DeltaTime)
 
 void AArcherLaserEffect::UpdateScale(float DeltaTime)
 {
-	CurScale -= DeltaTime * 2;
+	CurScale -= DeltaTime * ScaleDecreaseSpeed;
 
 	if (CurScale <= 0.0f)
 	{

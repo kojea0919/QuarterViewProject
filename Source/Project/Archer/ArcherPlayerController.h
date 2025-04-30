@@ -46,6 +46,9 @@ public:
 
 	void UseRSlot();
 	void ReleaseRSlot();
+
+	void UseFSlot();
+	void ReleaseFSlot();
 	//-------------------------------------------------
 
 	void UseInventoryKey();
@@ -95,6 +98,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotRInputAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotFInputAction;
 	//-------------------------------------------------
 
 	//인벤토리 키 InputAction

@@ -315,4 +315,11 @@ void UArcherAnimInstance::InitMontage()
 	if (ARROWSHOWER_MONTAGE.Succeeded())
 		ArrowShowerMontage = ARROWSHOWER_MONTAGE.Object;
 	//-------------------------------------------
+
+	//PulseShot Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> PULSESHOT_MONTAGE(TEXT("/Game/Player/Archer/Animation/PulseShotMontage.PulseShotMontage"));
+	if (PULSESHOT_MONTAGE.Succeeded())
+		PulseShotMontage = PULSESHOT_MONTAGE.Object;
+	//-------------------------------------------
 }
