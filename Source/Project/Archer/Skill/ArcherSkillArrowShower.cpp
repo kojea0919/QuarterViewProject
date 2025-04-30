@@ -5,9 +5,11 @@
 #include "Archer/Archer.h"
 #include "Archer/ArcherPlayerController.h"
 #include "TimerManager.h"
+#include "Archer/Effect/ArcherArrowShowerSkillEffect.h"
+#include "WorldSubSystem/EffectObjectPool.h"
 
 UArcherSkillArrowShower::UArcherSkillArrowShower()
-	: Range(700.0f), EffectTermTime(1)
+	: Range(700.0f), EffectTermTime(0.7), AttackLocationHeightOffset(100.f)
 {
 	SetCharginSpeed(1.0f);
 	SetTotalChargingTime(1.0f);
@@ -39,6 +41,31 @@ void UArcherSkillArrowShower::ReleaseEffect()
 
 void UArcherSkillArrowShower::CreateSkillEffect()
 {
+	UWorld* World = nullptr;
+	if (nullptr != Archer)
+		World = Archer->GetWorld();
+
+	if (nullptr != World)
+	{
+		UEffectObjectPool * EffectObjectPool = World->GetSubsystem<UEffectObjectPool>();
+		if (EffectObjectPool)
+		{
+			AArcherArrowShowerSkillEffect * SkillEffect = EffectObjectPool->GetArcherArrowShowerSkillEffect();
+			
+
+			//컨트롤러에게 현재 스킬 범위 Actor의 위치를 받아서 해당 위치에 SkillEffect를 생성
+			AArcherPlayerController* PlayerController = Cast<AArcherPlayerController>(Archer->GetController());
+			if (nullptr == PlayerController)
+				return;
+		
+			AttackLocation.Z += AttackLocationHeightOffset;
+			FTransform SpawnTransform(AttackLocation);
+			
+			
+			SkillEffect->SpwanNiagaraEffect(SpawnTransform);
+			
+		}
+	}
 }
 
 void UArcherSkillArrowShower::CompleteChargingProc()
@@ -67,5 +94,13 @@ void UArcherSkillArrowShower::CompleteChargingProc()
 	{
 		double Length = PlayerToMouseVector.Length();
 	}
-	///GetWorld()->GetTimerManager().SetTimer(EffectCreateTimer, this, &UArcherSkillArrowShower::CreateSkillEffect, EffectTermTime, false);
+
+	UWorld* World = nullptr;
+	if(nullptr != Archer)
+		World = Archer->GetWorld();
+
+	if(nullptr != World)
+		World->GetTimerManager().SetTimer(EffectCreateTimer, this, &UArcherSkillArrowShower::CreateSkillEffect, EffectTermTime, false);
+
+	AttackLocation = PlayerController->GetAttakAreaMarkLocation();
 }

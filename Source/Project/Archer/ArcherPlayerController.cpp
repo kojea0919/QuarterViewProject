@@ -12,7 +12,7 @@
 #include "Archer/Effect/AttackAreaMarkEffect.h"
 
 AArcherPlayerController::AArcherPlayerController()
-	: PlayerHUD(nullptr), IsSetStoreNPC(false), CurrentFocusWidget(nullptr)
+	: PlayerHUD(nullptr), IsSetStoreNPC(false)
 {
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
@@ -292,19 +292,4 @@ UInventory* AArcherPlayerController::GetInventory()
 UEquipment* AArcherPlayerController::GetEquipment()
 {
 	return PlayerHUD->GetEquipment();
-}
-
-void AArcherPlayerController::SetFocusWidget(UUserWidget* Widget)
-{
-	if (Widget)
-	{
-		if (CurrentFocusWidget)
-		{
-			CurrentFocusWidget->RemoveFromParent();
-			CurrentFocusWidget->AddToViewport(PrevZOrder);
-		}
-		CurrentFocusWidget = Widget;
-		CurrentFocusWidget->RemoveFromParent();
-		CurrentFocusWidget->AddToViewport(FocusZOrder);
-	}
 }

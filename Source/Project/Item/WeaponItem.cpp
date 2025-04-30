@@ -15,18 +15,18 @@ void UWeaponItem::SetItemInfo(FString ItemName, FString Description,int Price, i
 	ItemInfo.Price = Price;
 	ItemInfo.AttackStat = AttackStat;
 	ItemInfo.CriticalStat = CriticalStat;
-
-	CurrentItemInfo = &ItemInfo;
 }
 
 UBaseItem* UWeaponItem::GetCopyItem() const
 {
 	UWeaponItem* NewItem = NewObject<UWeaponItem>();
 	NewItem->ItemInfo = ItemInfo;
-	NewItem->CurrentItemInfo = &NewItem->ItemInfo;
-	NewItem->ItemTexture = ItemTexture;
+	
+	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *TexturePath);
+	NewItem->ItemTexture = NewTexture;
+	NewItem->TexturePath = TexturePath;
+
 	NewItem->Quantity = Quantity;
-	NewItem->ItemType = ItemType;
 
 	return NewItem;
 }

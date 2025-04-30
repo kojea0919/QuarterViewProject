@@ -18,7 +18,22 @@ void UItemToolTip::SetItemToolTip(UTexture2D * ItemTexture, const FBaseItemInfoS
 		ItemDescriptionTextBlock->SetText(FText::FromString(ItemInfo.Description));
 
 	if (ItemStatTextBlock)
-		ItemStatTextBlock->SetText(FText::FromString(ItemInfo.GetItemStat()));
+	{
+		switch (ItemInfo.ItemType)
+		{
+		case EItemListType::Weapon:
+			ItemStatTextBlock->SetText(FText::FromString(ItemInfo.GetWeaponItemStat()));
+			break;
+		case EItemListType::Armor:
+			ItemStatTextBlock->SetText(FText::FromString(ItemInfo.GetArmorItemStat()));
+			break;
+		case EItemListType::Potion:
+			ItemStatTextBlock->SetText(FText::FromString(ItemInfo.GetPotionItemStat()));
+			break;
+		default:
+			break;
+		}
+	}
 
 	double X, Y;
 	GetOwningPlayer()->GetMousePosition(X, Y);

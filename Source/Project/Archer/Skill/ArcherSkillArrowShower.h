@@ -32,4 +32,7 @@ private:
 
 	FTimerHandle EffectCreateTimer;					//스킬 사용후 잠시후 이펙트 생성을 위한 Timer
 	float EffectTermTime;
+
+	FVector AttackLocation;							//스킬키를 땠을 때의 좌표
+	const float AttackLocationHeightOffset = 100;	//스킬 이펙트 높이조절 변수
 };

@@ -15,8 +15,6 @@ void UArmorItem::SetItemInfo(FString ItemName, FString Description, int Price, i
 	ItemInfo.Price = Price;
 	ItemInfo.ArmorStat = ArmorStat;
 
-	CurrentItemInfo = &ItemInfo;
-
 	ArmorType = Type;
 }
 
@@ -24,10 +22,12 @@ UBaseItem* UArmorItem::GetCopyItem() const
 {
 	UArmorItem* NewItem = NewObject<UArmorItem>();
 	NewItem->ItemInfo = ItemInfo;
-	NewItem->CurrentItemInfo = &NewItem->ItemInfo;
-	NewItem->ItemTexture = ItemTexture;
+	
+	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *TexturePath);
+	NewItem->ItemTexture = NewTexture;
+	NewItem->TexturePath = TexturePath;
+
 	NewItem->Quantity = Quantity;
-	NewItem->ItemType = ItemType;
 
 	NewItem->ArmorType = ArmorType;
 

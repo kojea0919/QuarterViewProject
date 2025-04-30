@@ -17,6 +17,13 @@ AUIRenderArcher::AUIRenderArcher()
 	//---------------------------------------------
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SCENECAPTURE"));
+
+	RenderTarget = NewObject<UTextureRenderTarget2D>();
+	RenderTarget->InitAutoFormat(512, 512);
+	RenderTarget->UpdateResourceImmediate(true);
+
+	SceneCapture->TextureTarget = RenderTarget;
+	SceneCapture->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
 	//---------------------------------------------
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ARCHER(TEXT("/Game/Player/Archer/Mesh/Player.Player"));
@@ -25,23 +32,15 @@ AUIRenderArcher::AUIRenderArcher()
 		GetMesh()->SetSkeletalMesh(SK_ARCHER.Object);
 	}
 
+
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	SceneCapture->SetupAttachment(SpringArm);
 }
 void AUIRenderArcher::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	RenderTarget = NewObject<UTextureRenderTarget2D>();
-	RenderTarget->InitAutoFormat(2000, 2000);
-	RenderTarget->UpdateResourceImmediate(true);
 
-	SceneCapture->TextureTarget = RenderTarget;
-	SceneCapture->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-	SceneCapture->bCaptureEveryFrame = true;
-	SceneCapture->bCaptureOnMovement = true;
 
-	// ÇÙ½É ¼öÁ¤
 	SceneCapture->ShowOnlyActors.Add(*this);
 }
 

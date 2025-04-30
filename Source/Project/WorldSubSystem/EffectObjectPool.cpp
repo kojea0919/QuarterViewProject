@@ -36,6 +36,7 @@ void UEffectObjectPool::Init()
 	InitArr(ArcherSpecialAttackArrowEffectArr, 1);
 	InitArr(ArcherBigArrowEffectArr, 3);
 	InitArr(AfterimageEffectArr, 10);
+	InitArr(ArcherArrowShowerSkillEffectArr, 1);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()

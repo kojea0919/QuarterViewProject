@@ -8,16 +8,16 @@ UBaseItem::UBaseItem()
 }
 
 UBaseItem::UBaseItem(EItemListType Type)
-	: ItemType(Type)
 {
+	ItemInfo.ItemType = Type;
 }
 
 const FBaseItemInfoStruct& UBaseItem::GetItemInfo() const
 {
-	return *CurrentItemInfo;
+	return ItemInfo;
 }
 
 const FString& UBaseItem::GetItemName() const
 {
-	return CurrentItemInfo->ItemName;
+	return ItemInfo.ItemName;
 }

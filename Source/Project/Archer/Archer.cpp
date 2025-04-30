@@ -27,6 +27,7 @@
 #include "Item/BaseItem.h"
 #include "Item/WeaponItem.h"
 #include "Item/ArmorItem.h"
+#include "UI/Equipment.h"
 
 
 AArcher::AArcher()

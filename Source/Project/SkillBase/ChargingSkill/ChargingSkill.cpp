@@ -8,7 +8,7 @@
 
 UChargingSkill::UChargingSkill()
 	: ChargingSpeed(0.0f), TotalChargingTime(0.0f), IsLookMouse(true),
-	IsCharging(false), SkillGaugeBar(nullptr)
+	IsCharging(false),IsCanCharging(true), SkillGaugeBar(nullptr)
 {
 }
 
@@ -17,7 +17,12 @@ bool UChargingSkill::Use()
 	//BaseSkill의 Use함수 호출
 	//Skill사용이 불가능한 상황이라면(다른 스킬 사용중) fasle return
 	if (!Super::Use())
+	{
 		return false;
+	}
+
+	//if (!IsCanCharging)
+	//	return false;
 
 	//스킬 게이지바 출력
 	if (SkillGaugeBar)
@@ -44,17 +49,13 @@ bool UChargingSkill::Use()
 	//------------------------------------------------------
 
 	IsCharging = true;
+	//IsCanCharging = false;
 
 	return true;
 }
 
 void UChargingSkill::ReleaseSkill()
 {
-	//ChargingSkill은 스킬키를 떼면 플레이어의 차징 상태를 확인해 전부 채웠으면
-	//애니메이션을 계속 재생하고 부족하면 애니메이션을 멈춘다.
-	if (!IsCharging)
-		return;
-
 	bool IsFullCharging = SkillGaugeBar->GetPercent() >= 1.0f ? true : false;
 	if (IsFullCharging)
 	{
@@ -75,6 +76,9 @@ void UChargingSkill::End()
 	Super::End();
 
 	ResetSkillState();
+
+	IsCharging = false;
+	//IsCanCharging = true;
 }
 
 void UChargingSkill::ResetSkillState()
@@ -98,6 +102,4 @@ void UChargingSkill::ResetSkillState()
 		SkillGaugeBar->SetVisibility(ESlateVisibility::Hidden);
 		SkillGaugeBar->SetPercent(0.0f);
 	}
-
-	IsCharging = false;
 }

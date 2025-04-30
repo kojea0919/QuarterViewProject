@@ -26,13 +26,13 @@ public:
 	//const FBaseItemInfoStruct& GetItemInfo() const { return *CurrentItemInfo; }
 	const FBaseItemInfoStruct& GetItemInfo() const;
 
-	EItemListType GetItemType() const { return ItemType; }
+	EItemListType GetItemType() const { return ItemInfo.ItemType; }
 
 	virtual int GetQuantity() const { return Quantity; }
 
 	virtual void SetQuantity(int Num) { Quantity = Num; }
 
-	int GetPrice() const { return CurrentItemInfo->Price; }
+	int GetPrice() const { return ItemInfo.Price; }
 
 	virtual class UBaseItem* GetCopyItem() const
 	{
@@ -42,13 +42,16 @@ public:
 	//const FString& GetItemName() const { return CurrentItemInfo->ItemName; }
 	const FString& GetItemName() const;
 
+	void SetTexturePath(const FString& Path) { TexturePath = Path; }
+
 protected:
 	UPROPERTY()
 	UTexture2D* ItemTexture;
 
-	FBaseItemInfoStruct* CurrentItemInfo;
+	FString TexturePath;
 
-	EItemListType ItemType;
+	FBaseItemInfoStruct ItemInfo;
 
 	int Quantity = 1;			//아이템 개수
+
 };

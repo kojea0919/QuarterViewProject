@@ -23,6 +23,4 @@ public:
 public:
 	void SetItemInfo(FString ItemName, FString Description, int Price, int HealAmount);
 
-private:
-	FConsumptionItemInfoStruct ItemInfo;
 };

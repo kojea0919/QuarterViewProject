@@ -15,7 +15,9 @@ bool UBaseSkill::Use()
 {
 	//다른 스킬 중에는 공격 불가능
 	if (Archer->GetMoveSkillOn() || Archer->GetUseSkill())
+	{
 		return false;
+	}
 
 	if (!AnimInstance->Montage_IsPlaying(SkillMontage))
 	{

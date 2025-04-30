@@ -12,6 +12,7 @@ AAttackAreaMarkEffect::AAttackAreaMarkEffect()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	SetActorRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
 }
 
 void AAttackAreaMarkEffect::Tick(float DeltaTime)

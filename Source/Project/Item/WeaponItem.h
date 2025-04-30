@@ -25,7 +25,4 @@ public:
 
 	int GetAttackStat() const { return ItemInfo.AttackStat; }
 	int GetCriticalStat() const { return ItemInfo.CriticalStat; }
-
-private:
-	FWeaponItemInfoStruct ItemInfo;
 };

@@ -42,7 +42,7 @@ private:
 	
 	bool IsLookMouse;			//마우스를 바라보게 할지 나타내는 변수
 	bool IsCharging;			//현재 차징 중인지 나타내는 변수
-	
+	bool IsCanCharging;			//다시 차징 스킬을 사용할 수 있는지
 	
 	class USkillGaugeBar* SkillGaugeBar;
 

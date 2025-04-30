@@ -27,7 +27,5 @@ public:
 	int GetArmorStat() const { return ItemInfo.ArmorStat; }
 
 private:
-	FArmorItemInfoStruct ItemInfo;
-
 	EArmorType ArmorType;
 };
