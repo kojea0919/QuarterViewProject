@@ -272,6 +272,12 @@ void UArcherAnimInstance::AnimNotify_PulseShot()
 		Archer->PulseShot();
 }
 
+void UArcherAnimInstance::AnimNotify_PulseShotFootDecalSpawn()
+{
+	if (Archer)
+		Archer->SpawnPulseShotFootDecal();
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)

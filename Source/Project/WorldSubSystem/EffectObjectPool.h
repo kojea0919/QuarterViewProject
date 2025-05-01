@@ -52,6 +52,9 @@ public:
 	class AArcherLaserEffect* GetArcherLaserEffect();
 	void ReturnArcherLaserEffect(class AArcherLaserEffect* ReturnObj);
 
+	class AArcherPulseShotMuzzleEffect* GetArcherPulseShotMuzzleEffect();
+	void ReturnArcherPulseShotMuzzleEffect(class AArcherPulseShotMuzzleEffect* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -93,6 +96,9 @@ private:
 
 	UPROPERTY()
 	TArray<class AArcherLaserEffect*> ArcherLaserEffectArr;
+
+	UPROPERTY()
+	TArray<class AArcherPulseShotMuzzleEffect*> ArcherPulseShotMuzzleEffectArr;
 };
 
 

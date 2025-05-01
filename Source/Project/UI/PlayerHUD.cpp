@@ -106,7 +106,13 @@ void UPlayerHUD::SetVisibilityStore()
 bool UPlayerHUD::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UStoreWidgetDrag * WidgetDrag = Cast<UStoreWidgetDrag>(InOperation);
+	if (nullptr == WidgetDrag)
+		return false;
+
 	UUserWidget* WidgetReference = WidgetDrag->GetReference();
+	if (nullptr == WidgetReference)
+		return false;
+
 	FVector2D DragOffset = WidgetDrag->GetDragOffset();
 
 	FVector2D Pos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());

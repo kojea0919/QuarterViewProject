@@ -7,7 +7,8 @@
 #include "UI/SkillQuickSlot.h"
 
 UBaseSkill::UBaseSkill()
-	: Archer(nullptr), IsUltimateSkill(false), CoolTime(1.0f), IsCoolDown(false), CurSlot(nullptr)
+	: Archer(nullptr), IsUltimateSkill(false), CoolTime(1.0f), IsCoolDown(false), CurSlot(nullptr),
+	SkillType(ESkillType::Base)
 {
 }
 

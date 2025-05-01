@@ -69,17 +69,13 @@ protected:
 private:
 	void SwapSkill(USkillQuickSlot* OtherSlot);
 
+	void SetSkillTypeImage(const class UBaseSkill* Skill);
+
 private:
 	//슬롯 배경 이미지
 	//------------------------------------------
 	UPROPERTY()
 	class UImage* SlotImage;
-	
-	UPROPERTY()
-	class UTexture2D* HoverSlotTexture;
-
-	UPROPERTY()
-	class UTexture2D* NormalSlotTexture;
 	//------------------------------------------
 
 	UPROPERTY()
@@ -91,6 +87,18 @@ private:
 	//슬롯 키를 표시할 TextBlock
 	UPROPERTY()
 	class UTextBlock* SlotKeyText;
+
+	//스킬 타입을 표시할 Image
+	//------------------------------------------
+	UPROPERTY()
+	class UImage* SkillTypeImage;
+
+	UPROPERTY()
+	class UTexture2D* ChargingSkillTypeTexture;
+
+	UPROPERTY()
+	class UTexture2D* ComboSkillTypeTexture;
+	//------------------------------------------
 
 	//CoolTime을 표시할 TextBlock
 	//UPROPERTY()
@@ -111,4 +119,6 @@ private:
 	class UBaseSkill* SlotSkill;
 
 	bool IsUltimateSkillSlot;
+
+
 };

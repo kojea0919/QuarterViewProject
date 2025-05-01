@@ -6,13 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "SkillManagerComponent.generated.h"
 
-enum class EArcherSkillType : uint8
-{
-	Desperado = 0,
-	KickShot,
-	Max
-};
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_API USkillManagerComponent : public UActorComponent

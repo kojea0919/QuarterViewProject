@@ -12,6 +12,8 @@
 #include "Archer/Effect/ArcherArrowShowerSkillEffect.h"
 #include "Archer/Effect/AfterimageEffect.h"
 #include "Archer/Effect/ArcherLaserEffect.h"
+#include "Archer/Effect/ArcherPulseShotMuzzleEffect.h"
+
 
 UEffectObjectPool::UEffectObjectPool()
 {
@@ -139,4 +141,14 @@ AArcherLaserEffect* UEffectObjectPool::GetArcherLaserEffect()
 void UEffectObjectPool::ReturnArcherLaserEffect(AArcherLaserEffect* ReturnObj)
 {
 	ReturnEffectObject(ArcherLaserEffectArr, ReturnObj);
+}
+
+AArcherPulseShotMuzzleEffect* UEffectObjectPool::GetArcherPulseShotMuzzleEffect()
+{
+	return GetEffectObject(ArcherPulseShotMuzzleEffectArr);
+}
+
+void UEffectObjectPool::ReturnArcherPulseShotMuzzleEffect(AArcherPulseShotMuzzleEffect* ReturnObj)
+{
+	ReturnEffectObject(ArcherPulseShotMuzzleEffectArr, ReturnObj);
 }

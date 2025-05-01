@@ -23,6 +23,8 @@ public:
 
 	void StopUpdate() { StopUpdateRate = true; }
 
+	void SetTargetRate(float Rate) { TargetRate = Rate; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -34,6 +36,7 @@ private:
 
 private:
 	float CurRate;
+	float TargetRate;			//0이면 다 보이게하기 1이면 다 안보이게 하기
 
 	float CurOpacity;
 

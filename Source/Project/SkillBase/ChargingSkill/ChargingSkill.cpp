@@ -7,9 +7,10 @@
 #include "UI/SkillGaugeBar.h"
 
 UChargingSkill::UChargingSkill()
-	: ChargingSpeed(0.0f), TotalChargingTime(0.0f), IsLookMouse(true),
+	:  ChargingSpeed(0.0f), TotalChargingTime(0.0f), IsLookMouse(true),
 	IsCharging(false),IsCanCharging(true), SkillGaugeBar(nullptr)
 {
+	SkillType = ESkillType::Charging;
 }
 
 bool UChargingSkill::Use()

@@ -6,8 +6,9 @@
 #include "Archer/Animation/ArcherAnimInstance.h"
 
 UComboSkill::UComboSkill()
-	: CurrentCombo(0), MaxCombo(0), ComboInput(false), CanNextCombo(false)
+	:  CurrentCombo(0), MaxCombo(0), ComboInput(false), CanNextCombo(false)
 {
+	SkillType = ESkillType::Combo;
 }
 
 bool UComboSkill::Use()

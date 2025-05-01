@@ -129,6 +129,10 @@ private:
 	UFUNCTION()
 	void AnimNotify_PulseShot();
 
+	//PusleShot 사용시 바닥 Decal 생성
+	UFUNCTION()
+	void AnimNotify_PulseShotFootDecalSpawn();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);

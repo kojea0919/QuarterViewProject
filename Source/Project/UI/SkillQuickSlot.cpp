@@ -22,6 +22,8 @@ void USkillQuickSlot::SetSkill(UBaseSkill* Skill)
 
 		SetMaterial(SlotSkill->GetUIMaterial());
 		Empty = false;
+
+		SetSkillTypeImage(Skill);
 	}
 }
 
@@ -94,9 +96,14 @@ void USkillQuickSlot::NativeConstruct()
 	SlotImage = Cast<UImage>(GetWidgetFromName(FName("Img_SlotImage")));
 	SkillImage = Cast<UImage>(GetWidgetFromName(FName("Img_SkillImage")));
 	SlotKeyText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_SlotKey")));
+	
+	SkillTypeImage = Cast<UImage>(GetWidgetFromName(FName("Img_SkillType")));
+	if (SkillTypeImage)
+		SkillTypeImage->SetVisibility(ESlateVisibility::Hidden);
 
-	NormalSlotTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/UITexture/TX_PlayerSlot.TX_PlayerSlot"));
-	HoverSlotTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/UITexture/TX_PlayerSlot_Act.TX_PlayerSlot_Act"));
+
+	ChargingSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/Skill/Texture/T_ChargingSkillTexture.T_ChargingSkillTexture"));
+	ComboSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/Skill/Texture/T_ComboSkillTexture.T_ComboSkillTexture"));
 
 }
 
@@ -104,14 +111,14 @@ void USkillQuickSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPoi
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 
-	SlotImage->SetBrushFromTexture(HoverSlotTexture);
+	SlotImage->SetColorAndOpacity(FLinearColor(1.0f,1.0f,0.0f,0.5f));
 }
 
 void USkillQuickSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 
-	SlotImage->SetBrushFromTexture(NormalSlotTexture);
+	SlotImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 FReply USkillQuickSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -240,6 +247,9 @@ void USkillQuickSlot::SwapSkill(USkillQuickSlot* OtherSlot)
 		//---------------------------------------------------------------------------
 		OtherSlot->SlotSkill = SlotSkill;
 		SlotSkill = OtherSkill;
+
+		SetSkillTypeImage(SlotSkill);
+		OtherSlot->SetSkillTypeImage(OtherSlot->SlotSkill);
 		//---------------------------------------------------------------------------
 
 		//Empty바꾸기
@@ -249,4 +259,37 @@ void USkillQuickSlot::SwapSkill(USkillQuickSlot* OtherSlot)
 		Empty = OtherIsEmpty;
 		//---------------------------------------------------------------------------
 	}
+}
+
+void USkillQuickSlot::SetSkillTypeImage(const UBaseSkill* Skill)
+{
+	if (nullptr == SkillTypeImage)
+		return;
+
+	//SkillType 표시
+	//---------------------------------------------------------------------------
+	UTexture2D* TargetTexture = nullptr;
+
+	switch (Skill->GetSkillType())
+	{
+	case ESkillType::Base:
+		SkillTypeImage->SetVisibility(ESlateVisibility::Hidden);
+		return;
+	case ESkillType::Charging:
+		TargetTexture = ChargingSkillTypeTexture;
+		break;
+	case ESkillType::Combo:
+		TargetTexture = ComboSkillTypeTexture;
+		break;
+	default:
+		SkillTypeImage->SetVisibility(ESlateVisibility::Hidden);
+		return;
+	}
+
+	if (TargetTexture)
+	{
+		SkillTypeImage->SetBrushFromTexture(TargetTexture);
+		SkillTypeImage->SetVisibility(ESlateVisibility::Visible);
+	}
+	//---------------------------------------------------------------------------
 }

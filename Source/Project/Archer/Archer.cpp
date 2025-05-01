@@ -32,7 +32,7 @@
 
 
 AArcher::AArcher()
-	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), LeftFootDecal(nullptr),RightFootDecal(nullptr),FootDirtEffect(nullptr),
+	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), FootDirtEffect(nullptr),
 	DefaultArmLength(800.0f), DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f)
 {
@@ -484,13 +484,13 @@ void AArcher::MoveSkillAction()
 
 void AArcher::SpawnMoveSkillFootDecal()
 {
-	//왼쪽, 오른쪽 발 위치 바닥에 Decal 생성
+	//오른쪽 발 위치 바닥에 Decal 생성
 	//--------------------------------
 	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
 	if (nullptr == EffectObjPool)
 		return;
 
-	//왼쪽 발 위치 바닥 좌표 찾기
+	//오른쪽 발 위치 바닥 좌표 찾기
 	//-------------------------------------------------
 	FVector FootLocation = GetMesh()->GetBoneLocation(TEXT("Foot_R"));
 	FHitResult HitResult;
@@ -499,11 +499,11 @@ void AArcher::SpawnMoveSkillFootDecal()
 	GetWorld()->LineTraceSingleByChannel(HitResult, FootLocation, Target, ECC_Visibility);
 	//-------------------------------------------------
 
-	LeftFootDecal = EffectObjPool->GetArcherMoveSkillFootDecal();
+	AArcherMoveSkillFootDecal * RightFootDecal = EffectObjPool->GetArcherMoveSkillFootDecal();
 
-	//왼쪽 발 바닥 위치에 생성
-	LeftFootDecal->SetActorLocation(HitResult.Location);
-	LeftFootDecal->SetActorRotation(GetActorRotation());
+	//오른쪽 발 바닥 위치에 생성
+	RightFootDecal->SetActorLocation(HitResult.Location);
+	RightFootDecal->SetActorRotation(GetActorRotation());
 }
 
 void AArcher::RemoveMoveSkillFootDirt()
@@ -561,6 +561,47 @@ void AArcher::PulseShot()
 	AArcherLaserEffect* LaserEffect = EffectObjPool->GetArcherLaserEffect();
 
 	LaserEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("LaserEffectPos"));
+}
+
+void AArcher::SpawnPulseShotFootDecal()
+{
+	//왼쪽, 오른쪽 발 위치 바닥에 Decal 생성
+	//--------------------------------
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	//오른쪽 발 위치 바닥 좌표 찾기
+	//-------------------------------------------------
+	FVector FootLocation = GetMesh()->GetBoneLocation(TEXT("Foot_R"));
+	FHitResult HitResult;
+	FVector Target = FootLocation - FVector(0.0f, 0.0f, 80.0f);
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, FootLocation, Target, ECC_Visibility);
+	//-------------------------------------------------
+
+	AArcherMoveSkillFootDecal* RightFootDecal = EffectObjPool->GetArcherMoveSkillFootDecal();
+
+	//오른쪽 발 바닥 위치에 생성
+	RightFootDecal->SetActorLocation(HitResult.Location + GetActorForwardVector() * 30.0f);
+	RightFootDecal->SetActorRotation(GetActorRotation() + FRotator(0.0f,180.0f,0.0f));
+	RightFootDecal->SetTargetRate(0.7f);
+
+	//왼 발 위치 바닥 좌표 찾기
+	//-------------------------------------------------
+	FootLocation = GetMesh()->GetBoneLocation(TEXT("Foot_L"));
+	HitResult;
+	Target = FootLocation - FVector(0.0f, 0.0f, 80.0f);
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, FootLocation, Target, ECC_Visibility);
+	//-------------------------------------------------
+
+	AArcherMoveSkillFootDecal* LeftFootDecal = EffectObjPool->GetArcherMoveSkillFootDecal();
+
+	//왼쪽 발 바닥 위치에 생성
+	LeftFootDecal->SetActorLocation(HitResult.Location + GetActorForwardVector() * 30.0f);
+	LeftFootDecal->SetActorRotation(GetActorRotation() + FRotator(0.0f, 180.0f, 0.0f));
+	LeftFootDecal->SetTargetRate(0.7f);
 }
 
 void AArcher::CreateAfterimage()

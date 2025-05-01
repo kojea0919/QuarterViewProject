@@ -7,6 +7,13 @@
 #include "UI/SlotKey.h"
 #include "BaseSkill.generated.h"
 
+
+enum class ESkillType
+{
+	Base,
+	Charging,
+	Combo
+};
 /**
  * 
  */
@@ -83,6 +90,8 @@ public:
 
 	bool GetIsUltimateSkill() const { return IsUltimateSkill; }
 
+	ESkillType GetSkillType() const { return SkillType; }
+
 protected:
 	class AArcher* Archer;
 
@@ -97,6 +106,7 @@ protected:
 	//현재 스킬인 궁극기 인지 나타내는 변수
 	bool IsUltimateSkill;
 
+	ESkillType SkillType;
 private:
 	UAnimMontage* SkillMontage;
 
@@ -112,5 +122,5 @@ private:
 
 	//스킬 QuickSlot
 	class USkillQuickSlot* CurSlot;
-	
+
 };

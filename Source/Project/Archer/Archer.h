@@ -120,7 +120,12 @@ public:
 	void ArrowShowerShot();
 
 	//PulseShotSkill
+	//----------------------------------------------------
 	void PulseShot();
+
+	//PulseShot 胶懦 Foot Decal积己
+	void SpawnPulseShotFootDecal();
+	//----------------------------------------------------
 
 public:
 	//儡惑 积己
@@ -214,9 +219,6 @@ private:
 	class ABow* Bow;
 
 	TArray<UMaterialInstanceDynamic*> DynMaterialArr;
-
-	class AArcherMoveSkillFootDecal* LeftFootDecal;
-	class AArcherMoveSkillFootDecal* RightFootDecal;
 
 	class AMoveSkillFootDirt* FootDirtEffect;
 

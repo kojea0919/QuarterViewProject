@@ -7,7 +7,7 @@
 
 AArcherLaserEffect::AArcherLaserEffect()
 	: DynMaterial(nullptr) ,InitLength(30.0f), InitScale(2.0f), CurScale(2.0f),
-	ScaleDecreaseSpeed(2.5f)
+	ScaleDecreaseSpeed(3.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -18,7 +18,13 @@ AArcherLaserEffect::AArcherLaserEffect()
 
 	//Cylinder Setting
 	//--------------------------------------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/Player/Archer/Effect/Mesh/SM_Cylinder.SM_Cylinder"));
+	/*static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/Player/Archer/Effect/Mesh/SM_Cylinder.SM_Cylinder"));
+	if (SM_CYLINDER.Succeeded())
+	{
+		Cylinder->SetStaticMesh(SM_CYLINDER.Object);
+	}*/
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/Player/Archer/Effect/Mesh/Shape_NarrowCapsule.Shape_NarrowCapsule"));
 	if (SM_CYLINDER.Succeeded())
 	{
 		Cylinder->SetStaticMesh(SM_CYLINDER.Object);
@@ -48,7 +54,7 @@ void AArcherLaserEffect::Tick(float DeltaTime)
 	UpdateScale(DeltaTime);
 
 	LaserBeam->SetBeamSourcePoint(0, GetActorLocation(), 0);
-	LaserBeam->SetBeamTargetPoint(0, GetActorLocation() + GetActorUpVector() * InitLength * 19.5f, 0);
+	LaserBeam->SetBeamTargetPoint(0, GetActorLocation() + GetActorUpVector() * InitLength * 100.f, 0);
 }
 
 void AArcherLaserEffect::UpdateScale(float DeltaTime)

@@ -36,10 +36,7 @@ AArcherPlayerController::AArcherPlayerController()
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTF_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotF.IA_UseQuickSlotF"));
 	if (IA_SLOTF_INPUTACTION.Succeeded())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Con"));
 		SlotFInputAction = IA_SLOTF_INPUTACTION.Object;
-	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INVENTORY_INPUTACTION(TEXT("/Game/Player/Input/IA_Inventory.IA_Inventory"));
 	if (IA_INVENTORY_INPUTACTION.Succeeded())

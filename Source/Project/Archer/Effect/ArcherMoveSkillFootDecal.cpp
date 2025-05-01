@@ -6,7 +6,7 @@
 #include "WorldSubSystem/EffectObjectPool.h"
 
 AArcherMoveSkillFootDecal::AArcherMoveSkillFootDecal()
-	: CurRate(1.0f), CurOpacity(1.0f), StopUpdateRate(false)
+	: CurRate(1.0f),TargetRate(0.0f), CurOpacity(1.0f), StopUpdateRate(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -53,7 +53,7 @@ void AArcherMoveSkillFootDecal::UpdateFootDecal(float DeltaTime)
 		//---------------------------------------------
 		CurRate -= DeltaTime * 1.4f;
 
-		if (CurRate > 0.0f)
+		if (CurRate > TargetRate)
 		{
 			DynMaterial->SetScalarParameterValue(FName("Rate"), CurRate);
 			return;
