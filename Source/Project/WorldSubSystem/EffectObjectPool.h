@@ -49,6 +49,9 @@ public:
 	class AArcherArrowShowerSkillEffect* GetArcherArrowShowerSkillEffect();
 	void ReturnArcherArrowShowerSkillEffect(class AArcherArrowShowerSkillEffect* ReturnObj);
 
+	class AArcherLaserEffect* GetArcherLaserEffect();
+	void ReturnArcherLaserEffect(class AArcherLaserEffect* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -87,6 +90,9 @@ private:
 
 	UPROPERTY()
 	TArray<class AArcherArrowShowerSkillEffect*> ArcherArrowShowerSkillEffectArr;
+
+	UPROPERTY()
+	TArray<class AArcherLaserEffect*> ArcherLaserEffectArr;
 };
 
 

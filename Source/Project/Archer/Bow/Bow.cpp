@@ -152,6 +152,10 @@ void ABow::ArrowShowerShot()
 	SpawnMuzzle(MuzzleEffect);
 }
 
+void ABow::PulseShot()
+{
+}
+
 void ABow::SetChargingEffect(bool Enable)
 {
 	if (Enable)

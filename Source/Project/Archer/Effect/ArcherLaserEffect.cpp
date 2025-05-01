@@ -38,7 +38,7 @@ AArcherLaserEffect::AArcherLaserEffect()
 	}
 	//--------------------------------------------------------------------------
 
-	SetTickEnable(true);
+	//SetTickEnable(true);
 }
 
 void AArcherLaserEffect::Tick(float DeltaTime)
@@ -57,7 +57,8 @@ void AArcherLaserEffect::UpdateScale(float DeltaTime)
 
 	if (CurScale <= 0.0f)
 	{
-
+		EffectObjPool->ReturnArcherLaserEffect(this);
+		CurScale = InitScale;
 	}
 	else
 	{		

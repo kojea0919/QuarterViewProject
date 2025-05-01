@@ -119,6 +119,9 @@ public:
 	//ArrowShowerSkill
 	void ArrowShowerShot();
 
+	//PulseShotSkill
+	void PulseShot();
+
 public:
 	//ÀÜ»ó »ý¼º
 	void CreateAfterimage();

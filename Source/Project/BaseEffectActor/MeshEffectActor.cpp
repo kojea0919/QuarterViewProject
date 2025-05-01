@@ -28,5 +28,14 @@ void AMeshEffectActor::Tick(float DeltaTime)
 void AMeshEffectActor::SetEffectEnable(bool Enable)
 {
 	SetActorHiddenInGame(!Enable);
+
+	if (Enable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("True"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("False"));
+	}
 }
 

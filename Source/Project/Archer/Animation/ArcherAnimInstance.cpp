@@ -266,6 +266,12 @@ void UArcherAnimInstance::AnimNotify_ArrowShowerShot()
 		Archer->ArrowShowerShot();
 }
 
+void UArcherAnimInstance::AnimNotify_PulseShot()
+{
+	if (Archer)
+		Archer->PulseShot();
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)

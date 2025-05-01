@@ -11,6 +11,7 @@
 #include "Archer/Effect/ArcherBigArrowEffect.h"
 #include "Archer/Effect/ArcherArrowShowerSkillEffect.h"
 #include "Archer/Effect/AfterimageEffect.h"
+#include "Archer/Effect/ArcherLaserEffect.h"
 
 UEffectObjectPool::UEffectObjectPool()
 {
@@ -37,6 +38,7 @@ void UEffectObjectPool::Init()
 	InitArr(ArcherBigArrowEffectArr, 3);
 	InitArr(AfterimageEffectArr, 10);
 	InitArr(ArcherArrowShowerSkillEffectArr, 1);
+	InitArr(ArcherLaserEffectArr, 1);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -127,4 +129,14 @@ AArcherArrowShowerSkillEffect* UEffectObjectPool::GetArcherArrowShowerSkillEffec
 void UEffectObjectPool::ReturnArcherArrowShowerSkillEffect(AArcherArrowShowerSkillEffect* ReturnObj)
 {
 	ReturnEffectObject(ArcherArrowShowerSkillEffectArr, ReturnObj);
+}
+
+AArcherLaserEffect* UEffectObjectPool::GetArcherLaserEffect()
+{
+	return GetEffectObject(ArcherLaserEffectArr);
+}
+
+void UEffectObjectPool::ReturnArcherLaserEffect(AArcherLaserEffect* ReturnObj)
+{
+	ReturnEffectObject(ArcherLaserEffectArr, ReturnObj);
 }

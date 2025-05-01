@@ -20,6 +20,7 @@
 #include "WorldSubSystem/EffectObjectPool.h"
 #include "Archer/Skill/SkillManagerComponent.h"
 #include "Archer/Effect/AfterimageEffect.h"
+#include "Archer/Effect/ArcherLaserEffect.h"
 #include "Archer/Inventory/InventoryComponent.h"
 #include "Archer/Inventory/EquipmentComponent.h"
 #include "UI/Inventory.h"
@@ -549,6 +550,17 @@ void AArcher::ArrowShowerShot()
 {
 	if (Bow)
 		Bow->ArrowShowerShot();
+}
+
+void AArcher::PulseShot()
+{
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	AArcherLaserEffect* LaserEffect = EffectObjPool->GetArcherLaserEffect();
+
+	LaserEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("LaserEffectPos"));
 }
 
 void AArcher::CreateAfterimage()

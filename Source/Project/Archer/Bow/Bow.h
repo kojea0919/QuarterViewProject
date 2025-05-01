@@ -32,6 +32,8 @@ public:
 
 	void ArrowShowerShot();
 
+	void PulseShot();
+
 	void SetChargingEffect(bool Enable);
 
 private:

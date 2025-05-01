@@ -126,6 +126,9 @@ private:
 	UFUNCTION()
 	void AnimNotify_ArrowShowerShot();
 
+	UFUNCTION()
+	void AnimNotify_PulseShot();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);
