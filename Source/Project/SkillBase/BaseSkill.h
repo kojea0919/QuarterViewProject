@@ -35,6 +35,8 @@ public:
 	void EndCoolDown();				//CoolTime이 끝나면 호출될 함수
 	//---------------------------
 
+	void CheckEnemyOverlap();
+
 public:
 	void SetMontage(UAnimMontage* InitMontage) { SkillMontage = InitMontage; }
 	void SetAnimInstance(class UArcherAnimInstance* InitAnimInstance) { AnimInstance = InitAnimInstance; }
@@ -107,6 +109,9 @@ protected:
 	bool IsUltimateSkill;
 
 	ESkillType SkillType;
+
+	//스킬 QuickSlot
+	class USkillQuickSlot* CurSlot;
 private:
 	UAnimMontage* SkillMontage;
 
@@ -120,7 +125,8 @@ private:
 	FTimerHandle CooldownTimerHandle;//쿨타임 적용하기 위한 FTimerHandle
 	//------------------------
 
-	//스킬 QuickSlot
-	class USkillQuickSlot* CurSlot;
-
+	//스킬 범위
+	//------------------------
+	const float ForwardScale;		//캐릭터 앞방향으로 얼만큼 위치에 생성할지
+	//------------------------
 };

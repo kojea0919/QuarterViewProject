@@ -55,6 +55,9 @@ public:
 	class AArcherPulseShotMuzzleEffect* GetArcherPulseShotMuzzleEffect();
 	void ReturnArcherPulseShotMuzzleEffect(class AArcherPulseShotMuzzleEffect* ReturnObj);
 
+	class ABasicHitEffect* GetBasicHitEffect();
+	void ReturnBasicHitEffect(class ABasicHitEffect* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -99,6 +102,9 @@ private:
 
 	UPROPERTY()
 	TArray<class AArcherPulseShotMuzzleEffect*> ArcherPulseShotMuzzleEffectArr;
+
+	UPROPERTY()
+	TArray<class ABasicHitEffect*> BasicHitEffectArr;
 };
 
 

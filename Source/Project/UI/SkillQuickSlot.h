@@ -38,6 +38,10 @@ public:
 	//쿨타임 끝나는 효과 애니메이션 실행
 	void PlaySkillCoolTimeEndAnimation();
 
+	//스킬키 입력 애니메이션 실행
+	void PlayUseSkillAnimation();
+	void PlayFailUseSkillAnimation();
+
 	void SetUltimateSlot() { IsUltimateSkillSlot = true; }
 public:
 	//해당 슬롯이 가지고 있는 스킬 사용하는 함수
@@ -101,16 +105,24 @@ private:
 	//------------------------------------------
 
 	//CoolTime을 표시할 TextBlock
-	//UPROPERTY()
-	//class UTextBlock* RemainCoolTimeText;
+	UPROPERTY()
+	class UTextBlock* RemainCoolTime;
 
 	//CoolTime이 끝나면 실행될 효과를 위한 Image
 	//UPROPERTY()
 	//class UImage* SkillCoolTimeEnd;
 
 	//CoolTime이 끝나면 실행될 효과
-	//UPROPERTY(meta = (BindWidgetAnim), Transient)
-	//UWidgetAnimation* SkillCoolTimeEndAnimation;
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* SkillCoolTimeEndAnimation;
+
+	//스킬키가 눌리고 스킬 사용이 가능한 경우 실행될 효과
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* UseSkillAnimation;
+
+	//스킬키가 눌리고 스킬 사용이 불가능한 경우 실행될 효과
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* FailUseSkillAnimation;
 
 	//비어있는 슬롯인지 나타내는 bool변수
 	bool Empty;

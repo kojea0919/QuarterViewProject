@@ -29,7 +29,10 @@
 #include "Item/WeaponItem.h"
 #include "Item/ArmorItem.h"
 #include "UI/Equipment.h"
-
+#include "Kismet/KismetSystemLibrary.h"
+#include "DrawDebugHelpers.h"
+#include "DamageType/ArcherDamageType.h"
+#include "DamageType/ArcherBasicDamageType.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), FootDirtEffect(nullptr),
@@ -89,14 +92,16 @@ AArcher::AArcher()
 		GetMesh()->SetSkeletalMesh(SK_ARCHER.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SKILLRANGE(TEXT("/Game/Player/Archer/RangeMark/SM_RangeMarkMesh.SM_RangeMarkMesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SKILLRANGE(TEXT("/Game/Player/Archer/RangeMark/Shape_Plane.Shape_Plane"));
 	if (SM_SKILLRANGE.Succeeded())
 	{
 		SkillRangeMarkMesh->SetStaticMesh(SM_SKILLRANGE.Object);
 	}
 	SkillRangeMarkMesh->SetupAttachment(RootComponent);
-	SkillRangeMarkMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
+	SkillRangeMarkMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -89.7f));
 	SkillRangeMarkMesh->SetHiddenInGame(true);
+	SkillRangeMarkMesh->SetRelativeScale3D(FVector(RangeMarkMeshScale, RangeMarkMeshScale, 1.0f));
+	SkillRangeMarkMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	GetMesh()->SetWorldRotation(FRotator(0.0f, -90.0f, 0.0f));
 
@@ -175,7 +180,6 @@ void AArcher::BeginPlay()
 		if (Equip)
 			Equip->SetEquip(PlayerController->GetEquipment());
 		//---------------------------------------------
-
 	}
 }
 
@@ -243,13 +247,7 @@ void AArcher::SetBowChargingEffect(bool Enable)
 
 void AArcher::RangeMarkOn(float Range)
 {
-	//Range로 부터 반지름 20짜리 원을 얼만큼 늘릴지 계산
-	//ex Range가 20이면 scale 1
-	// Range : y = 20 : 1
-	// y = Range / 20;
-
-	float NewScale = Range / 20.0f;
-	SkillRangeMarkMesh->SetWorldScale3D(FVector(NewScale,NewScale,1.0f));
+	SkillRangeMarkMesh->SetWorldScale3D(FVector(Range *RangeMarkMeshScale * 2, Range * RangeMarkMeshScale * 2,1.0f));
 	SkillRangeMarkMesh->SetHiddenInGame(false);
 }
 
@@ -450,7 +448,46 @@ void AArcher::BasicAttackComboCheck()
 void AArcher::BasicAttackShot()
 {	
 	if (Bow)
+	{
 		Bow->BasicAttack();
+
+		TArray<FHitResult> HitResults;
+		
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel2);
+
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+
+		FVector BoxLocation = GetActorLocation() + GetActorForwardVector() * BasicAttackBoxExtent.X + FVector(0.0f, 0.0f, BasicAttackHeightOffset);
+
+		bool IsHit = GetWorld()->SweepMultiByObjectType(HitResults,
+			BoxLocation,BoxLocation,
+			GetActorQuat(),ObjectQueryParams,
+			FCollisionShape::MakeBox(BasicAttackBoxExtent),
+			Params);
+
+		DrawDebugBox(GetWorld(),
+			BoxLocation,
+			BasicAttackBoxExtent,
+			GetActorQuat(),
+			FColor::Green,false,2);
+
+		//충돌이 된 경우
+		if (IsHit)
+		{
+			for (auto& Hit : HitResults)
+			{
+				UGameplayStatics::ApplyDamage(
+					Hit.GetActor(),
+					20.0f,
+					GetInstigatorController(),
+					this,
+					UArcherBasicDamageType::StaticClass());
+			}
+		}
+
+	}
 
 	//기본공격에 화살을 발사하는 동안은 회전을 안하도록 막기
 	IsCanRotate = false;

@@ -278,6 +278,12 @@ void UArcherAnimInstance::AnimNotify_PulseShotFootDecalSpawn()
 		Archer->SpawnPulseShotFootDecal();
 }
 
+void UArcherAnimInstance::CheckEnemyOverlap()
+{
+	if (CurSkill)
+		CurSkill->CheckEnemyOverlap();
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)

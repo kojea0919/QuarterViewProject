@@ -7,13 +7,16 @@
 #include "UI/SkillQuickSlot.h"
 
 UBaseSkill::UBaseSkill()
-	: Archer(nullptr), IsUltimateSkill(false), CoolTime(1.0f), IsCoolDown(false), CurSlot(nullptr),
-	SkillType(ESkillType::Base)
+	: Archer(nullptr),AnimInstance(nullptr),SkillUIMaterial(nullptr), SkillType(ESkillType::Base), CurSlot(nullptr),
+	SkillMontage(nullptr), CoolTime(1.0f), ElapsedSkillTime(0),	IsCoolDown(false)
 {
 }
 
 bool UBaseSkill::Use()
 {
+	if (nullptr == Archer)
+		return false;
+
 	//다른 스킬 중에는 공격 불가능
 	if (Archer->GetMoveSkillOn() || Archer->GetUseSkill())
 	{
@@ -22,6 +25,9 @@ bool UBaseSkill::Use()
 
 	if (!AnimInstance->Montage_IsPlaying(SkillMontage))
 	{
+		if (CurSlot)
+			CurSlot->PlayUseSkillAnimation();
+
 		Archer->SetUseSkill(true);
 		AnimInstance->Montage_Play(SkillMontage);
 
@@ -29,6 +35,10 @@ bool UBaseSkill::Use()
 		//Animation이 끝나면 Skill의 End함수를 호출하도록 한다.
 		AnimInstance->BindSkillMontageEndDelegate(SkillMontage);
 		AnimInstance->SetCurSkill(this);
+
+		if(SkillType == ESkillType::Base)
+			StartCoolDown();
+
 		return true;
 	}
 
@@ -123,6 +133,11 @@ void UBaseSkill::EndCoolDown()
 
 	CurSlot->SetRemainCoolTimeVisible(false);
 	CurSlot->PlaySkillCoolTimeEndAnimation();
+}
+
+void UBaseSkill::CheckEnemyOverlap()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Check"));
 }
 
 

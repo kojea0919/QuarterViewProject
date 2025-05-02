@@ -160,6 +160,9 @@ private:
 	//스킬 사거리 표시 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Skill, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* SkillRangeMarkMesh;		//반지름 20짜리 실린더
+
+	const float RangeMarkMeshScale = 0.0138f; //단위 size
+
 	//----------------------------------------
 
 	//스킬 관련 ActorComponent
@@ -266,4 +269,11 @@ private:
 
 	//회전 속도
 	float RotateSpeed;
+
+
+	//기본 공격 범위
+	//--------------------------------------------
+	const FVector BasicAttackBoxExtent = FVector(600.f,90.f,90.f);
+	const float BasicAttackHeightOffset = 100.f;
+	//--------------------------------------------
 };

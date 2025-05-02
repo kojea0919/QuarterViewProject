@@ -13,6 +13,7 @@
 #include "Archer/Effect/AfterimageEffect.h"
 #include "Archer/Effect/ArcherLaserEffect.h"
 #include "Archer/Effect/ArcherPulseShotMuzzleEffect.h"
+#include "Monster/Effect/BasicHitEffect.h"
 
 
 UEffectObjectPool::UEffectObjectPool()
@@ -41,6 +42,7 @@ void UEffectObjectPool::Init()
 	InitArr(AfterimageEffectArr, 10);
 	InitArr(ArcherArrowShowerSkillEffectArr, 1);
 	InitArr(ArcherLaserEffectArr, 1);
+	InitArr(BasicHitEffectArr, 3);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -151,4 +153,14 @@ AArcherPulseShotMuzzleEffect* UEffectObjectPool::GetArcherPulseShotMuzzleEffect(
 void UEffectObjectPool::ReturnArcherPulseShotMuzzleEffect(AArcherPulseShotMuzzleEffect* ReturnObj)
 {
 	ReturnEffectObject(ArcherPulseShotMuzzleEffectArr, ReturnObj);
+}
+
+ABasicHitEffect* UEffectObjectPool::GetBasicHitEffect()
+{
+	return GetEffectObject(BasicHitEffectArr);
+}
+
+void UEffectObjectPool::ReturnBasicHitEffect(ABasicHitEffect* ReturnObj)
+{
+	ReturnEffectObject(BasicHitEffectArr, ReturnObj);
 }

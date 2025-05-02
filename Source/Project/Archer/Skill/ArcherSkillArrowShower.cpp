@@ -13,6 +13,8 @@ UArcherSkillArrowShower::UArcherSkillArrowShower()
 {
 	SetCharginSpeed(1.0f);
 	SetTotalChargingTime(1.0f);
+
+	SetCoolTime(1.0f);
 }
 
 bool UArcherSkillArrowShower::Use()

@@ -35,48 +35,70 @@ void USkillQuickSlot::SetSlotKeyText(const TCHAR* SlotKey)
 
 void USkillQuickSlot::SetRemainCoolTimeVisible(bool Enable)
 {
-	/*if (RemainCoolTimeText)
+	if (RemainCoolTime)
 	{
 		if (Enable)
 		{
-			RemainCoolTimeText->SetVisibility(ESlateVisibility::Visible);
+			RemainCoolTime->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
-			RemainCoolTimeText->SetVisibility(ESlateVisibility::Hidden);
+			RemainCoolTime->SetVisibility(ESlateVisibility::Hidden);
 		}
-	}*/
+	}
 }
 
 void USkillQuickSlot::UpdateRemainCoolTime()
 {
-	//if (RemainCoolTimeText)
-	//{
-	//	//스킬로 부터 남은 쿨타임 계산
-	//	float RemainCoolTime = SlotSkill->GetRemainCoolTime();
+	if (RemainCoolTime)
+	{
+		//스킬로 부터 남은 쿨타임 계산
+		float CoolTime = SlotSkill->GetRemainCoolTime();
 
-	//	//정수 부분과 소수 부분 분리
-	//	uint8 IntegerPart = RemainCoolTime;
-	//	uint8 DecimalPart = (RemainCoolTime - IntegerPart) * 10;
+		//정수 부분과 소수 부분 분리
+		uint8 IntegerPart = CoolTime;
+		uint8 DecimalPart = (CoolTime - IntegerPart) * 10;
 
-	//	FString RemainTimeString = FString::Printf(TEXT("%d.%d"), IntegerPart, DecimalPart);
+		FString RemainTimeString = FString::Printf(TEXT("%d.%d"), IntegerPart, DecimalPart);
 
-	//	RemainCoolTimeText->SetText(FText::FromString(RemainTimeString));
-	//}
+		RemainCoolTime->SetText(FText::FromString(RemainTimeString));
+	}
 }
 
 void USkillQuickSlot::PlaySkillCoolTimeEndAnimation()
 {
-	//if (SkillCoolTimeEndAnimation)
-	//	PlayAnimation(SkillCoolTimeEndAnimation);
+	if (SkillCoolTimeEndAnimation)
+	{
+
+		PlayAnimation(SkillCoolTimeEndAnimation);
+	}
+}
+
+void USkillQuickSlot::PlayUseSkillAnimation()
+{
+	if(UseSkillAnimation)
+		PlayAnimation(UseSkillAnimation);
+}
+
+void USkillQuickSlot::PlayFailUseSkillAnimation()
+{
+	if (FailUseSkillAnimation)
+		PlayAnimation(FailUseSkillAnimation);
 }
 
 void USkillQuickSlot::UseSkill()
 {
-	if (SlotSkill && !SlotSkill->IsCoolDownActive())
+	if (nullptr == SlotSkill)
+		return;
+
+	if (!SlotSkill->IsCoolDownActive())
 	{
 		SlotSkill->Use();
 	}
+	/*else
+	{
+		PlayFailUseSkillAnimation();
+	}*/
 }
 
 void USkillQuickSlot::ReleaseSkill()
@@ -91,7 +113,6 @@ void USkillQuickSlot::NativeConstruct()
 
 	Empty = true;
 
-	//RemainCoolTimeText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_RemainCoolTime")));
 	//SkillCoolTimeEnd = Cast<UImage>(GetWidgetFromName(FName("Img_SkillCoolTimeEnd")));
 	SlotImage = Cast<UImage>(GetWidgetFromName(FName("Img_SlotImage")));
 	SkillImage = Cast<UImage>(GetWidgetFromName(FName("Img_SkillImage")));
@@ -101,6 +122,7 @@ void USkillQuickSlot::NativeConstruct()
 	if (SkillTypeImage)
 		SkillTypeImage->SetVisibility(ESlateVisibility::Hidden);
 
+	RemainCoolTime = Cast<UTextBlock>(GetWidgetFromName(FName("Text_RemainCoolTime")));
 
 	ChargingSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/Skill/Texture/T_ChargingSkillTexture.T_ChargingSkillTexture"));
 	ComboSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/Skill/Texture/T_ComboSkillTexture.T_ComboSkillTexture"));

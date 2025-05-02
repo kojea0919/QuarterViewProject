@@ -85,7 +85,7 @@ void UChargingSkill::End()
 void UChargingSkill::ResetSkillState()
 {
 	//쿨타임 시작
-	//StartCoolDown();
+	StartCoolDown();
 
 	//사용한 Charging 이펙트 제거
 	ReleaseEffect();	

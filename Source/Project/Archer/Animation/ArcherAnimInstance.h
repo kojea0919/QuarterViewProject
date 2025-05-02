@@ -38,7 +38,6 @@ public:
 	//SkillMontage가 끝나면 호출될 함수(SkillMontageEnd함수)를 Bind
 	void BindSkillMontageEndDelegate(UAnimMontage* SkillMontage);
 
-
 	//스킬 Montage 재생, 정지
 	//-----------------------------
 	void PlayDesperadoMontage();
@@ -132,6 +131,9 @@ private:
 	//PusleShot 사용시 바닥 Decal 생성
 	UFUNCTION()
 	void AnimNotify_PulseShotFootDecalSpawn();
+
+	UFUNCTION()
+	void CheckEnemyOverlap();
 
 private:
 	UFUNCTION()

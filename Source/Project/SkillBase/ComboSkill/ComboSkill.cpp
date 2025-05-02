@@ -4,6 +4,7 @@
 #include "ComboSkill.h"
 #include "Archer/Archer.h"
 #include "Archer/Animation/ArcherAnimInstance.h"
+#include "UI/SkillQuickSlot.h"
 
 UComboSkill::UComboSkill()
 	:  CurrentCombo(0), MaxCombo(0), ComboInput(false), CanNextCombo(false)
@@ -73,9 +74,10 @@ void UComboSkill::SkillComboCheck()
 	{
 		CurrentCombo = (CurrentCombo + 1) % (MaxCombo + 1);
 
-		//PlaySkillMontageSection(CurrentCombo);
-
 		ComboInput = false;
 		CanNextCombo = false;
+
+		if (CurSlot)
+			CurSlot->PlayUseSkillAnimation();
 	}
 }
