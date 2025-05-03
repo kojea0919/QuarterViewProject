@@ -15,7 +15,7 @@ AAfterimageEffect::AAfterimageEffect()
 	//----------------------------------------
 	RootComponent = Mesh;
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_MESH(TEXT("/Game/Player/Archer/Mesh/Player.Player"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_MESH(TEXT("/Game/GamePlay/Player/Archer/Mesh/Player.Player"));
 	if (SK_MESH.Succeeded())
 	{
 		//Mesh->SetSkeletalMesh(SK_MESH.Object);
@@ -72,7 +72,7 @@ void AAfterimageEffect::Tick(float DeltaTime)
 
 void AAfterimageEffect::LoadMaterial()
 {
-	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_Afterimage.M_Afterimage"));
+	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_Afterimage.M_Afterimage"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, Mesh);
 	Mesh->SetMaterial(0, DynMaterial);
 	Mesh->SetMaterial(1, DynMaterial);

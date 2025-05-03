@@ -15,6 +15,8 @@ class PROJECT_API UArcherSkillPulseShot : public UBaseSkill
 	GENERATED_BODY()
 
 public:
+	UArcherSkillPulseShot();
+
 	virtual bool Use() override;
 	
 };

@@ -7,7 +7,7 @@
 
 AArcherArrowShowerSkillEffect::AArcherArrowShowerSkillEffect()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_Archer_ArrowShower.NS_Archer_ArrowShower"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_ArrowShower.NS_Archer_ArrowShower"));
 }
 
 void AArcherArrowShowerSkillEffect::OnNiagaraSystemFinished_Impl()

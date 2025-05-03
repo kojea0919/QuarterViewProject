@@ -8,7 +8,7 @@
 
 AArcherBasicAttackMuzzleEffect::AArcherBasicAttackMuzzleEffect()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_Archer_BasicAttackMuzzle.NS_Archer_BasicAttackMuzzle"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_BasicAttackMuzzle.NS_Archer_BasicAttackMuzzle"));
 }
 
 void AArcherBasicAttackMuzzleEffect::OnNiagaraSystemFinished_Impl()

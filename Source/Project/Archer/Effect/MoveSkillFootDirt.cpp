@@ -8,7 +8,9 @@
 
 AMoveSkillFootDirt::AMoveSkillFootDirt()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_Archer_MoveSkillFootDirt.NS_Archer_MoveSkillFootDirt"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_MoveSkillFootDirt.NS_Archer_MoveSkillFootDirt"));
+
+	int a = 10;
 }
 
 void AMoveSkillFootDirt::Tick(float DeltaTime)

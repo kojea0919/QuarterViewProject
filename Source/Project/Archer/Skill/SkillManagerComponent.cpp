@@ -53,7 +53,7 @@ void USkillManagerComponent::Init()
 	Desperado->SetMontage(Anim->GetDesperadoMontage());	//재생할 스킬 Montage설정
 	Desperado->SetBaseClass(Archer);
 	Desperado->SetQuickSlotKey(ESkillQuickSlot::SlotQ);	//초기 QuickSlotKey 설정
-	Desperado->SetMaterial(TEXT("/Game/Player/UI/Skill/M_Desperado.M_Desperado"));
+	Desperado->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_Desperado.M_Desperado"));
 
 	PlayerController->SetQuickSlotSkill(Desperado, ESkillQuickSlot::SlotQ);
 	//---------------------------------------------------------
@@ -67,7 +67,7 @@ void USkillManagerComponent::Init()
 	KickShot->SetMontage(Anim->GetKickShotMontage());
 	KickShot->SetBaseClass(Archer);
 	KickShot->SetQuickSlotKey(ESkillQuickSlot::SlotW);
-	KickShot->SetMaterial(TEXT("/Game/Player/UI/Skill/M_KickShot.M_KickShot"));
+	KickShot->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_KickShot.M_KickShot"));
 
 	PlayerController->SetQuickSlotSkill(KickShot, ESkillQuickSlot::SlotW);
 	//---------------------------------------------------------
@@ -81,7 +81,7 @@ void USkillManagerComponent::Init()
 	FlippingArrow->SetMontage(Anim->GetFlippingArrowMontage());
 	FlippingArrow->SetBaseClass(Archer);
 	FlippingArrow->SetQuickSlotKey(ESkillQuickSlot::SlotE);
-	FlippingArrow->SetMaterial(TEXT("/Game/Player/UI/Skill/M_FlippingArrow.M_FlippingArrow"));
+	FlippingArrow->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_FlippingArrow.M_FlippingArrow"));
 
 	PlayerController->SetQuickSlotSkill(FlippingArrow, ESkillQuickSlot::SlotE);
 	//---------------------------------------------------------
@@ -95,7 +95,7 @@ void USkillManagerComponent::Init()
 	ArrowShower->SetBaseClass(Archer);
 	ArrowShower->SetQuickSlotKey(ESkillQuickSlot::SlotR);
 	ArrowShower->SetSkillGaugeBar(PlayerController->GetSkillGaugeBar());
-	ArrowShower->SetMaterial(TEXT("/Game/Player/UI/Skill/M_ArrowShower.M_ArrowShower"));
+	ArrowShower->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_ArrowShower.M_ArrowShower"));
 
 	PlayerController->SetQuickSlotSkill(ArrowShower, ESkillQuickSlot::SlotR);
 	//---------------------------------------------------------
@@ -108,7 +108,7 @@ void USkillManagerComponent::Init()
 	PulseShot->SetMontage(Anim->GetPulseShotMontage());
 	PulseShot->SetBaseClass(Archer);
 	PulseShot->SetQuickSlotKey(ESkillQuickSlot::SlotF);
-	PulseShot->SetMaterial(TEXT("/Game/Player/UI/Skill/M_PulseShot.M_PulseShot"));
+	PulseShot->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_PulseShot.M_PulseShot"));
 
 	PlayerController->SetQuickSlotSkill(PulseShot, ESkillQuickSlot::SlotF);
 	//---------------------------------------------------------

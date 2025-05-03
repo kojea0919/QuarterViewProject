@@ -131,6 +131,11 @@ public:
 	//잔상 생성
 	void CreateAfterimage();
 
+	//카메라 Shake 재생
+	void PlayCameraShake();
+
+	//카메라 ZoomOut 효과 재생
+	void PlayCameraZoomOut(int StartSpringArmLength, float Speed);
 
 private:
 	//마우스 방향으로 회전하는 함수
@@ -146,6 +151,9 @@ private:
 
 	//마우스 방향으로 RotateSpeed만큼 회전하는 함수
 	void AddRotateMouseDirection(float DeltaTime);
+
+	//ZoomOut효과를 위한 SpringArm길이 Update함수
+	void UpdateZoomOutEffect(float DeltaTime);
 
 private:
 	//카메라 관련 컴포넌트
@@ -275,5 +283,18 @@ private:
 	//--------------------------------------------
 	const FVector BasicAttackBoxExtent = FVector(600.f,90.f,90.f);
 	const float BasicAttackHeightOffset = 100.f;
+	//--------------------------------------------
+
+	//카메라 Shake
+	UPROPERTY(EditAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UCameraShakeBase> ArcherSkillCameraShakeClass;
+
+
+	//Camera ZoomOut 효과
+	//--------------------------------------------
+	bool IsCameraZoomOut;
+
+	float CurrentSpringArmLength = 0;
+	float ZoomOutSpeed = 10;
 	//--------------------------------------------
 };

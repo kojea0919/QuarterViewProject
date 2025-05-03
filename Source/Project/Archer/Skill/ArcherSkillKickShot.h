@@ -15,5 +15,13 @@ class PROJECT_API UArcherSkillKickShot : public UBaseSkill
 	GENERATED_BODY()
 
 public:
+	UArcherSkillKickShot();
+
 	virtual bool Use() override;
+
+public:
+	virtual void CheckEnemyOverlap() override;
+
+private:
+
 };

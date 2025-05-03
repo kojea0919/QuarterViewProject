@@ -7,7 +7,7 @@
 
 AArcherSpecialAttackArrowEffect::AArcherSpecialAttackArrowEffect()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_Archer_SpecialArrow.NS_Archer_SpecialArrow"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_SpecialArrow.NS_Archer_SpecialArrow"));
 }
 
 void AArcherSpecialAttackArrowEffect::OnNiagaraSystemFinished_Impl()

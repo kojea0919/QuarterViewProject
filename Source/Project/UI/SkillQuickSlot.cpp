@@ -124,8 +124,8 @@ void USkillQuickSlot::NativeConstruct()
 
 	RemainCoolTime = Cast<UTextBlock>(GetWidgetFromName(FName("Text_RemainCoolTime")));
 
-	ChargingSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/Skill/Texture/T_ChargingSkillTexture.T_ChargingSkillTexture"));
-	ComboSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/Skill/Texture/T_ComboSkillTexture.T_ComboSkillTexture"));
+	ChargingSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/GamePlay/Player/UI/Skill/Texture/T_ChargingSkillTexture.T_ChargingSkillTexture"));
+	ComboSkillTypeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/GamePlay/Player/UI/Skill/Texture/T_ComboSkillTexture.T_ComboSkillTexture"));
 
 }
 

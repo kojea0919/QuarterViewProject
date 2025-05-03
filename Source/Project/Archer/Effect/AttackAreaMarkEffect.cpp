@@ -37,7 +37,7 @@ void AAttackAreaMarkEffect::Tick(float DeltaTime)
 
 void AAttackAreaMarkEffect::LoadMaterial()
 {
-	UMaterialInstance* BaseDecalMaterial = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/Player/Archer/AttackAreaMark/M_AttackAreaMark_Inst.M_AttackAreaMark_Inst"));
+	UMaterialInstance* BaseDecalMaterial = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/GamePlay/Player/Archer/AttackAreaMark/M_AttackAreaMark_Inst.M_AttackAreaMark_Inst"));
 
 	DynMaterial = UMaterialInstanceDynamic::Create(BaseDecalMaterial, this);
 	Decal->SetDecalMaterial(DynMaterial);

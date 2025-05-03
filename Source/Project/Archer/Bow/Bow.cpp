@@ -18,7 +18,7 @@ ABow::ABow()
 	Bow = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BOW"));
 
 	RootComponent = Bow;
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM_BOW(TEXT("/Game/Player/Archer/Weapon/Bow2/Bow2.Bow2"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM_BOW(TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/Bow2.Bow2"));
 	if (SM_BOW.Succeeded())
 		Bow->SetSkeletalMesh(SM_BOW.Object);
 
@@ -34,7 +34,7 @@ void ABow::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Weapon/Bow2/M_Bow.M_Bow"));
+	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/M_Bow.M_Bow"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, Bow->GetSkeletalMeshAsset());
 	Bow->SetMaterial(0, DynMaterial);
 

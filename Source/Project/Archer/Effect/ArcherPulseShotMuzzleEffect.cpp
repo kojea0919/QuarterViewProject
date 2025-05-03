@@ -6,5 +6,5 @@
 
 AArcherPulseShotMuzzleEffect::AArcherPulseShotMuzzleEffect()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_PulseShot_Muzzle.NS_PulseShot_Muzzle"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_PulseShot_Muzzle.NS_PulseShot_Muzzle"));
 }

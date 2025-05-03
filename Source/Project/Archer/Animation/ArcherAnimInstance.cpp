@@ -278,10 +278,16 @@ void UArcherAnimInstance::AnimNotify_PulseShotFootDecalSpawn()
 		Archer->SpawnPulseShotFootDecal();
 }
 
-void UArcherAnimInstance::CheckEnemyOverlap()
+void UArcherAnimInstance::AnimNotify_CheckEnemyOverlap()
 {
 	if (CurSkill)
 		CurSkill->CheckEnemyOverlap();
+}
+
+void UArcherAnimInstance::ANimNotify_StartMultiHitSkillEnemyOverlap()
+{
+	if (CurSkill)
+		CurSkill->StartMutliHitSkillEnemyOverlap();
 }
 
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
@@ -294,49 +300,49 @@ void UArcherAnimInstance::InitMontage()
 {
 	//Attck Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> BASICATTACK_MONTAGE(TEXT("/Game/Player/Archer/Animation/BasicAttackMontage.BasicAttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> BASICATTACK_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/BasicAttackMontage.BasicAttackMontage"));
 	if (BASICATTACK_MONTAGE.Succeeded())
 		BasicAttackMontage = BASICATTACK_MONTAGE.Object;
 	//-------------------------------------------
 
 	//MoveSkill Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> MOVESKILL_MONTAGE(TEXT("/Game/Player/Archer/Animation/MoveSkillMontage.MoveSkillMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MOVESKILL_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/MoveSkillMontage.MoveSkillMontage"));
 	if (MOVESKILL_MONTAGE.Succeeded())
 		MoveSkillMontage = MOVESKILL_MONTAGE.Object;
 	//-------------------------------------------
 
 	//Desperado Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> DESPERADO_MONTAGE(TEXT("/Game/Player/Archer/Animation/DesperadoMontage.DesperadoMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DESPERADO_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/DesperadoMontage.DesperadoMontage"));
 	if (DESPERADO_MONTAGE.Succeeded())
 		DesperadoMontage = DESPERADO_MONTAGE.Object;
 	//-------------------------------------------
 
 	//KickShot Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> KICKSHOT_MONTAGE(TEXT("/Game/Player/Archer/Animation/KickShotMontage.KickShotMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> KICKSHOT_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/KickShotMontage.KickShotMontage"));
 	if (KICKSHOT_MONTAGE.Succeeded())
 		KickShotMontage = KICKSHOT_MONTAGE.Object;
 	//-------------------------------------------
 
 	//FlippingArrow Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> FLIPPINGARROW_MONTAGE(TEXT("/Game/Player/Archer/Animation/FlippingArrowMontage.FlippingArrowMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FLIPPINGARROW_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/FlippingArrowMontage.FlippingArrowMontage"));
 	if (FLIPPINGARROW_MONTAGE.Succeeded())
 		FlippingArrowMontage = FLIPPINGARROW_MONTAGE.Object;
 	//-------------------------------------------
 
 	//ArrowShower Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ARROWSHOWER_MONTAGE(TEXT("/Game/Player/Archer/Animation/ArrowShowerMontage.ArrowShowerMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ARROWSHOWER_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/ArrowShowerMontage.ArrowShowerMontage"));
 	if (ARROWSHOWER_MONTAGE.Succeeded())
 		ArrowShowerMontage = ARROWSHOWER_MONTAGE.Object;
 	//-------------------------------------------
 
 	//PulseShot Montage Init
 	//-------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> PULSESHOT_MONTAGE(TEXT("/Game/Player/Archer/Animation/PulseShotMontage.PulseShotMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> PULSESHOT_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/PulseShotMontage.PulseShotMontage"));
 	if (PULSESHOT_MONTAGE.Succeeded())
 		PulseShotMontage = PULSESHOT_MONTAGE.Object;
 	//-------------------------------------------

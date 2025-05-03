@@ -9,7 +9,7 @@
 AArcherDesperadoSkillEffect::AArcherDesperadoSkillEffect()
 	: Offset(FVector(0.0, 0.0, 290.0f))
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_Archer_Desperado.NS_Archer_Desperado"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_Desperado.NS_Archer_Desperado"));
 }
 
 void AArcherDesperadoSkillEffect::SpwanNiagaraEffect(const FTransform& Transform)

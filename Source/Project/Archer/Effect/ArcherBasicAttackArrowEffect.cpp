@@ -8,7 +8,7 @@
 
 AArcherBasicAttackArrowEffect::AArcherBasicAttackArrowEffect()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Player/Archer/Effect/Niagara/NS_Archer_BasicAttackArrow.NS_Archer_BasicAttackArrow"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_BasicAttackArrow.NS_Archer_BasicAttackArrow"));
 }
 
 void AArcherBasicAttackArrowEffect::SpwanNiagaraEffect(const FTransform& Transform)

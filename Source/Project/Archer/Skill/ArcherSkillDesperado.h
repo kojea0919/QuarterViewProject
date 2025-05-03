@@ -13,7 +13,9 @@ UCLASS()
 class PROJECT_API UArcherSkillDesperado : public UBaseSkill
 {
 	GENERATED_BODY()
-	
+
 public:
+	UArcherSkillDesperado();
+
 	virtual bool Use() override;
 };

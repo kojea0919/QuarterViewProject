@@ -73,7 +73,7 @@ void UItemPurchaseSlot::NativeConstruct()
 	if(QuantityText)
 		QuantityText->SetVisibility(ESlateVisibility::Hidden);
 
-	BaseTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Player/UI/UITexture/TX_InventoryBackGroundImage.TX_InventoryBackGroundImage"));
+	BaseTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/GamePlay/Player/UI/UITexture/TX_InventoryBackGroundImage.TX_InventoryBackGroundImage"));
 }
 
 FReply UItemPurchaseSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

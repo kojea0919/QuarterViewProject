@@ -133,7 +133,10 @@ private:
 	void AnimNotify_PulseShotFootDecalSpawn();
 
 	UFUNCTION()
-	void CheckEnemyOverlap();
+	void AnimNotify_CheckEnemyOverlap();
+
+	UFUNCTION()
+	void ANimNotify_StartMultiHitSkillEnemyOverlap();
 
 private:
 	UFUNCTION()

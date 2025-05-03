@@ -11,10 +11,22 @@
 UArcherSkillArrowShower::UArcherSkillArrowShower()
 	: Range(700.0f), EffectTermTime(0.7), AttackLocationHeightOffset(100.f)
 {
-	SetCharginSpeed(1.0f);
+	SetChargingSpeed(1.0f);
 	SetTotalChargingTime(1.0f);
 
 	SetCoolTime(1.0f);
+
+	//구형 Collision 정보 Setting
+	//-----------------------------
+	CollisionForwardScaleArr.Push(0);
+	CollisionTypeArr.Push(ECollisionType::Sphere);
+	CollisionExtentArr.Push(FVector(300.0f));
+	CollisionHeightOffsetArr.Push(-90.0f);
+
+	CurCollisionIdx = 0;
+	//-----------------------------
+
+	IsPlacedSkill = true;
 }
 
 bool UArcherSkillArrowShower::Use()
@@ -41,6 +53,11 @@ void UArcherSkillArrowShower::ReleaseEffect()
 	Archer->SetAttackAreaMark(false);
 }
 
+void UArcherSkillArrowShower::CheckEnemyOverlap()
+{
+	Super::CheckEnemyOverlap();
+}
+
 void UArcherSkillArrowShower::CreateSkillEffect()
 {
 	UWorld* World = nullptr;
@@ -52,20 +69,23 @@ void UArcherSkillArrowShower::CreateSkillEffect()
 		UEffectObjectPool * EffectObjectPool = World->GetSubsystem<UEffectObjectPool>();
 		if (EffectObjectPool)
 		{
+
+			//Effect 생성 
+			//----------------------------------------------------------------------------------------
 			AArcherArrowShowerSkillEffect * SkillEffect = EffectObjectPool->GetArcherArrowShowerSkillEffect();
 			
-
 			//컨트롤러에게 현재 스킬 범위 Actor의 위치를 받아서 해당 위치에 SkillEffect를 생성
 			AArcherPlayerController* PlayerController = Cast<AArcherPlayerController>(Archer->GetController());
 			if (nullptr == PlayerController)
 				return;
 		
 			AttackLocation.Z += AttackLocationHeightOffset;
-			FTransform SpawnTransform(AttackLocation);
-			
-			
+			FTransform SpawnTransform(AttackLocation);		
+
 			SkillEffect->SpwanNiagaraEffect(SpawnTransform);
-			
+			//----------------------------------------------------------------------------------------
+
+			StartMutliHitSkillEnemyOverlap();
 		}
 	}
 }
@@ -88,14 +108,16 @@ void UArcherSkillArrowShower::CompleteChargingProc()
 	
 	//PlayerForwardVector == PlayerToMouseVector
 	double DorResult = FVector::DotProduct(PlayerForwardVector.GetSafeNormal(), PlayerToMouseVector.GetSafeNormal());
-	if (FMath::IsNearlyEqual(DorResult, 1,FLT_EPSILON))
+	if (FMath::IsNearlyEqual(DorResult, 0, 3))
 	{
-		
+		AttackLocation = PlayerController->GetAttakAreaMarkLocation();
 	}
 	else
 	{
-		double Length = PlayerToMouseVector.Length();
+		AttackLocation = PlayerPos + PlayerForwardVector * PlayerToMouseVector.Length();
 	}
+
+	CollisionLocation = AttackLocation;
 
 	UWorld* World = nullptr;
 	if(nullptr != Archer)
@@ -104,5 +126,4 @@ void UArcherSkillArrowShower::CompleteChargingProc()
 	if(nullptr != World)
 		World->GetTimerManager().SetTimer(EffectCreateTimer, this, &UArcherSkillArrowShower::CreateSkillEffect, EffectTermTime, false);
 
-	AttackLocation = PlayerController->GetAttakAreaMarkLocation();
 }

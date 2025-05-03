@@ -21,6 +21,8 @@ public:
 
 	virtual void ReleaseEffect();
 	
+	virtual void CheckEnemyOverlap() override;
+
 public:
 	void CreateSkillEffect();
 
@@ -35,4 +37,11 @@ private:
 
 	FVector AttackLocation;							//스킬키를 땠을 때의 좌표
 	const float AttackLocationHeightOffset = 100;	//스킬 이펙트 높이조절 변수
+
+
+	FTimerHandle DamageTimer;
+	const float DamageTermTime = 0.25f;
+	int CallDamageTimerNum = 0;
+	const int MaxCallDamageTimerNum = 4;
+
 };

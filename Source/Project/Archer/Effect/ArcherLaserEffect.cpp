@@ -18,13 +18,13 @@ AArcherLaserEffect::AArcherLaserEffect()
 
 	//Cylinder Setting
 	//--------------------------------------------------------------------------
-	/*static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/Player/Archer/Effect/Mesh/SM_Cylinder.SM_Cylinder"));
+	/*static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/GamePlay/Player/Archer/Effect/Mesh/SM_Cylinder.SM_Cylinder"));
 	if (SM_CYLINDER.Succeeded())
 	{
 		Cylinder->SetStaticMesh(SM_CYLINDER.Object);
 	}*/
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/Player/Archer/Effect/Mesh/Shape_NarrowCapsule.Shape_NarrowCapsule"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_CYLINDER(TEXT("/Game/GamePlay/Player/Archer/Effect/Mesh/Shape_NarrowCapsule.Shape_NarrowCapsule"));
 	if (SM_CYLINDER.Succeeded())
 	{
 		Cylinder->SetStaticMesh(SM_CYLINDER.Object);
@@ -37,7 +37,7 @@ AArcherLaserEffect::AArcherLaserEffect()
 
 	//LaserBeam Setting
 	//--------------------------------------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_BEAM(TEXT("/Game/Player/Archer/Effect/Particle/P_Beam.P_Beam"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_BEAM(TEXT("/Game/GamePlay/Player/Archer/Effect/Particle/P_Beam.P_Beam"));
 	if (P_BEAM.Succeeded())
 	{
 		LaserBeam->SetTemplate(P_BEAM.Object);
@@ -75,7 +75,7 @@ void AArcherLaserEffect::UpdateScale(float DeltaTime)
 
 void AArcherLaserEffect::LoadMaterial()
 {
-	UMaterialInstance* Material = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/Player/Archer/Effect/Mesh/Material/M_ArcherLaser_Inst.M_ArcherLaser_Inst"));
+	UMaterialInstance* Material = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Mesh/Material/M_ArcherLaser_Inst.M_ArcherLaser_Inst"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, Cylinder->GetStaticMesh());
 	Cylinder->SetMaterial(0, DynMaterial);
 }

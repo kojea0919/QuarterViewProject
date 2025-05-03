@@ -19,4 +19,6 @@ public:
 
 	virtual bool Use();
 
+public:
+	virtual void CheckEnemyOverlap() override;
 };

@@ -26,7 +26,7 @@ AUIRenderArcher::AUIRenderArcher()
 	SceneCapture->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
 	//---------------------------------------------
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ARCHER(TEXT("/Game/Player/Archer/Mesh/Player.Player"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ARCHER(TEXT("/Game/GamePlay/Player/Archer/Mesh/Player.Player"));
 	if (SK_ARCHER.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SK_ARCHER.Object);

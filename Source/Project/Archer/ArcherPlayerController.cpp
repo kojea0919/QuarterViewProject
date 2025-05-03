@@ -14,39 +14,39 @@
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr), IsSetStoreNPC(false)
 {
-	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
+	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
 		PlayerHUDWidgetClass = UI_PLAYERHUD_C.Class;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
 	if (IA_SLOTQ_INPUTACTION.Succeeded())
 		SlotQInputAction = IA_SLOTQ_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTW_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotW.IA_UseQuickSlotW"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTW_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotW.IA_UseQuickSlotW"));
 	if (IA_SLOTW_INPUTACTION.Succeeded())
 		SlotWInputAction = IA_SLOTW_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTE_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotE.IA_UseQuickSlotE"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTE_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotE.IA_UseQuickSlotE"));
 	if (IA_SLOTE_INPUTACTION.Succeeded())
 		SlotEInputAction = IA_SLOTE_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTR_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotR.IA_UseQuickSlotR"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTR_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotR.IA_UseQuickSlotR"));
 	if (IA_SLOTR_INPUTACTION.Succeeded())
 		SlotRInputAction = IA_SLOTR_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTF_INPUTACTION(TEXT("/Game/Player/Input/IA_UseQuickSlotF.IA_UseQuickSlotF"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTF_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotF.IA_UseQuickSlotF"));
 	if (IA_SLOTF_INPUTACTION.Succeeded())
 		SlotFInputAction = IA_SLOTF_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INVENTORY_INPUTACTION(TEXT("/Game/Player/Input/IA_Inventory.IA_Inventory"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INVENTORY_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_Inventory.IA_Inventory"));
 	if (IA_INVENTORY_INPUTACTION.Succeeded())
 		InventoryKeyInputAction = IA_INVENTORY_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_EQUIPMENT_INPUTACTION(TEXT("/Game/Player/Input/IA_Equipment.IA_Equipment"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_EQUIPMENT_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_Equipment.IA_Equipment"));
 	if (IA_EQUIPMENT_INPUTACTION.Succeeded())
 		EquipmentKeyInputAction = IA_EQUIPMENT_INPUTACTION.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INTERACTION_INPUTACTION(TEXT("/Game/Player/Input/IA_Interaction.IA_Interaction"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_INTERACTION_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_Interaction.IA_Interaction"));
 	if (IA_INTERACTION_INPUTACTION.Succeeded())
 		InteractionInputAction = IA_INTERACTION_INPUTACTION.Object;
 

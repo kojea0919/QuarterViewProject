@@ -30,14 +30,13 @@
 #include "Item/ArmorItem.h"
 #include "UI/Equipment.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "DrawDebugHelpers.h"
 #include "DamageType/ArcherDamageType.h"
 #include "DamageType/ArcherBasicDamageType.h"
 
 AArcher::AArcher()
-	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr),Bow(nullptr), FootDirtEffect(nullptr),
+	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
 	DefaultArmLength(800.0f), DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
-	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f)
+	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -58,18 +57,18 @@ AArcher::AArcher()
 
 	//Input Setting
 	//---------------------------------------------
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext>INPUTMAPPINGCONTEXT(TEXT("/Game/Player/Input/IMC_Player.IMC_Player"));
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext>INPUTMAPPINGCONTEXT(TEXT("/Game/GamePlay/Player/Input/IMC_Player.IMC_Player"));
 	if (INPUTMAPPINGCONTEXT.Succeeded())
 		InputMappingContext = INPUTMAPPINGCONTEXT.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction>IA_MOVESKILL_INPUTACTION(TEXT("/Game/Player/Input/IA_MoveSkill.IA_MoveSkill"));
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_MOVESKILL_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_MoveSkill.IA_MoveSkill"));
 	if (IA_MOVESKILL_INPUTACTION.Succeeded())
 		MoveSkillInputAction = IA_MOVESKILL_INPUTACTION.Object;
 	//---------------------------------------------
 
 	//Curve Setting
 	//---------------------------------------------
-	const ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/Player/Archer/CF_ArcherAttackRotate.CF_ArcherAttackRotate"));
+	const ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/GamePlay/Player/Archer/CF_ArcherAttackRotate.CF_ArcherAttackRotate"));
 
 	if (Curve.Succeeded())
 	{
@@ -86,13 +85,13 @@ AArcher::AArcher()
 	SpringArm->SetRelativeRotation(FRotator(-45.0f, -45.0f, 0.0f));
 	SpringArm->SetUsingAbsoluteRotation(true);
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ARCHER(TEXT("/Game/Player/Archer/Mesh/Player.Player"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ARCHER(TEXT("/Game/GamePlay/Player/Archer/Mesh/Player.Player"));
 	if (SK_ARCHER.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SK_ARCHER.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SKILLRANGE(TEXT("/Game/Player/Archer/RangeMark/Shape_Plane.Shape_Plane"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SKILLRANGE(TEXT("/Game/GamePlay/Player/Archer/RangeMark/Shape_Plane.Shape_Plane"));
 	if (SM_SKILLRANGE.Succeeded())
 	{
 		SkillRangeMarkMesh->SetStaticMesh(SM_SKILLRANGE.Object);
@@ -105,7 +104,7 @@ AArcher::AArcher()
 
 	GetMesh()->SetWorldRotation(FRotator(0.0f, -90.0f, 0.0f));
 
-	static ConstructorHelpers::FClassFinder<UArcherInteractionUI> INTERACTIONUI(TEXT("/Game/Player/UI/UI_ArcherInteraction.UI_ArcherInteraction_C"));
+	static ConstructorHelpers::FClassFinder<UArcherInteractionUI> INTERACTIONUI(TEXT("/Game/GamePlay/Player/UI/UI_ArcherInteraction.UI_ArcherInteraction_C"));
 	if (INTERACTIONUI.Succeeded())
 	{
 		InteractionUI->SetWidgetClass(INTERACTIONUI.Class);
@@ -131,7 +130,7 @@ AArcher::AArcher()
 	//---------------------------------------------
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> ARCHER_ANIM(TEXT("/Game/Player/Archer/Animation/ABP_Archer.ABP_Archer_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> ARCHER_ANIM(TEXT("/Game/GamePlay/Player/Archer/Animation/ABP_Archer.ABP_Archer_C"));
 	if (ARCHER_ANIM.Succeeded())
 		GetMesh()->SetAnimInstanceClass(ARCHER_ANIM.Class);
 	//---------------------------------------------
@@ -190,6 +189,9 @@ void AArcher::Tick(float DeltaTime)
 	//LookMouseDirection이 켜져있으면 마우스 방향으로 회전
 	if(LookMouseDirection)
 		AddRotateMouseDirection(DeltaTime);
+
+	if (IsCameraZoomOut)
+		UpdateZoomOutEffect(DeltaTime);
 }
 
 void AArcher::PostInitializeComponents()
@@ -466,7 +468,7 @@ void AArcher::BasicAttackShot()
 			GetActorQuat(),ObjectQueryParams,
 			FCollisionShape::MakeBox(BasicAttackBoxExtent),
 			Params);
-
+		
 		DrawDebugBox(GetWorld(),
 			BoxLocation,
 			BasicAttackBoxExtent,
@@ -662,6 +664,22 @@ void AArcher::CreateAfterimage()
 	AfterimageEffect->SetActorTickEnabled(true);
 }
 
+void AArcher::PlayCameraShake()
+{
+	if (ArcherSkillCameraShakeClass && ArcherController)
+		ArcherController->ClientStartCameraShake(ArcherSkillCameraShakeClass);
+}
+
+void AArcher::PlayCameraZoomOut(int StartSpringArmLength, float Speed)
+{
+	IsCameraZoomOut = true;
+	ZoomOutSpeed = Speed;
+	CurrentSpringArmLength = StartSpringArmLength;
+
+	if (SpringArm)
+		SpringArm->TargetArmLength = StartSpringArmLength;
+}
+
 void AArcher::RotateMouseDirection()
 {
 	if (nullptr == ArcherController)
@@ -693,47 +711,47 @@ void AArcher::InitMaterial()
 {
 	//Material Setting
 	//---------------------------------------------
-	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_TorsoHead.M_TBSO_TorsoHead"));
+	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_TorsoHead.M_TBSO_TorsoHead"));
 	UMaterialInstanceDynamic * DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(0, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_Arms.M_TBSO_Arms"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_Arms.M_TBSO_Arms"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(1, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_Pants.M_TBSO_Pants"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_Pants.M_TBSO_Pants"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(2, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_LENS_01.M_TBSO_LENS_01"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_LENS_01.M_TBSO_LENS_01"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(3, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_Acc.M_TBSO_Acc"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_Acc.M_TBSO_Acc"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(4, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_Boots.M_TBSO_Boots"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_Boots.M_TBSO_Boots"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(5, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_Weapons.M_TBSO_Weapons"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_Weapons.M_TBSO_Weapons"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(6, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_TorsoInner.M_TBSO_TorsoInner"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_TorsoInner.M_TBSO_TorsoInner"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(7, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
 
-	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Player/Archer/Mesh/Material/M_TBSO_Grenade.M_TBSO_Grenade"));
+	Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Mesh/Material/M_TBSO_Grenade.M_TBSO_Grenade"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, GetMesh());
 	GetMesh()->SetMaterial(8, DynMaterial);
 	DynMaterialArr.Push(DynMaterial);
@@ -783,6 +801,21 @@ void AArcher::AddRotateMouseDirection(float DeltaTime)
 	else
 		AddActorLocalRotation(FRotator(0.0f, -DeltaTime * RotateSpeed, 0.0f));
 	//--------------------------------------
+}
+
+void AArcher::UpdateZoomOutEffect(float DeltaTime)
+{
+	CurrentSpringArmLength += DeltaTime * ZoomOutSpeed;
+
+	float NewArmLength = CurrentSpringArmLength;
+	if (CurrentSpringArmLength >= DefaultArmLength)
+	{
+		NewArmLength = DefaultArmLength;
+		IsCameraZoomOut = false;
+	}
+
+	SpringArm->TargetArmLength = NewArmLength;
+
 }
 
 void AArcher::UpdateRotation(float Alpha)

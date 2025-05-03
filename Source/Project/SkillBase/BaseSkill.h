@@ -14,6 +14,13 @@ enum class ESkillType
 	Charging,
 	Combo
 };
+
+enum class ECollisionType
+{
+	Box,
+	Capsule,
+	Sphere
+};
 /**
  * 
  */
@@ -35,7 +42,9 @@ public:
 	void EndCoolDown();				//CoolTime이 끝나면 호출될 함수
 	//---------------------------
 
-	void CheckEnemyOverlap();
+	virtual void CheckEnemyOverlap();
+	void StartMutliHitSkillEnemyOverlap();
+	void MultiHitSkillProc();
 
 public:
 	void SetMontage(UAnimMontage* InitMontage) { SkillMontage = InitMontage; }
@@ -112,6 +121,31 @@ protected:
 
 	//스킬 QuickSlot
 	class USkillQuickSlot* CurSlot;
+
+	//현재 스킬이 설치형 스킬인지 나타내는 변수
+	bool IsPlacedSkill;			
+
+	//스킬 범위
+	//------------------------
+	TArray<float> CollisionForwardScaleArr;		//캐릭터 앞방향으로 얼만큼 위치에 생성할지 나타내는 변수
+	TArray<float> CollisionHeightOffsetArr;		//높이 조절 Offset
+	TArray<FVector> CollisionExtentArr;			//Collision 크기
+	
+	FVector CollisionLocation;					//충돌체를 생성할 위치
+
+	TArray<ECollisionType> CollisionTypeArr;
+
+	int CurCollisionIdx;
+	//------------------------
+
+	//다단 히트 스킬인 경우는 Timer로 데미지 처리
+	//------------------------
+	FTimerHandle DamageTimer;
+	float DamageTermTime = 0.25f;
+	int CallDamageTimerNum = 0;
+	int MaxCallDamageTimerNum = 4;
+	//------------------------
+
 private:
 	UAnimMontage* SkillMontage;
 
@@ -123,10 +157,5 @@ private:
 	bool IsCoolDown;		//쿨타임 적용 중인지 나타내는 변수
 
 	FTimerHandle CooldownTimerHandle;//쿨타임 적용하기 위한 FTimerHandle
-	//------------------------
-
-	//스킬 범위
-	//------------------------
-	const float ForwardScale;		//캐릭터 앞방향으로 얼만큼 위치에 생성할지
 	//------------------------
 };

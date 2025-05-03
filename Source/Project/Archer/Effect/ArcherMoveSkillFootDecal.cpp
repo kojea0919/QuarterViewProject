@@ -37,7 +37,7 @@ void AArcherMoveSkillFootDecal::BeginPlay()
 
 void AArcherMoveSkillFootDecal::LoadMaterial()
 {
-	UMaterialInstance* BaseDecalMaterial = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/Player/Archer/Effect/MoveSkillDecal/M_FootFrictionMark_Inst.M_FootFrictionMark_Inst"));
+	UMaterialInstance* BaseDecalMaterial = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/MoveSkillDecal/M_FootFrictionMark_Inst.M_FootFrictionMark_Inst"));
 
 	DynMaterial = UMaterialInstanceDynamic::Create(BaseDecalMaterial, this);
 	Decal->SetDecalMaterial(DynMaterial);
@@ -69,6 +69,7 @@ void AArcherMoveSkillFootDecal::UpdateFootDecal(float DeltaTime)
 		EffectObjPool->ReturnArcherMoveSkillFootDecal(this);
 		CurOpacity = 1.0f;
 		CurRate = 1.0f;
+		TargetRate = 0.0f;
 
 		StopUpdateRate = false;
 	}

@@ -22,7 +22,7 @@ public:
 	virtual void End() override;
 
 public:
-	void SetCharginSpeed(float Speed) { ChargingSpeed = Speed; }
+	void SetChargingSpeed(float Speed) { ChargingSpeed = Speed; }
 	void SetTotalChargingTime(float TotalTime) { TotalChargingTime = TotalTime; }
 	void SetSkillGaugeBar(class USkillGaugeBar* Widget) { if (nullptr == SkillGaugeBar) SkillGaugeBar = Widget; }
 	void SetIsLookMouse(bool Enable) { IsLookMouse = Enable; }
