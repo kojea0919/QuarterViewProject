@@ -14,6 +14,10 @@
 #include "Archer/Effect/ArcherLaserEffect.h"
 #include "Archer/Effect/ArcherPulseShotMuzzleEffect.h"
 #include "Monster/Effect/BasicHitEffect.h"
+#include "Monster/Effect/BossSawToothSkillEffect.h"
+#include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
+#include "Monster/Effect/BossMeteorTargetAreaMarkEffect.h"
+#include "Monster/Effect/BossMeteorEffect.h"
 
 
 UEffectObjectPool::UEffectObjectPool()
@@ -43,6 +47,10 @@ void UEffectObjectPool::Init()
 	InitArr(ArcherArrowShowerSkillEffectArr, 1);
 	InitArr(ArcherLaserEffectArr, 1);
 	InitArr(BasicHitEffectArr, 3);
+	InitArr(BossSawToothSkillEffectArr, 1);
+	InitArr(BossSpawnMeteorReadyEffectArr, 1);
+	InitArr(BossMeteorTargetAreaMarkEffectArr, 12);
+	InitArr(BossMeteorEffectArr, 12);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -163,4 +171,44 @@ ABasicHitEffect* UEffectObjectPool::GetBasicHitEffect()
 void UEffectObjectPool::ReturnBasicHitEffect(ABasicHitEffect* ReturnObj)
 {
 	ReturnEffectObject(BasicHitEffectArr, ReturnObj);
+}
+
+ABossSawToothSkillEffect* UEffectObjectPool::GetBossSawToothSkillEffect()
+{
+	return GetEffectObject(BossSawToothSkillEffectArr);
+}
+
+void UEffectObjectPool::ReturnBossSawToothSkillEffect(ABossSawToothSkillEffect* ReturnObj)
+{
+	ReturnEffectObject(BossSawToothSkillEffectArr, ReturnObj);
+}
+
+ABossSpawnMeteorReadyEffect* UEffectObjectPool::GetBossSpawnMeteorReadyEffect()
+{
+	return GetEffectObject(BossSpawnMeteorReadyEffectArr);
+}
+
+void UEffectObjectPool::ReturntBossSpawnMeteorReadyEffect(ABossSpawnMeteorReadyEffect* ReturnObj)
+{
+	ReturnEffectObject(BossSpawnMeteorReadyEffectArr, ReturnObj);
+}
+
+ABossMeteorTargetAreaMarkEffect* UEffectObjectPool::GetBossMeteorTargetAreaMarkEffect()
+{
+	return GetEffectObject(BossMeteorTargetAreaMarkEffectArr);
+}
+
+void UEffectObjectPool::ReturntBossMeteorTargetAreaMarkEffect(ABossMeteorTargetAreaMarkEffect* ReturnObj)
+{
+	ReturnEffectObject(BossMeteorTargetAreaMarkEffectArr, ReturnObj);
+}
+
+ABossMeteorEffect* UEffectObjectPool::GetBossMeteorEffect()
+{
+	return GetEffectObject(BossMeteorEffectArr);
+}
+
+void UEffectObjectPool::ReturnBossMeteorEffect(ABossMeteorEffect* ReturnObj)
+{
+	ReturnEffectObject(BossMeteorEffectArr, ReturnObj);
 }

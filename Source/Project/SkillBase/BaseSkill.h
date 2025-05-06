@@ -159,3 +159,4 @@ private:
 	FTimerHandle CooldownTimerHandle;//쿨타임 적용하기 위한 FTimerHandle
 	//------------------------
 };
+ 

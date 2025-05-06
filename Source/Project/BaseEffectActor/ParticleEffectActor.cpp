@@ -2,10 +2,13 @@
 
 
 #include "ParticleEffectActor.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AParticleEffectActor::AParticleEffectActor()
-	: Effect(nullptr)
+	: Effect(nullptr), EffectEnable(true)
 {
+	Effect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PARTICLE"));
+	RootComponent = Effect;
 }
 
 void AParticleEffectActor::BeginPlay()
@@ -21,9 +24,27 @@ void AParticleEffectActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AParticleEffectActor::OnParticleSystemFinished(UParticleSystemComponent* PSystem)
+void AParticleEffectActor::SetEffectEnable(bool Enable)
 {
-	if (!Effect->IsActive())
+	SetActorHiddenInGame(!Enable);
+
+	if (!Effect)
+		return;
+
+	EffectEnable = Enable;
+	if (Enable)
+	{
+		Effect->Activate(true);
+	}
+	else
+	{
+		Effect->Deactivate();
+	}
+}
+
+void AParticleEffectActor::OnParticleSystemFinished(UParticleSystemComponent* PSystem)
+{	
+	if (!EffectEnable)
 		return;
 
 	OnParticleSystemFinished_Impl();

@@ -10,6 +10,7 @@
 #include "UI/SkillGaugeBar.h"
 #include "UI/Inventory.h"
 #include "Archer/Effect/AttackAreaMarkEffect.h"
+#include "Monster/Boss.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr), IsSetStoreNPC(false)
@@ -50,6 +51,10 @@ AArcherPlayerController::AArcherPlayerController()
 	if (IA_INTERACTION_INPUTACTION.Succeeded())
 		InteractionInputAction = IA_INTERACTION_INPUTACTION.Object;
 
+	//testcode
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_BOSSTESTKEY_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_BossTestKey.IA_BossTestKey"));
+	if (IA_BOSSTESTKEY_INPUTACTION.Succeeded())
+		BossTestKey = IA_BOSSTESTKEY_INPUTACTION.Object;
 
 }
 
@@ -97,6 +102,8 @@ void AArcherPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(InventoryKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInventoryKey);
 		EnhancedInputComponent->BindAction(EquipmentKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseEquipmentKey);
 		EnhancedInputComponent->BindAction(InteractionInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInteractionKey);
+
+		EnhancedInputComponent->BindAction(BossTestKey, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseBossTestKey);//testcode
 	}
 
 
@@ -270,6 +277,14 @@ void AArcherPlayerController::UseInteractionKey()
 	{
 		if(IsSetStoreNPC)
 			PlayerHUD->SetVisibilityStore();
+	}
+}
+
+void AArcherPlayerController::UseBossTestKey()
+{
+	if (CurrentBoss)
+	{
+		CurrentBoss->SpawnMeteorSkill();
 	}
 }
 

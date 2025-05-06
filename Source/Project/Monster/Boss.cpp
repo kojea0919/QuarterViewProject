@@ -3,17 +3,71 @@
 
 #include "Monster/Boss.h"
 #include "Engine/DamageEvents.h"
-#include "DamageType/ArcherDamageType.h"
 #include "WorldSubSystem/EffectObjectPool.h"
+#include "Monster/Animation/BossAnimInstance.h"
 #include "Monster/Effect/BasicHitEffect.h"
-#include "UI/DamageText.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"	
+#include "Archer/Archer.h"
+#include "Archer/ArcherPlayerController.h"
+#include "UI/DamageText.h"
+#include "DamageType/ArcherDamageType.h"
+#include "Monster/Effect/BossSawToothSkillEffect.h"
+#include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
+#include "Monster/Effect/BossMeteorTargetAreaMarkEffect.h"
 
 ABoss::ABoss()
+	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(500.f), CurrentBasicComboAttackIdx(0),
+	BasicComboAttackMaxIdx(3)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Components Create
+	//---------------------------------------------
+	BossLowerBodyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LOWERBODYEFFECT"));
+	WeaponEffect = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("WEAPONEFFECT"));
+	//---------------------------------------------
+
+	//Components Init
+	//---------------------------------------------
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_BOSS(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.Sevarog"));
+	if (SK_BOSS.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(SK_BOSS.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_LOWERBODYEFFECT(TEXT("/Game/ParagonSevarog/FX/Particles/Abilities/SoulStackPassive/FX/P_ShadowTrailsCharSelect.P_ShadowTrailsCharSelect"));
+	if (PS_LOWERBODYEFFECT.Succeeded())
+	{
+		BossLowerBodyEffect->SetTemplate(PS_LOWERBODYEFFECT.Object);
+	}
+	BossLowerBodyEffect->SetupAttachment(GetMesh());
+	BossLowerBodyEffect->SetRelativeLocation(FVector(0.0f, 0.0f, 90.0f));
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_WEAPONEFFECT(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Effects/P_Sevarog_Homescreen_Hammer.P_Sevarog_Homescreen_Hammer"));
+	if (PS_WEAPONEFFECT.Succeeded())
+	{
+		WeaponEffect->SetTemplate(PS_WEAPONEFFECT.Object);
+	}
+	WeaponEffect->SetupAttachment(GetMesh(), TEXT("FX_Trail_R_01"));
+
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
+
+	//---------------------------------------------
+
+}
+
+void ABoss::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	UBossAnimInstance* Anim = Cast<UBossAnimInstance>(GetMesh()->GetAnimInstance());
+	if (Anim)
+		BossAnim = Anim;
 }
 
 float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -36,25 +90,153 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		break;
 	}
 
-
 	return 0.0f;
+}
+
+float ABoss::GetDistanceToPlayer() const
+{
+	float Distance = 0.0f;
+	if (Player)
+	{
+		Distance = (Player->GetActorLocation() - GetActorLocation()).Length();
+	}
+	return Distance;
+}
+
+bool ABoss::CanBasicComboAttack() const
+{
+	if (GetDistanceToPlayer() < BasicComboAttackRange)
+		return true;
+	
+	return false;
 }
 
 void ABoss::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//Player Setting
+	//------------------------------
+	AArcher* TargetPlayer = Cast<AArcher>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (TargetPlayer)
+	{
+		Player = TargetPlayer;
+	
+		AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
+		if (ArcherController)
+			ArcherController->SetBoss(this);
+	}
+	//------------------------------
+		
 }
 
 void ABoss::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	if (RotateToPlayer)
+	{
+		LookPlayer(DeltaTime);
+	}
 }
 
 void ABoss::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
+void ABoss::BasicComboAttack()
+{
+	if (BossAnim)
+	{
+		BossAnim->PlayBasicComboAttackMontage();
+		CurrentBasicComboAttackIdx = 0;
+	}
+}
+
+void ABoss::SpawnSawToothAttack()
+{
+	if (BossAnim)
+	{
+		BossAnim->PlaySpawnSawToothMontage();
+	}
+}
+
+void ABoss::SpawnSawTooth()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	if (nullptr == Player)
+		return;
+
+	//플레이어와 특정 거리 이내에 톱니 생성
+	//------------------------------------------------------------------------
+	FVector PlayerLocation = Player->GetActorLocation();
+	FVector2D RandomDir = FMath::RandPointInCircle(1.0f);
+	RandomDir.Normalize();
+
+	FVector SawSpawnLocation = PlayerLocation + FVector(RandomDir.X, RandomDir.Y, 0.0f) * SawToothAttackRange;
+	//------------------------------------------------------------------------
+
+	ABossSawToothSkillEffect * SawToothEffect = EffectObjectPool->GetBossSawToothSkillEffect();
+	FVector SawToPlayerVector = PlayerLocation - SawSpawnLocation;
+	SawToPlayerVector.Z = 0;
+	FRotator SawToPlayerRotator = SawToPlayerVector.GetSafeNormal().Rotation();
+
+
+	SawToothEffect->SetActorLocation(SawSpawnLocation - FVector(0.0f,0.0f,90.f));
+	SawToothEffect->SetActorRotation(SawToPlayerRotator);
+	SawToothEffect->StartTelegraphRectangle();
+
+}
+
+void ABoss::SpawnMeteorSkill()
+{
+	if (BossAnim)
+	{
+		BossAnim->PlaySpawnMeteorMontage();
+	}
+}
+
+void ABoss::ReadyToSpawnMeteor()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	ABossSpawnMeteorReadyEffect* Effect = EffectObjectPool->GetBossSpawnMeteorReadyEffect();
+	FTransform BossTransform = GetActorTransform();
+	BossTransform.AddToTranslation(FVector(0.0f, 0.0f, -89.f));
+	Effect->SpwanNiagaraEffect(BossTransform);
+}
+
+void ABoss::SpawnMeteor()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+
+	ABossMeteorTargetAreaMarkEffect* Effect = EffectObjectPool->GetBossMeteorTargetAreaMarkEffect();
+
+	//보스와 특정 거리 이내에 메테오 생성
+	//------------------------------------------------------------------------
+	FVector BossLocation = GetActorLocation();
+	FVector2D RandomDir = FMath::RandPointInCircle(1.0f);
+	RandomDir.Normalize();
+
+	float Range = FMath::RandRange(MeteorSpawnMinDist, MeteorSpawnMaxDist);
+
+	FVector MeteorTargetLocation = BossLocation + FVector(RandomDir.X, RandomDir.Y, 0.0f) * Range + FVector(0.0f,0.0f,-89.f);
+	//------------------------------------------------------------------------
+
+	FTransform BossTransform = GetActorTransform();
+	BossTransform.SetLocation(MeteorTargetLocation);
+	Effect->SpwanNiagaraEffect(BossTransform);
 
 }
 
@@ -109,5 +291,30 @@ FVector ABoss::GetRandomVector()
 	ReturnVector.Y = FMath::RandRange(-Range, Range);
 	ReturnVector.Z = FMath::RandRange(-Range, Range);
 	return ReturnVector;
+}
+
+void ABoss::LookPlayer(float DeltaTime)
+{
+	if (nullptr == Player)
+		return;
+
+
+	//플레이어가 오른쪽에 있는지 왼쪽에 있는지 판별
+	//-----------------------------------------
+	FVector BossForward = GetActorForwardVector();
+	FVector BossToPlayerVector = (Player->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+	if (BossForward.Equals(BossToPlayerVector, 0.07f))
+	{
+		RotateToPlayer = false;
+		return;
+	}
+
+	FVector Cross = FVector::CrossProduct(BossForward, BossToPlayerVector);
+
+	float RotationDir = Cross.Z > 0 ? 1.0f : -1.0f;
+	
+	AddActorWorldRotation(FRotator(0.0f, DeltaTime * RotationDir * RotateSpeed, 0.0f));
+	//-----------------------------------------
 }
 

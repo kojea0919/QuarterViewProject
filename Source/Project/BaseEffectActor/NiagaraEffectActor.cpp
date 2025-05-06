@@ -6,41 +6,74 @@
 #include "NiagaraFunctionLibrary.h"
 #include "WorldSubSystem/EffectObjectPool.h"
 
+ANiagaraEffectActor::ANiagaraEffectActor()
+	: EffectEnable(true)
+{
+
+}
+
 void ANiagaraEffectActor::SpwanNiagaraEffect(const FTransform& Transform)
 {
 	//Spawn NiagaraComp
-	NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, Transform.GetLocation(),
-		Transform.GetRotation().Rotator(), FVector(1.0f));
+	if (nullptr == NiagaraComp)
+	{
+		NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, Transform.GetLocation(),
+			Transform.GetRotation().Rotator(), FVector(1.0f),false);
 
-	RootComponent = NiagaraComp;
+		RootComponent = NiagaraComp;
 
-	NiagaraComp->OnSystemFinished.AddDynamic(this, &ANiagaraEffectActor::OnNiagaraSystemFinished);
+		NiagaraComp->OnSystemFinished.AddDynamic(this, &ANiagaraEffectActor::OnNiagaraSystemFinished);
+	}
+	else
+	{
+		NiagaraComp->SetWorldLocationAndRotation(Transform.GetLocation(), Transform.GetRotation().Rotator());
+	}
 }
 
 void ANiagaraEffectActor::SpawnAndAttachNiagaraEffect(USkeletalMeshComponent* TargetMesh, FName SocketName)
 {
 	//Spawn NiagaraComp
-	FTransform SocketTransform = TargetMesh->GetSocketTransform(SocketName);
-	NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraEffect, TargetMesh, SocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,true);
-	
-	RootComponent = NiagaraComp;
+	if (nullptr == NiagaraComp)
+	{
+		FTransform SocketTransform = TargetMesh->GetSocketTransform(SocketName);
+		NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraEffect, TargetMesh, SocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
 
-	NiagaraComp->AttachToComponent(TargetMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+		RootComponent = NiagaraComp;
 
-	NiagaraComp->OnSystemFinished.AddDynamic(this, &ANiagaraEffectActor::OnNiagaraSystemFinished);
+		NiagaraComp->AttachToComponent(TargetMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
 
+		NiagaraComp->OnSystemFinished.AddDynamic(this, &ANiagaraEffectActor::OnNiagaraSystemFinished);
+	}
+	else
+	{
+		NiagaraComp->AttachToComponent(TargetMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+	}
 }
 
 void ANiagaraEffectActor::SetEffectEnable(bool Enable)
 {
-	if (NiagaraComp)
+	SetActorHiddenInGame(!Enable);
+	
+	if (!NiagaraComp)
+		return;
+
+	EffectEnable = Enable;
+	if (Enable)
 	{
-		NiagaraComp->SetVisibility(Enable);
+		NiagaraComp->ResetSystem();
+		NiagaraComp->Activate(true);
+	}
+	else
+	{
+		NiagaraComp->Deactivate();
 	}
 }
 
 void ANiagaraEffectActor::OnNiagaraSystemFinished(UNiagaraComponent* PSystem)
 {
+	if (!EffectEnable)
+		return;
+
 	OnNiagaraSystemFinished_Impl();
 }
 

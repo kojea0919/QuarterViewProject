@@ -58,6 +58,18 @@ public:
 	class ABasicHitEffect* GetBasicHitEffect();
 	void ReturnBasicHitEffect(class ABasicHitEffect* ReturnObj);
 
+	class ABossSawToothSkillEffect* GetBossSawToothSkillEffect();
+	void ReturnBossSawToothSkillEffect(class ABossSawToothSkillEffect* ReturnObj);
+
+	class ABossSpawnMeteorReadyEffect* GetBossSpawnMeteorReadyEffect();
+	void ReturntBossSpawnMeteorReadyEffect(class ABossSpawnMeteorReadyEffect* ReturnObj);
+
+	class ABossMeteorTargetAreaMarkEffect* GetBossMeteorTargetAreaMarkEffect();
+	void ReturntBossMeteorTargetAreaMarkEffect(class ABossMeteorTargetAreaMarkEffect* ReturnObj);
+
+	class ABossMeteorEffect* GetBossMeteorEffect();
+	void ReturnBossMeteorEffect(class ABossMeteorEffect* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -105,6 +117,18 @@ private:
 
 	UPROPERTY()
 	TArray<class ABasicHitEffect*> BasicHitEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossSawToothSkillEffect*> BossSawToothSkillEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossSpawnMeteorReadyEffect*> BossSpawnMeteorReadyEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossMeteorTargetAreaMarkEffect*> BossMeteorTargetAreaMarkEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossMeteorEffect*> BossMeteorEffectArr;
 };
 
 

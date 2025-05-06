@@ -15,6 +15,9 @@ class PROJECT_API ANiagaraEffectActor : public ABaseEffectActor
 	GENERATED_BODY()
 
 public:
+	ANiagaraEffectActor();
+
+public:
 	virtual void SpwanNiagaraEffect(const FTransform& Transform);
 
 	virtual void SpawnAndAttachNiagaraEffect(class USkeletalMeshComponent* TargetMesh, FName SocketName);
@@ -35,5 +38,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = Effect)
 	class UNiagaraComponent* NiagaraComp;
+
+	bool EffectEnable;
 	
 };

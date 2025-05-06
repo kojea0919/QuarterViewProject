@@ -8,7 +8,7 @@
 
 ABasicHitEffect::ABasicHitEffect()
 {
-	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Enemy/Effect/NS_BasicHit.NS_BasicHit"));
+	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Enemy/Effect/Niagara/NS_BasicHit.NS_BasicHit"));
 }
 
 void ABasicHitEffect::SpwanNiagaraEffect(const FTransform& Transform)

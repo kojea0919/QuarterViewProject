@@ -20,12 +20,10 @@ void UArcherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	//CurrentSpeed Setting
 	//-------------------------------
-	APawn* Pawn = TryGetPawnOwner();
-	if (::IsValid(Pawn))
+	if (Archer)
 	{
-		CurrentSpeed = Pawn->GetVelocity().Size();
+		CurrentSpeed = Archer->GetVelocity().Size();
 	}
-
 	//-------------------------------
 }
 

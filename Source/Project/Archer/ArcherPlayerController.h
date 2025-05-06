@@ -55,6 +55,8 @@ public:
 	void UseEquipmentKey();
 	void UseInteractionKey();
 
+	void UseBossTestKey(); //testcode
+
 	class USkillGaugeBar* GetSkillGaugeBar() const;
 
 	void SetAreaMarkEffectVisible(bool Enable);
@@ -66,6 +68,8 @@ public:
 
 	class UInventory* GetInventory();
 	class UEquipment* GetEquipment();
+
+	void SetBoss(class ABoss* Boss) { if (Boss) CurrentBoss = Boss; }
 
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
@@ -115,10 +119,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* InteractionInputAction;
 
+	//testcode
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* BossTestKey;
+
 	UPROPERTY(VisibleAnywhere)
 	class AAttackAreaMarkEffect* AreaMarkEffect;
 
 	bool IsSetStoreNPC;		//현재 Store에 NPC가 배정이 됐는지 나타내는 변수
 
-
+	//보스
+	class ABoss* CurrentBoss;
 };

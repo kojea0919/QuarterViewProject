@@ -65,8 +65,8 @@ public:
 	void UnEquipGlove();
 	void UnEquipWeapon();
 	
-	const UBaseItem* GetWeaponItem() const;
-	const UBaseItem* GetArmorItem(EArmorType ArmorType) const;
+	const class UBaseItem* GetWeaponItem() const;
+	const class UBaseItem* GetArmorItem(EArmorType ArmorType) const;
 
 	void SetVisibleInteractionUI(bool Enable);
 

@@ -25,11 +25,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	bool IsActive() { return Effect->IsActive(); }
-	void SetActive(bool Active) { Effect->SetActive(Active); }
 	void SetAutoActive(bool Active) { Effect->SetAutoActivate(Active); }
 
-	void SetEffectEnable(bool Enable) { Effect->SetActive(Enable); }
+	void SetEffectEnable(bool Enable);
 
 public:
 	//파티클이 끝나면 호출될 함수로 OnParticleSystemFinished를 등록
@@ -42,5 +40,7 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Effect)
 	UParticleSystemComponent* Effect;
+
+	bool EffectEnable;
 	
 };
