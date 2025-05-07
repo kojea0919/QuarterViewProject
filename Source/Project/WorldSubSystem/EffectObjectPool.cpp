@@ -18,6 +18,8 @@
 #include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
 #include "Monster/Effect/BossMeteorTargetAreaMarkEffect.h"
 #include "Monster/Effect/BossMeteorEffect.h"
+#include "Monster/Effect/BossMeteorOverlapEffect.h"
+#include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
 
 
 UEffectObjectPool::UEffectObjectPool()
@@ -51,6 +53,8 @@ void UEffectObjectPool::Init()
 	InitArr(BossSpawnMeteorReadyEffectArr, 1);
 	InitArr(BossMeteorTargetAreaMarkEffectArr, 12);
 	InitArr(BossMeteorEffectArr, 12);
+	InitArr(BossMeteorOverlapEffectArr, 12);
+	InitArr(BossStoneSpikeAreaMarkEffectArr, 1);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -211,4 +215,24 @@ ABossMeteorEffect* UEffectObjectPool::GetBossMeteorEffect()
 void UEffectObjectPool::ReturnBossMeteorEffect(ABossMeteorEffect* ReturnObj)
 {
 	ReturnEffectObject(BossMeteorEffectArr, ReturnObj);
+}
+
+ABossMeteorOverlapEffect* UEffectObjectPool::GetBossMeteorOverlapEffect()
+{
+	return GetEffectObject(BossMeteorOverlapEffectArr);
+}
+
+void UEffectObjectPool::ReturnBossMeteorOverlapEffect(ABossMeteorOverlapEffect* ReturnObj)
+{
+	ReturnEffectObject(BossMeteorOverlapEffectArr, ReturnObj);
+}
+
+ABossStoneSpikeAreaMarkEffect* UEffectObjectPool::GetBossStoneSpikeAreaMarkEffect()
+{
+	return GetEffectObject(BossStoneSpikeAreaMarkEffectArr);
+}
+
+void UEffectObjectPool::ReturnBossStoneSpikeAreaMarkEffect(ABossStoneSpikeAreaMarkEffect* ReturnObj)
+{
+	ReturnEffectObject(BossStoneSpikeAreaMarkEffectArr, ReturnObj);
 }

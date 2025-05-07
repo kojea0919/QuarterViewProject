@@ -24,5 +24,6 @@ void ABossSpawnMeteorReadyEffect::SpwanNiagaraEffect(const FTransform& Transform
 	{
 		NiagaraComp->SetVariableFloat(FName("User.Scale"), TelegraphRadius);
 		NiagaraComp->SetVariableFloat(FName("User.LifeTime"), TelegraphRectangleLifeTime);
+		NiagaraComp->SetVariableFloat(FName("User.CircleAngle"), 360);
 	}
 }

@@ -3,12 +3,14 @@
 
 #include "Bow.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "WorldSubSystem/EffectObjectPool.h"
 #include "Archer/Effect/ArcherBasicAttackArrowEffect.h"
 #include "Archer/Effect/ArcherSpecialAttackArrowEffect.h"
 #include "Archer/Effect/ArcherBasicAttackMuzzleEffect.h"
-#include "BaseEffectActor/NiagaraEffectActor.h"
+#include "BaseEffectActor/ParticleEffectActor.h"
 #include "Archer/Effect/ArcherBigArrowEffect.h"
+
 
 ABow::ABow()
 	: DynMaterial(nullptr)
@@ -16,18 +18,38 @@ ABow::ABow()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Bow = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BOW"));
+	BasicWeaponEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BASICWEAPONEFFECT"));
+	SkillWeaponEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SKILLWEAPONEFFECT"));
 
 	RootComponent = Bow;
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM_BOW(TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/Bow2.Bow2"));
 	if (SM_BOW.Succeeded())
 		Bow->SetSkeletalMesh(SM_BOW.Object);
 
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_BASICWEAPONEFFECT(TEXT("/Game/ParagonSparrow/FX/Particles/Sparrow/Abilities/Ultimate/FX/P_SparrowBuff_Homescreen.P_SparrowBuff_Homescreen"));
+	if (PS_BASICWEAPONEFFECT.Succeeded())
+	{
+		BasicWeaponEffect->SetTemplate(PS_BASICWEAPONEFFECT.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_SKILLWEAPONEFFECT(TEXT("/Game/ParagonSparrow/FX/Particles/Sparrow/Abilities/Ultimate/FX/P_SparrowBuff.P_SparrowBuff"));
+	if (PS_SKILLWEAPONEFFECT.Succeeded())
+	{
+		SkillWeaponEffect->SetTemplate(PS_SKILLWEAPONEFFECT.Object);
+	}
+
 	Bow->SetCollisionProfileName(TEXT("NoCollision"));
+	
+	BasicWeaponEffect->SetupAttachment(Bow, TEXT("WeaponEffectPos"));
+	SkillWeaponEffect->SetupAttachment(Bow, TEXT("WeaponEffectPos"));
+
 }
 
 void ABow::BeginPlay()
 {
 	Super::BeginPlay();	
+
+	BasicWeaponEffect->Deactivate();
 }
 
 void ABow::PostInitializeComponents()
@@ -59,6 +81,7 @@ void ABow::BasicAttack()
 	//-----------------------------------------------------------
 
 	AArcherBasicAttackMuzzleEffect* MuzzleEffect = EffectObjPool->GetArcherBasicAttackMuzzleEffect();
+
 	SpawnMuzzle(MuzzleEffect);
 }
 
@@ -173,13 +196,9 @@ void ABow::SpawnArrow(ANiagaraEffectActor* ArrowEffect, bool UsePlayerDir)
 	SpawnArrowAddYawAngle(ArrowEffect, 0, UsePlayerDir);
 }
 
-void ABow::SpawnMuzzle(ANiagaraEffectActor* MuzzleEffect)
+void ABow::SpawnMuzzle(AParticleEffectActor* MuzzleEffect)
 {
-	FTransform BowTransform = GetActorTransform();
-	FTransform MuzzleTransform = BowTransform;
-	MuzzleTransform.SetLocation(BowTransform.GetLocation() + GetActorForwardVector() * 30.0f);
-
-	MuzzleEffect->SpwanNiagaraEffect(MuzzleTransform);
+	MuzzleEffect->SetActorTransform(Bow->GetSocketTransform(TEXT("MuzzlePos")));
 }
 
 void ABow::SpawnArrowAddYawAngle(ANiagaraEffectActor* ArrowEffect, float AddYawAngle, bool UsePlayerDir)

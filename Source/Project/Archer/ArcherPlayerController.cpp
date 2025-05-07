@@ -284,8 +284,9 @@ void AArcherPlayerController::UseBossTestKey()
 {
 	if (CurrentBoss)
 	{
-		CurrentBoss->SpawnMeteorSkill();
+		CurrentBoss->StoneSpike();
 	}
+	
 }
 
 USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const

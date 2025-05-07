@@ -18,9 +18,9 @@ void ABossMeteorTargetAreaMarkEffect::OnNiagaraSystemFinished_Impl()
 	EffectObjPool->ReturntBossMeteorTargetAreaMarkEffect(this);
 	
 	ABossMeteorEffect * Meteor = EffectObjPool->GetBossMeteorEffect();
-	Meteor->SetActorLocation(GetActorLocation() + FVector(0.0f, 0.0f, 1200.0f));
+	Meteor->SetActorLocation(GetActorLocation() + FVector(0.0f, 0.0f, 1600.0f));
 	Meteor->SetActorRotation(FRotator(-90.0f, 0.0f, 0.0f));
-
+	Meteor->SetOverlapEventOn();
 }
 
 void ABossMeteorTargetAreaMarkEffect::SpwanNiagaraEffect(const FTransform& Transform)
@@ -31,5 +31,6 @@ void ABossMeteorTargetAreaMarkEffect::SpwanNiagaraEffect(const FTransform& Trans
 	{
 		NiagaraComp->SetVariableFloat(FName("User.Scale"), TelegraphRadius);
 		NiagaraComp->SetVariableFloat(FName("User.LifeTime"), TelegraphRectangleLifeTime);
+		NiagaraComp->SetVariableFloat(FName("User.CircleAngle"), 360);
 	}
 }

@@ -18,6 +18,8 @@
 #include "Monster/Effect/BossSawToothSkillEffect.h"
 #include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
 #include "Monster/Effect/BossMeteorTargetAreaMarkEffect.h"
+#include "Monster/BossAIController.h"
+#include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(500.f), CurrentBasicComboAttackIdx(0),
@@ -28,7 +30,8 @@ ABoss::ABoss()
 	//Components Create
 	//---------------------------------------------
 	BossLowerBodyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LOWERBODYEFFECT"));
-	WeaponEffect = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("WEAPONEFFECT"));
+	WeaponEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("WEAPONEFFECT"));
+	DashSkillEffect = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("DASHSKILLEFFECT"));
 	//---------------------------------------------
 
 	//Components Init
@@ -54,6 +57,13 @@ ABoss::ABoss()
 	}
 	WeaponEffect->SetupAttachment(GetMesh(), TEXT("FX_Trail_R_01"));
 
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_DASHSKILLEFFECT(TEXT("/Game/Luos8Elements/Particles/Dark/Par_4E_Dark_Atk_01.Par_4E_Dark_Atk_01"));
+	if (PS_DASHSKILLEFFECT.Succeeded())
+	{
+		DashSkillEffect->SetTemplate(PS_DASHSKILLEFFECT.Object);
+	}
+	DashSkillEffect->SetupAttachment(GetCapsuleComponent());
+	DashSkillEffect->SetWorldScale3D(FVector(3.0f));
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
@@ -127,6 +137,8 @@ void ABoss::BeginPlay()
 			ArcherController->SetBoss(this);
 	}
 	//------------------------------
+
+	DashSkillEffect->Deactivate();
 		
 }
 
@@ -238,6 +250,72 @@ void ABoss::SpawnMeteor()
 	BossTransform.SetLocation(MeteorTargetLocation);
 	Effect->SpwanNiagaraEffect(BossTransform);
 
+}
+
+void ABoss::DashSkill()
+{
+	if (BossAnim)
+	{
+		BossAnim->PlayDashSkillStartMontae();
+		RotateToPlayer = true;
+	}
+}
+
+void ABoss::Dash()
+{
+	UWorld* World = GetWorld();
+
+	if (nullptr != World)
+		World->GetTimerManager().SetTimer(DashEffectCreateTimer, this, &ABoss::CreateDashEffect, DashEffectTermTime, false);
+	
+	GetCharacterMovement()->MaxWalkSpeed = 3500.0f;
+
+	ABossAIController * AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->MoveToLocation(Player->GetActorLocation());
+	}
+}
+
+void ABoss::DashEnd()
+{
+	DashSkillEffect->Deactivate();
+	GetMesh()->SetVisibility(true);
+	BossLowerBodyEffect->Activate();
+	WeaponEffect->Activate();
+
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+	//후속타 진행
+	if (BossAnim)
+		BossAnim->PlayBigSwingMontage();
+}
+
+void ABoss::CreateDashEffect()
+{
+	DashSkillEffect->Activate();
+	GetMesh()->SetVisibility(false);
+	BossLowerBodyEffect->Deactivate();
+	WeaponEffect->Deactivate();
+}
+
+void ABoss::StoneSpike()
+{
+	if (BossAnim)
+		BossAnim->PlayStoneSpikeMontage();
+}
+
+void ABoss::SpawnStoneSpikeMarkEffect()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	ABossStoneSpikeAreaMarkEffect* Effect = EffectObjectPool->GetBossStoneSpikeAreaMarkEffect();
+	FTransform BossTransform = GetActorTransform();
+	BossTransform.SetLocation(GetMesh()->GetSocketLocation(TEXT("StoneSpikePos")));
+
+	Effect->SpwanNiagaraEffect(BossTransform);
 }
 
 void ABoss::BasicTypeDamageProc()

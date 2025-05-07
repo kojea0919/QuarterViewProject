@@ -70,6 +70,11 @@ public:
 	class ABossMeteorEffect* GetBossMeteorEffect();
 	void ReturnBossMeteorEffect(class ABossMeteorEffect* ReturnObj);
 
+	class ABossMeteorOverlapEffect* GetBossMeteorOverlapEffect();
+	void ReturnBossMeteorOverlapEffect(class ABossMeteorOverlapEffect* ReturnObj);
+
+	class ABossStoneSpikeAreaMarkEffect* GetBossStoneSpikeAreaMarkEffect();
+	void ReturnBossStoneSpikeAreaMarkEffect(class ABossStoneSpikeAreaMarkEffect* ReturnObj);
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -129,6 +134,12 @@ private:
 
 	UPROPERTY()
 	TArray<class ABossMeteorEffect*> BossMeteorEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossMeteorOverlapEffect*> BossMeteorOverlapEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossStoneSpikeAreaMarkEffect*> BossStoneSpikeAreaMarkEffectArr;
 };
 
 

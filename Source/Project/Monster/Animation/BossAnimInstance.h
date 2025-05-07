@@ -25,6 +25,9 @@ public:
 	void PlayBasicComboAttackMontage();
 	void PlaySpawnSawToothMontage();
 	void PlaySpawnMeteorMontage();
+	void PlayDashSkillStartMontae();
+	void PlayBigSwingMontage();
+	void PlayStoneSpikeMontage();
 
 private:
 	UFUNCTION()
@@ -45,6 +48,12 @@ private:
 	UFUNCTION()
 	void AnimNotify_SpawnMeteor();
 
+	UFUNCTION()
+	void AnimNotify_BossDash();
+
+	UFUNCTION()
+	void AnimNotify_SpawnStoneSpikeMarkEffect();
+
 private:
 	void InitMontage();
 
@@ -60,6 +69,14 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* SpawnMeteorMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* DashSkillStartMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* BigSwingMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* StoneSpikeMontage;
 private:
 	class ABoss* Boss;
 

@@ -46,7 +46,7 @@ private:
 	//활의 앞방향으로 쏘려면 false로
 	void SpawnArrowAddYawAngle(class ANiagaraEffectActor* ArrowEffect, float AddYawAngle, bool UsePlayerDir = true);
 	//--------------------------------------------------------------------------------------------------
-	void SpawnMuzzle(class ANiagaraEffectActor* MuzzleEffect);
+	void SpawnMuzzle(class AParticleEffectActor* MuzzleEffect);
 
 
 private:
@@ -55,4 +55,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Material)
 	UMaterialInstanceDynamic* DynMaterial;
+
+	//무기 이펙트
+	UPROPERTY(VisibleAnywhere, Category = Effect)
+	UParticleSystemComponent* BasicWeaponEffect;
+
+	UPROPERTY(VisibleAnywhere, Category = Effect)
+	UParticleSystemComponent* SkillWeaponEffect;
 };

@@ -57,6 +57,30 @@ void UBossAnimInstance::PlaySpawnMeteorMontage()
 	}
 }
 
+void UBossAnimInstance::PlayDashSkillStartMontae()
+{
+	if (!Montage_IsPlaying(DashSkillStartMontage))
+	{
+		Montage_Play(DashSkillStartMontage);
+	}
+}
+
+void UBossAnimInstance::PlayBigSwingMontage()
+{
+	if (!Montage_IsPlaying(BigSwingMontage))
+	{
+		Montage_Play(BigSwingMontage);
+	}
+}
+
+void UBossAnimInstance::PlayStoneSpikeMontage()
+{
+	if (!Montage_IsPlaying(StoneSpikeMontage))
+	{
+		Montage_Play(StoneSpikeMontage);
+	}
+}
+
 void UBossAnimInstance::AnimNotify_RotateStart()
 {
 	if (Boss)
@@ -110,6 +134,22 @@ void UBossAnimInstance::AnimNotify_SpawnMeteor()
 	}
 }
 
+void UBossAnimInstance::AnimNotify_BossDash()
+{
+	if (Boss)
+	{
+		Boss->Dash();
+	}
+}
+
+void UBossAnimInstance::AnimNotify_SpawnStoneSpikeMarkEffect()
+{
+	if (Boss)
+	{
+		Boss->SpawnStoneSpikeMarkEffect();
+	}
+}
+
 void UBossAnimInstance::InitMontage()
 {
 	//Basic Combo Attck Montage Init
@@ -121,7 +161,7 @@ void UBossAnimInstance::InitMontage()
 	}
 	//-------------------------------------------
 
-	//Spawn Saw Tooth Animation Init
+	//Spawn Saw Tooth Montage Init
 	//-------------------------------------------
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SPAWNSAWTOOTH_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossSpawnSawToothMontage.BossSpawnSawToothMontage"));
 	if (SPAWNSAWTOOTH_MONTAGE.Succeeded())
@@ -130,12 +170,39 @@ void UBossAnimInstance::InitMontage()
 	}
 	//-------------------------------------------
 
-	//Spawn Meteor Animation Init
+	//Spawn Meteor Montage Init
 	//-------------------------------------------
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SPAWNMETEOR_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossSpawnMeteorMontage.BossSpawnMeteorMontage"));
 	if (SPAWNMETEOR_MONTAGE.Succeeded())
 	{
 		SpawnMeteorMontage = SPAWNMETEOR_MONTAGE.Object;
+	}
+	//-------------------------------------------
+
+	//Dash Skill Start Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DASHSKILLSTART_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossDashSkillStartMontage.BossDashSkillStartMontage"));
+	if (DASHSKILLSTART_MONTAGE.Succeeded())
+	{
+		DashSkillStartMontage = DASHSKILLSTART_MONTAGE.Object;
+	}
+	//-------------------------------------------
+
+	//Big Swing Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> BIGSWING_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossBigSwing.BossBigSwing"));
+	if (BIGSWING_MONTAGE.Succeeded())
+	{
+		BigSwingMontage = BIGSWING_MONTAGE.Object;
+	}
+	//-------------------------------------------
+
+	//Stone Spike Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> STONESPIKE_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossStoneSpike.BossStoneSpike"));
+	if (STONESPIKE_MONTAGE.Succeeded())
+	{
+		StoneSpikeMontage = STONESPIKE_MONTAGE.Object;
 	}
 	//-------------------------------------------
 }

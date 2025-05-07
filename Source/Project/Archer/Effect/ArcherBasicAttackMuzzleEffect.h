@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseEffectActor/NiagaraEffectActor.h"
+#include "BaseEffectActor/ParticleEffectActor.h"
 #include "ArcherBasicAttackMuzzleEffect.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT_API AArcherBasicAttackMuzzleEffect : public ANiagaraEffectActor
+class PROJECT_API AArcherBasicAttackMuzzleEffect : public AParticleEffectActor
 {
 	GENERATED_BODY()
 
@@ -18,5 +18,5 @@ public:
 	AArcherBasicAttackMuzzleEffect();
 
 public:
-	virtual void OnNiagaraSystemFinished_Impl();
+	virtual void OnParticleSystemFinished_Impl();
 };

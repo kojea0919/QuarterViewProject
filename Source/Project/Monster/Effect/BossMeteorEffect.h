@@ -22,11 +22,21 @@ public:
 
 	virtual void OnParticleSystemFinished_Impl() override;
 
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+public:
+	void SetOverlapEventOn();
+
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* MeteorCollider;
 
-	const float FallSpeed = 2000;
+	const float FallSpeed = 3000;
 
 	//현재 이동 거리
 	float CurMoveDistance;

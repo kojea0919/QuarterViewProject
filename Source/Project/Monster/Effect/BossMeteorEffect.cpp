@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "WorldSubSystem/EffectObjectPool.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Monster/Effect/BossMeteorOverlapEffect.h"
 
 
 ABossMeteorEffect::ABossMeteorEffect()
@@ -21,11 +22,8 @@ ABossMeteorEffect::ABossMeteorEffect()
 	SetRootComponent(MeteorCollider);
 	Effect->SetupAttachment(MeteorCollider);
 
-	//MeteorCollider->SetWorldScale3D(FVector(0.5f));
-
-
-	//Effect->bUseFixedRelativeBoundingBox = true;
-	//Effect->FixedRelativeBoundingBox = FBox(FVector(-2000, -2000, -2000), FVector(2000, 2000, 2000));
+	MeteorCollider->SetCollisionProfileName(TEXT("BossSkillCollision"));
+	MeteorCollider->SetGenerateOverlapEvents(false);
 }
 
 void ABossMeteorEffect::Tick(float DeltaTime)
@@ -33,13 +31,6 @@ void ABossMeteorEffect::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	float CurMoveLength = DeltaTime * FallSpeed;
-
-	if (CurMoveLength + CurMoveDistance >= 3000.0f)
-	{
-		EffectObjPool->ReturnBossMeteorEffect(this);
-		CurMoveDistance = 0;
-		return;
-	}
 
 	CurMoveDistance += CurMoveLength;
 
@@ -50,4 +41,27 @@ void ABossMeteorEffect::Tick(float DeltaTime)
 void ABossMeteorEffect::OnParticleSystemFinished_Impl()
 {
 	EffectObjPool->ReturnBossMeteorEffect(this);
+	CurMoveDistance = 0;
+}
+
+void ABossMeteorEffect::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	MeteorCollider->SetGenerateOverlapEvents(false);
+	ABossMeteorOverlapEffect * OverlapEffect = EffectObjPool->GetBossMeteorOverlapEffect();
+	OverlapEffect->SetActorLocation(GetActorLocation());
+
+	EffectObjPool->ReturnBossMeteorEffect(this);
+	CurMoveDistance = 0;
+}
+
+void ABossMeteorEffect::SetOverlapEventOn()
+{
+	MeteorCollider->SetGenerateOverlapEvents(true);
+}
+
+void ABossMeteorEffect::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MeteorCollider->OnComponentBeginOverlap.AddDynamic(this, &ABossMeteorEffect::OnComponentBeginOverlap);
 }

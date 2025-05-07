@@ -22,10 +22,9 @@ public:
 
 	virtual void SpwanNiagaraEffect(const FTransform& Transform) override;
 
-
 private:
 	//장판 크기
-	const float TelegraphRadius = 80.0f;
+	const float TelegraphRadius = 140.0f;
 
 	//장판 LifeTime
 	const float TelegraphRectangleLifeTime = 1;

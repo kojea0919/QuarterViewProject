@@ -33,6 +33,14 @@ public:
 	void ReadyToSpawnMeteor();
 	void SpawnMeteor();
 
+	void DashSkill();
+	void Dash();
+	void DashEnd();
+	void CreateDashEffect();
+
+	void StoneSpike();
+	void SpawnStoneSpikeMarkEffect();
+
 public:
 	void SetRotateToPlayer(bool Enable) { RotateToPlayer = Enable; }
 
@@ -61,7 +69,11 @@ private:
 	UParticleSystemComponent* BossLowerBodyEffect;		//하체 Particle
 
 	UPROPERTY(VisibleAnywhere, Category = Effect)
-	UParticleSystemComponent* WeaponEffect;		//무기 Particle
+	UParticleSystemComponent* WeaponEffect;				//무기 Particle
+
+	UPROPERTY(VisibleAnywhere, Category = Effect)
+	UParticleSystemComponent* DashSkillEffect;				//DashSkill Particle
+
 	//-----------------------------------------------------------------------------
 
 	//Damage관련 변수
@@ -90,5 +102,8 @@ private:
 	const float SawToothAttackRange = 1200.0f;
 
 	const float MeteorSpawnMinDist = 100.0f;
-	const float MeteorSpawnMaxDist = 500.0f;
+	const float MeteorSpawnMaxDist = 900.0f;
+
+	FTimerHandle DashEffectCreateTimer;	
+	const float DashEffectTermTime = 0.15f;
 };
