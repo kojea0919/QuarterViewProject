@@ -13,7 +13,7 @@
 #include "Monster/Boss.h"
 
 AArcherPlayerController::AArcherPlayerController()
-	: PlayerHUD(nullptr), IsSetStoreNPC(false)
+	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false)
 {
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
@@ -121,6 +121,7 @@ void AArcherPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	CheckMousePositionCollision();
 }
 
 void AArcherPlayerController::MoveTargetAction()
@@ -154,6 +155,36 @@ void AArcherPlayerController::InitPlayerHUD()
 		if (PlayerHUD)
 		{
 			PlayerHUD->AddToViewport();
+		}
+	}
+}
+
+void AArcherPlayerController::CheckMousePositionCollision()
+{
+	FVector WorldLocation, WorldDirection;
+	if (DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+	{
+		FVector Start = WorldLocation;
+		FVector End = WorldLocation + MouseCollisionSearchRange * WorldDirection;
+
+		FHitResult HitResult;
+		FCollisionQueryParams Params;
+		
+		if (GetWorld()->LineTraceSingleByObjectType(HitResult, Start, End,
+			ECollisionChannel::ECC_GameTraceChannel2, Params))
+		{
+			AActor* HitActor = HitResult.GetActor();
+			ABoss* Boss = Cast<ABoss>(HitActor);
+			if (Boss && !BossRenderOutLine)
+			{
+				Boss->SetOutLineEnable(true);
+				BossRenderOutLine = true;
+			}
+		}
+		else if(BossRenderOutLine)
+		{
+			CurrentBoss->SetOutLineEnable(false);
+			BossRenderOutLine = false;
 		}
 	}
 }

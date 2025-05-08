@@ -139,6 +139,11 @@ bool ABoss::CanBasicComboAttack() const
 	return false;
 }
 
+void ABoss::SetOutLineEnable(bool Enable)
+{
+	GetMesh()->SetRenderCustomDepth(Enable);
+}
+
 void ABoss::BeginPlay()
 {
 	Super::BeginPlay();

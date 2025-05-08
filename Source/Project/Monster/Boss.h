@@ -56,6 +56,8 @@ public:
 	float GetDistanceToPlayer() const;
 	bool CanBasicComboAttack() const;
 
+	void SetOutLineEnable(bool Enable);
+
 protected:
 	virtual void BeginPlay() override;
 

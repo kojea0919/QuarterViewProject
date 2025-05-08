@@ -83,6 +83,8 @@ private:
 
 	void InitPlayerHUD();
 
+	void CheckMousePositionCollision();
+
 private:
 	//Player HUD
 	//-------------------------------------------------
@@ -136,4 +138,8 @@ private:
 
 	//º¸½º
 	class ABoss* CurrentBoss;
+	bool BossRenderOutLine;
+
+	const float MouseCollisionSearchRange = 5000.f;
+
 };
