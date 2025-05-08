@@ -35,6 +35,10 @@ AArcherPlayerController::AArcherPlayerController()
 	if (IA_SLOTR_INPUTACTION.Succeeded())
 		SlotRInputAction = IA_SLOTR_INPUTACTION.Object;
 
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTD_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotD.IA_UseQuickSlotD"));
+	if (IA_SLOTD_INPUTACTION.Succeeded())
+		SlotDInputAction = IA_SLOTD_INPUTACTION.Object;
+
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTF_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotF.IA_UseQuickSlotF"));
 	if (IA_SLOTF_INPUTACTION.Succeeded())
 		SlotFInputAction = IA_SLOTF_INPUTACTION.Object;
@@ -95,6 +99,9 @@ void AArcherPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseRSlot);
 		EnhancedInputComponent->BindAction(SlotRInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseRSlot);
+
+		EnhancedInputComponent->BindAction(SlotDInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseDSlot);
+		EnhancedInputComponent->BindAction(SlotDInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseDSlot);
 
 		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseFSlot);
 		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseFSlot);
@@ -255,6 +262,22 @@ void AArcherPlayerController::ReleaseFSlot()
 	}
 }
 
+void AArcherPlayerController::UseDSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotD);
+	}
+}
+
+void AArcherPlayerController::ReleaseDSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotD);
+	}
+}
+
 void AArcherPlayerController::UseInventoryKey()
 {
 	if (PlayerHUD)
@@ -284,7 +307,7 @@ void AArcherPlayerController::UseBossTestKey()
 {
 	if (CurrentBoss)
 	{
-		CurrentBoss->StoneSpike();
+		CurrentBoss->DomainExpansion();
 	}
 	
 }

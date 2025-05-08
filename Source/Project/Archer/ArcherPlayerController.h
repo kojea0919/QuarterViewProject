@@ -49,6 +49,9 @@ public:
 
 	void UseFSlot();
 	void ReleaseFSlot();
+
+	void UseDSlot();
+	void ReleaseDSlot();
 	//-------------------------------------------------
 
 	void UseInventoryKey();
@@ -102,6 +105,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotRInputAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotDInputAction;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotFInputAction;

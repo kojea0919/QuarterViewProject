@@ -344,4 +344,11 @@ void UArcherAnimInstance::InitMontage()
 	if (PULSESHOT_MONTAGE.Succeeded())
 		PulseShotMontage = PULSESHOT_MONTAGE.Object;
 	//-------------------------------------------
+
+	//DiveShot Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DIVESHOT_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/DiveShotMontage.DiveShotMontage"));
+	if (DIVESHOT_MONTAGE.Succeeded())
+		DiveShotMontage = DIVESHOT_MONTAGE.Object;
+	//-------------------------------------------
 }

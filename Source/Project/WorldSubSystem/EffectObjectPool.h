@@ -75,6 +75,9 @@ public:
 
 	class ABossStoneSpikeAreaMarkEffect* GetBossStoneSpikeAreaMarkEffect();
 	void ReturnBossStoneSpikeAreaMarkEffect(class ABossStoneSpikeAreaMarkEffect* ReturnObj);
+
+	class ABossDomainExpansionEffect* GetBossDomainExpansionEffect();
+	void ReturnBossDomainExpansionEffect(class ABossDomainExpansionEffect* ReturnObj);
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -140,6 +143,9 @@ private:
 
 	UPROPERTY()
 	TArray<class ABossStoneSpikeAreaMarkEffect*> BossStoneSpikeAreaMarkEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossDomainExpansionEffect*> BossDomainExpansionEffectArr;
 };
 
 

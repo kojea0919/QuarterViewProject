@@ -28,6 +28,7 @@ public:
 	void PlayDashSkillStartMontae();
 	void PlayBigSwingMontage();
 	void PlayStoneSpikeMontage();
+	void PlayDomainExpansion();
 
 private:
 	UFUNCTION()
@@ -54,6 +55,9 @@ private:
 	UFUNCTION()
 	void AnimNotify_SpawnStoneSpikeMarkEffect();
 
+	UFUNCTION()
+	void AnimNotify_SpawnDomainExpansion();
+
 private:
 	void InitMontage();
 
@@ -77,6 +81,10 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* StoneSpikeMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* DomainExpansionMontage;
+
 private:
 	class ABoss* Boss;
 

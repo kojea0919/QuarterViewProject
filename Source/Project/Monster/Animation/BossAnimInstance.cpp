@@ -81,6 +81,14 @@ void UBossAnimInstance::PlayStoneSpikeMontage()
 	}
 }
 
+void UBossAnimInstance::PlayDomainExpansion()
+{
+	if (!Montage_IsPlaying(DomainExpansionMontage))
+	{
+		Montage_Play(DomainExpansionMontage);
+	}
+}
+
 void UBossAnimInstance::AnimNotify_RotateStart()
 {
 	if (Boss)
@@ -150,6 +158,14 @@ void UBossAnimInstance::AnimNotify_SpawnStoneSpikeMarkEffect()
 	}
 }
 
+void UBossAnimInstance::AnimNotify_SpawnDomainExpansion()
+{
+	if (Boss)
+	{
+		Boss->SpawnDomainExpansion();
+	}
+}
+
 void UBossAnimInstance::InitMontage()
 {
 	//Basic Combo Attck Montage Init
@@ -203,6 +219,15 @@ void UBossAnimInstance::InitMontage()
 	if (STONESPIKE_MONTAGE.Succeeded())
 	{
 		StoneSpikeMontage = STONESPIKE_MONTAGE.Object;
+	}
+	//-------------------------------------------
+
+	//Domain Expansion Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DOMAINEXPANSION_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossDomainExpansion.BossDomainExpansion"));
+	if (DOMAINEXPANSION_MONTAGE.Succeeded())
+	{
+		DomainExpansionMontage = DOMAINEXPANSION_MONTAGE.Object;
 	}
 	//-------------------------------------------
 }

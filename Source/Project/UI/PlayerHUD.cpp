@@ -165,6 +165,13 @@ void UPlayerHUD::NativeConstruct()
 		QuickSlot->SetSlotKeyText(TEXT("R"));
 	}
 
+	QuickSlot = Cast<USkillQuickSlot>(GetWidgetFromName(TEXT("UI_QuickSlotD")));
+	if (QuickSlot)
+	{
+		SkillQuickSlotArr.Push(QuickSlot);
+		QuickSlot->SetSlotKeyText(TEXT("D"));
+	}
+
 	QuickSlot = Cast<USkillQuickSlot>(GetWidgetFromName(TEXT("UI_QuickSlotF")));
 	if (QuickSlot)
 	{

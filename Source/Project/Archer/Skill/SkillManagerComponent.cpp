@@ -10,6 +10,7 @@
 #include "ArcherSkillFlippingArrow.h"
 #include "ArcherSkillArrowShower.h"
 #include "ArcherSkillPulseShot.h"
+#include "ArcherSkillDiveShot.h"
 #include "UI/SkillGaugeBar.h"
 
 USkillManagerComponent::USkillManagerComponent()
@@ -111,6 +112,19 @@ void USkillManagerComponent::Init()
 	PulseShot->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_PulseShot.M_PulseShot"));
 
 	PlayerController->SetQuickSlotSkill(PulseShot, ESkillQuickSlot::SlotF);
+	//---------------------------------------------------------
+
+	//PulseShot Setting
+	//---------------------------------------------------------
+	UArcherSkillDiveShot* DiveShot = NewObject<UArcherSkillDiveShot>();
+	SkillArr.Push(DiveShot);
+	DiveShot->SetAnimInstance(Anim);
+	DiveShot->SetMontage(Anim->GetDiveShotMontage());
+	DiveShot->SetBaseClass(Archer);
+	DiveShot->SetQuickSlotKey(ESkillQuickSlot::SlotD);
+	DiveShot->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_DiveShot.M_DiveShot"));
+
+	PlayerController->SetQuickSlotSkill(DiveShot, ESkillQuickSlot::SlotD);
 	//---------------------------------------------------------
 }
 

@@ -4,22 +4,25 @@
 #include "Monster/Boss.h"
 #include "Engine/DamageEvents.h"
 #include "WorldSubSystem/EffectObjectPool.h"
-#include "Monster/Animation/BossAnimInstance.h"
-#include "Monster/Effect/BasicHitEffect.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"	
+#include "Components/CapsuleComponent.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 #include "Archer/Archer.h"
 #include "Archer/ArcherPlayerController.h"
 #include "UI/DamageText.h"
 #include "DamageType/ArcherDamageType.h"
+#include "Monster/Animation/BossAnimInstance.h"
+#include "Monster/Effect/BasicHitEffect.h"
 #include "Monster/Effect/BossSawToothSkillEffect.h"
 #include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
 #include "Monster/Effect/BossMeteorTargetAreaMarkEffect.h"
 #include "Monster/BossAIController.h"
 #include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
+#include "Monster/Effect/BossDomainExpansionEffect.h"
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(500.f), CurrentBasicComboAttackIdx(0),
@@ -31,7 +34,9 @@ ABoss::ABoss()
 	//---------------------------------------------
 	BossLowerBodyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LOWERBODYEFFECT"));
 	WeaponEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("WEAPONEFFECT"));
-	DashSkillEffect = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("DASHSKILLEFFECT"));
+	DashSkillEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DASHSKILLEFFECT"));
+
+	DomainExpansionTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DOMAINEXPANSIONTIMELINE"));
 	//---------------------------------------------
 
 	//Components Init
@@ -66,8 +71,21 @@ ABoss::ABoss()
 	DashSkillEffect->SetWorldScale3D(FVector(3.0f));
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
-
 	//---------------------------------------------
+
+	//Curve Setting
+	//---------------------------------------------
+	const ConstructorHelpers::FObjectFinder<UCurveFloat> C_RADIUSCURVE(TEXT("/Game/GamePlay/GamePlayEffect/BlackAndWhite/C_BlackAndWhiteRadius.C_BlackAndWhiteRadius"));
+
+	if (C_RADIUSCURVE.Succeeded())
+	{  
+		ExpansionCurve = C_RADIUSCURVE.Object;
+	}
+	//---------------------------------------------
+
+	//MPC Setting
+	BlackAndWhiteMPC = LoadObject<UMaterialParameterCollection>(nullptr, TEXT("/Game/GamePlay/GamePlayEffect/BlackAndWhite/MPC_BlackAndWhite.MPC_BlackAndWhite"));
+
 
 }
 
@@ -139,7 +157,20 @@ void ABoss::BeginPlay()
 	//------------------------------
 
 	DashSkillEffect->Deactivate();
+
+	//Timeline Setting
+	//------------------------------
+	DomainExpansionTimelineProgress.BindUFunction(this, FName("UpdateDomainExpansionRadius"));
+	DomainExpansionTimeline->AddInterpFloat(ExpansionCurve, DomainExpansionTimelineProgress);
+	//------------------------------
 		
+	//MPC Instance Setting
+	//------------------------------
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	BlackAndWhiteMPCInstance = World->GetParameterCollectionInstance(BlackAndWhiteMPC);
+	//------------------------------
 }
 
 void ABoss::Tick(float DeltaTime)
@@ -318,6 +349,31 @@ void ABoss::SpawnStoneSpikeMarkEffect()
 	Effect->SpwanNiagaraEffect(BossTransform);
 }
 
+void ABoss::DomainExpansion()
+{
+	if (BossAnim)
+		BossAnim->PlayDomainExpansion();
+}
+
+void ABoss::SpawnDomainExpansion()
+{
+	if (BlackAndWhiteMPCInstance)
+	{
+		FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("HammerCenter"));
+
+		BlackAndWhiteMPCInstance->SetVectorParameterValue(TEXT("SpawnActorLocation"), SpawnLocation);
+	}
+
+	DomainExpansionTimeline->PlayFromStart();
+
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	ABossDomainExpansionEffect * Effect = EffectObjectPool->GetBossDomainExpansionEffect();
+	Effect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(TEXT("HammerCenter")));	
+}
+
 void ABoss::BasicTypeDamageProc()
 {
 	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
@@ -349,10 +405,6 @@ void ABoss::BasicTypeDamageProc()
 		UGameplayStatics::ProjectWorldToScreen(PlayerController, UILocation, ScreenPos);
 		DamageText->SetPlayerController(PlayerController);
 		DamageText->SetOwnerLocation(UILocation);
-
-		/*float DPIScale = UWidgetLayoutLibrary::GetViewportScale(PlayerController);
-		ScreenPos /= DPIScale;
-		UE_LOG(LogTemp, Warning, TEXT("%f"), DPIScale);*/
 
 		DamageText->SetPositionInViewport(ScreenPos);
 		DamageText->PlayBasicDamageTextAnimation();
@@ -394,5 +446,13 @@ void ABoss::LookPlayer(float DeltaTime)
 	
 	AddActorWorldRotation(FRotator(0.0f, DeltaTime * RotationDir * RotateSpeed, 0.0f));
 	//-----------------------------------------
+}
+
+void ABoss::UpdateDomainExpansionRadius(float Alpha)
+{
+	if (BlackAndWhiteMPCInstance)
+	{
+		BlackAndWhiteMPCInstance->SetScalarParameterValue(TEXT("Radius"), Alpha);
+	}
 }
 

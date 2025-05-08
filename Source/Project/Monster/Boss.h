@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/TimelineComponent.h"
 #include "Boss.generated.h"
 
 UCLASS()
@@ -41,6 +42,9 @@ public:
 	void StoneSpike();
 	void SpawnStoneSpikeMarkEffect();
 
+	void DomainExpansion();
+	void SpawnDomainExpansion();
+
 public:
 	void SetRotateToPlayer(bool Enable) { RotateToPlayer = Enable; }
 
@@ -74,6 +78,27 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Effect)
 	UParticleSystemComponent* DashSkillEffect;				//DashSkill Particle
 
+	//-----------------------------------------------------------------------------
+
+	//흑백 처리(영역 전개 스킬)용 TimeLine
+	//-----------------------------------------------------------------------------
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DomainExpansion, meta = (AllowPrivateAccess = "true"))
+	class UTimelineComponent* DomainExpansionTimeline;
+
+	UPROPERTY()
+	UCurveFloat* ExpansionCurve;
+
+	FOnTimelineFloat DomainExpansionTimelineProgress;
+
+	UFUNCTION()
+	void UpdateDomainExpansionRadius(float Alpha);
+	//-----------------------------------------------------------------------------
+
+	//흑백 처리 MPC
+	//-----------------------------------------------------------------------------
+	UMaterialParameterCollection* BlackAndWhiteMPC;
+	
+	UMaterialParameterCollectionInstance* BlackAndWhiteMPCInstance;
 	//-----------------------------------------------------------------------------
 
 	//Damage관련 변수
