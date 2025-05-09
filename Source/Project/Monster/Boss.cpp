@@ -23,6 +23,8 @@
 #include "Monster/BossAIController.h"
 #include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
 #include "Monster/Effect/BossDomainExpansionEffect.h"
+#include "Monster/SpawnActor/SoulSiphonActor.h"
+#include "DamageType/BossStiffDamageType.h"
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(500.f), CurrentBasicComboAttackIdx(0),
@@ -377,6 +379,54 @@ void ABoss::SpawnDomainExpansion()
 
 	ABossDomainExpansionEffect * Effect = EffectObjectPool->GetBossDomainExpansionEffect();
 	Effect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(TEXT("HammerCenter")));	
+}
+
+void ABoss::SoulSiphon()
+{
+	if (BossAnim)
+		BossAnim->PlaySoulShipon();
+}
+
+void ABoss::CheckSoulSiphonOverlap()
+{
+	TArray<FHitResult> HitResults;
+
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	FVector SphereLocation = GetActorLocation() + GetActorForwardVector() * SoulSiphonForwardOffset;
+
+	bool IsHit = GetWorld()->SweepMultiByObjectType(HitResults,
+		SphereLocation, SphereLocation,
+		GetActorQuat(), ObjectQueryParams,
+		FCollisionShape::MakeSphere(SoulSiphonCollisionRadius),
+		Params);
+
+	DrawDebugSphere(GetWorld(),
+		SphereLocation,
+		SoulSiphonCollisionRadius, 12,
+		FColor::Green, false, 2);
+
+	//충돌이 된 경우
+	if (IsHit)
+	{
+		for (auto& Hit : HitResults)
+		{
+			UGameplayStatics::ApplyDamage(
+				Hit.GetActor(),
+				20.0f,
+				GetInstigatorController(),
+				this,
+				UBossStiffDamageType::StaticClass());
+		}
+
+		GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
+
+	}
+
 }
 
 void ABoss::BasicTypeDamageProc()

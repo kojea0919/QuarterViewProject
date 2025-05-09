@@ -47,6 +47,8 @@ public:
 	void StopKickShotMontage();
 	//-----------------------------
 
+	void PlaySitffHitMontage();
+
 	//스킬 Montage Get함수
 	//-----------------------------
 	UAnimMontage* GetDesperadoMontage() const { return DesperadoMontage; }
@@ -174,6 +176,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* DiveShotMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Hit, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* StiffHitMontage;
 
 	class AArcher* Archer;
 

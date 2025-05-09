@@ -28,6 +28,8 @@ public:
 
 	virtual void PossessedBy(AController* Controller) override;
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 public:
 	bool GetMoveAble() const { return MoveAble; }
 	void SetMoveAble(bool Enable);
@@ -163,6 +165,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* QuarterViewCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SceneCapture, meta = (AllowPrivateAccess = "true"))
+	class USceneCaptureComponent2D* SceneCapture;
 	//-----------------------------------------------------------------------------------------------
 
 	//스킬 사거리 표시 컴포넌트
@@ -297,4 +302,11 @@ private:
 	float CurrentSpringArmLength = 0;
 	float ZoomOutSpeed = 10;
 	//--------------------------------------------
+
+	UPROPERTY(EditAnywhere, Category = SceneShatter, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class ASceneShatter> SceneShatterClass;
+
+	UPROPERTY(EditAnywhere, Category = SceneShatter, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UUserWidget> SceneShatterWidgetClass;
+
 };

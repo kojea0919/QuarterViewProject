@@ -45,6 +45,11 @@ public:
 	void DomainExpansion();
 	void SpawnDomainExpansion();
 
+	void SoulSiphon();
+
+public:
+	void CheckSoulSiphonOverlap();
+
 public:
 	void SetRotateToPlayer(bool Enable) { RotateToPlayer = Enable; }
 
@@ -124,6 +129,8 @@ private:
 	int CurrentBasicComboAttackIdx;
 	int BasicComboAttackMaxIdx;
 
+	//스킬 사거리 관련 변수
+	//------------------------------------------------
 	const float BasicComboAttackRange = 200.0f;
 
 	const float SawToothAttackRange = 1200.0f;
@@ -131,6 +138,14 @@ private:
 	const float MeteorSpawnMinDist = 100.0f;
 	const float MeteorSpawnMaxDist = 900.0f;
 
+	const float SoulSiphonForwardOffset = 200.0f;
+	//const float SoulSiphonHeightOffset = 0.0f
+	const float SoulSiphonCollisionRadius = 100.0f;
+	//------------------------------------------------
+
 	FTimerHandle DashEffectCreateTimer;	
 	const float DashEffectTermTime = 0.15f;
+
+
+
 };

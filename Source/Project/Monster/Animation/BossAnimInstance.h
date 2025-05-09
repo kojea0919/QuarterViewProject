@@ -29,6 +29,7 @@ public:
 	void PlayBigSwingMontage();
 	void PlayStoneSpikeMontage();
 	void PlayDomainExpansion();
+	void PlaySoulShipon();
 
 private:
 	UFUNCTION()
@@ -58,6 +59,9 @@ private:
 	UFUNCTION()
 	void AnimNotify_SpawnDomainExpansion();
 
+	UFUNCTION()
+	void AnimNotify_CheckSoulSiphonOverlap();
+
 private:
 	void InitMontage();
 
@@ -84,6 +88,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* DomainExpansionMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* SoulSiphonMontage;
 
 private:
 	class ABoss* Boss;

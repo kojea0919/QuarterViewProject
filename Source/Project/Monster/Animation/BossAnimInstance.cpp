@@ -89,6 +89,14 @@ void UBossAnimInstance::PlayDomainExpansion()
 	}
 }
 
+void UBossAnimInstance::PlaySoulShipon()
+{
+	if (!Montage_IsPlaying(SoulSiphonMontage))
+	{
+		Montage_Play(SoulSiphonMontage);
+	}
+}
+
 void UBossAnimInstance::AnimNotify_RotateStart()
 {
 	if (Boss)
@@ -166,6 +174,14 @@ void UBossAnimInstance::AnimNotify_SpawnDomainExpansion()
 	}
 }
 
+void UBossAnimInstance::AnimNotify_CheckSoulSiphonOverlap()
+{
+	if (Boss)
+	{
+		Boss->CheckSoulSiphonOverlap();
+	}
+}
+
 void UBossAnimInstance::InitMontage()
 {
 	//Basic Combo Attck Montage Init
@@ -228,6 +244,15 @@ void UBossAnimInstance::InitMontage()
 	if (DOMAINEXPANSION_MONTAGE.Succeeded())
 	{
 		DomainExpansionMontage = DOMAINEXPANSION_MONTAGE.Object;
+	}
+	//-------------------------------------------
+
+	//Soul Siphon Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SOULSIPHON_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossSoulSiphon.BossSoulSiphon"));
+	if (SOULSIPHON_MONTAGE.Succeeded())
+	{
+		SoulSiphonMontage = SOULSIPHON_MONTAGE.Object;
 	}
 	//-------------------------------------------
 }

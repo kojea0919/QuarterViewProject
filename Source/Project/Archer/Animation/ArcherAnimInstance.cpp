@@ -125,6 +125,14 @@ void UArcherAnimInstance::StopKickShotMontage()
 		Montage_Stop(0.2f, DesperadoMontage);
 }
 
+void UArcherAnimInstance::PlaySitffHitMontage()
+{
+	if (!Montage_IsPlaying(StiffHitMontage))
+	{
+		Montage_Play(StiffHitMontage, 1.0f);
+	}
+}
+
 void UArcherAnimInstance::AnimNotify_BasicAttackComboCheck()
 {
 	if (Archer)
@@ -351,4 +359,13 @@ void UArcherAnimInstance::InitMontage()
 	if (DIVESHOT_MONTAGE.Succeeded())
 		DiveShotMontage = DIVESHOT_MONTAGE.Object;
 	//-------------------------------------------
+
+	//DiveShot Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> STIFFHIT_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/StiffHitMontage.StiffHitMontage"));
+	if (STIFFHIT_MONTAGE.Succeeded())
+		StiffHitMontage = STIFFHIT_MONTAGE.Object;
+	//-------------------------------------------
 }
+
+

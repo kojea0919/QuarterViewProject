@@ -338,7 +338,7 @@ void AArcherPlayerController::UseBossTestKey()
 {
 	if (CurrentBoss)
 	{
-		CurrentBoss->DomainExpansion();
+		CurrentBoss->SoulSiphon();
 	}
 	
 }

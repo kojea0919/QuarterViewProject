@@ -9,6 +9,7 @@
 #include "Components/TimelineComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "Particles/ParticleSystemComponent.h"	
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -33,6 +34,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DamageType/ArcherDamageType.h"
 #include "DamageType/ArcherBasicDamageType.h"
+#include "GamePlayEffect/SceneShatter/SceneShatter.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
@@ -45,7 +47,8 @@ AArcher::AArcher()
 	//---------------------------------------------
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	QuarterViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("QUARTERVIEWCAMERA"));
-	
+	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SCENECAPTURE"));
+
 	SkillRangeMarkMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SKILLRANGEMARK"));
 
 	SkillManager = CreateDefaultSubobject<USkillManagerComponent>(TEXT("SKILLMANAGER"));
@@ -82,6 +85,9 @@ AArcher::AArcher()
 	//---------------------------------------------
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	QuarterViewCamera->SetupAttachment(SpringArm);
+	SceneCapture->SetupAttachment(QuarterViewCamera);
+	SceneCapture->bCaptureEveryFrame = false;
+	SceneCapture->bCaptureOnMovement = false;
 
 	SpringArm->TargetArmLength = DefaultArmLength;
 	SpringArm->SetRelativeRotation(FRotator(-45.0f, -45.0f, 0.0f));
@@ -126,6 +132,8 @@ AArcher::AArcher()
 	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
 	GetCharacterMovement()->MaxAcceleration = 20000.0f;
 	GetCharacterMovement()->RotationRate.Yaw= 720;
+
+	QuarterViewCamera->SetConstraintAspectRatio(true);
 	//---------------------------------------------
 
 	//Animation Setting
@@ -136,6 +144,11 @@ AArcher::AArcher()
 	if (ARCHER_ANIM.Succeeded())
 		GetMesh()->SetAnimInstanceClass(ARCHER_ANIM.Class);
 	//---------------------------------------------
+
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_PLAYERHUD_C(TEXT("/Game/GamePlay/GamePlayEffect/SceneShatter/UI_SceneShatterHUD.UI_SceneShatterHUD_C"));
+	if (UI_PLAYERHUD_C.Succeeded())
+		SceneShatterWidgetClass = UI_PLAYERHUD_C.Class;
 
 }
 
@@ -231,6 +244,17 @@ void AArcher::PossessedBy(AController* PossessedController)
 	{
 		ArcherController = NewController;
 	}
+}
+
+float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	//기본공격 Montage 실행
+	if (nullptr != ArcherAnim)
+		ArcherAnim->PlaySitffHitMontage();
+
+	return 0.0f;
 }
 
 void AArcher::SetMoveAble(bool Enable)
@@ -490,7 +514,6 @@ void AArcher::BasicAttackShot()
 					UArcherBasicDamageType::StaticClass());
 			}
 		}
-
 	}
 
 	//기본공격에 화살을 발사하는 동안은 회전을 안하도록 막기
@@ -499,28 +522,37 @@ void AArcher::BasicAttackShot()
 
 void AArcher::MoveSkillAction()
 {
-	if (!MoveSkillOn)
-	{
-		MoveSkillOn = true;
-		SetMoveAble(true);
+	SceneCapture->CaptureScene();
 
-		//현재 동작중인 Montage Cancel
-		ArcherAnim->Montage_Stop(0.0f);
-		ArcherAnim->PlayMoveSkillMontage();
+	ASceneShatter * test = GetWorld()->SpawnActor<ASceneShatter>(SceneShatterClass,FVector(0.0f,0.0f,-4000.0f),FRotator());
 
-		//마우스가 가리키는 좌표를 이동 방향으로 Setting
-		//------------------------------------------
-		FVector MouseWorldLocation = ArcherController->GetMouseWorldLocation();
-		FVector MoveDir = MouseWorldLocation - GetActorLocation();
-		MoveDir.Z = 0.0f;
-		MoveDir.Normalize();
+	UUserWidget * SceneShatterWidget = CreateWidget<UUserWidget>(GetWorld(), SceneShatterWidgetClass);
+	SceneShatterWidget->AddToViewport(5);
+	test->Shatter();
+	
 
-		RotateTargetLocation(MoveDir);
-		//------------------------------------------
+	//if (!MoveSkillOn)
+	//{
+	//	MoveSkillOn = true;
+	//	SetMoveAble(true);
 
-		//이전에 이동은 멈추기
-		ArcherController->StopMovement();
-	}
+	//	//현재 동작중인 Montage Cancel
+	//	ArcherAnim->Montage_Stop(0.0f);
+	//	ArcherAnim->PlayMoveSkillMontage();
+
+	//	//마우스가 가리키는 좌표를 이동 방향으로 Setting
+	//	//------------------------------------------
+	//	FVector MouseWorldLocation = ArcherController->GetMouseWorldLocation();
+	//	FVector MoveDir = MouseWorldLocation - GetActorLocation();
+	//	MoveDir.Z = 0.0f;
+	//	MoveDir.Normalize();
+
+	//	RotateTargetLocation(MoveDir);
+	//	//------------------------------------------
+
+	//	//이전에 이동은 멈추기
+	//	ArcherController->StopMovement();
+	//}
 }
 
 void AArcher::SpawnMoveSkillFootDecal()
