@@ -30,7 +30,7 @@
 #include "DamageType/BossKnockBackDamageType.h"
 
 ABoss::ABoss()
-	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(500.f), CurrentBasicComboAttackIdx(0),
+	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
 	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -584,11 +584,10 @@ FVector ABoss::GetRandomVector()
 	return ReturnVector;
 }
 
-void ABoss::LookPlayer(float DeltaTime)
+bool ABoss::LookPlayer(float DeltaTime)
 {
 	if (nullptr == Player)
-		return;
-
+		return false;
 
 	//플레이어가 오른쪽에 있는지 왼쪽에 있는지 판별
 	//-----------------------------------------
@@ -598,7 +597,7 @@ void ABoss::LookPlayer(float DeltaTime)
 	if (BossForward.Equals(BossToPlayerVector, 0.07f))
 	{
 		RotateToPlayer = false;
-		return;
+		return true;
 	}
 
 	FVector Cross = FVector::CrossProduct(BossForward, BossToPlayerVector);
@@ -607,6 +606,8 @@ void ABoss::LookPlayer(float DeltaTime)
 	
 	AddActorWorldRotation(FRotator(0.0f, DeltaTime * RotationDir * RotateSpeed, 0.0f));
 	//-----------------------------------------
+
+	return false;
 }
 
 void ABoss::UpdateDomainExpansionRadius(float Alpha)

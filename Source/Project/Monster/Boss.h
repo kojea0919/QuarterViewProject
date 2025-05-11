@@ -26,6 +26,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	bool LookPlayer(float DeltaTime);
+
 	void BasicComboAttack();
 	void SpawnSawToothAttack();
 	void SpawnSawTooth();
@@ -87,8 +89,6 @@ private:
 	void BasicTypeDamageProc();
 
 	FVector GetRandomVector();
-
-	void LookPlayer(float DeltaTime);
 
 private:
 	//Particle
