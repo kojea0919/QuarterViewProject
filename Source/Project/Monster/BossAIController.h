@@ -15,11 +15,28 @@ class PROJECT_API ABossAIController : public AAIController
 	GENERATED_BODY()
 
 public:
+	ABossAIController();
+
+public:
 	void MoveToTargetLocation(const FVector& TargetLocation);
 	
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 
+	void StartBehaviorTree();
+
+	void MontageEnd();
+	void SoulSiphonSkillEnd();
+
+	void SetUsingSoulSiphonState(bool Enable);
+
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY()
+	class UBehaviorTree* BossBT;
+
+	UPROPERTY()
+	class UBlackboardData* BossBB;
 };

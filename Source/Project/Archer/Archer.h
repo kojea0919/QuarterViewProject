@@ -9,6 +9,15 @@
 #include "Archer.generated.h"
 
 
+enum class EPlayerState 
+{
+	Normal,
+	Bound,
+	Stiff,
+	Down
+};
+
+
 UCLASS()
 class PROJECT_API AArcher : public ACharacter
 {
@@ -72,6 +81,13 @@ public:
 
 	void SetVisibleInteractionUI(bool Enable);
 
+	void SetBoundState() { PlayerState = EPlayerState::Bound; }
+	bool GetIsBound() const { return PlayerState == EPlayerState::Bound;; }
+
+	FTransform GetSoulSiphonEffectPos() const;
+
+	EPlayerState GetPlayerState() const { return PlayerState; }
+	void SetNormalState() { PlayerState = EPlayerState::Normal; }
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
@@ -139,6 +155,9 @@ public:
 	//카메라 ZoomOut 효과 재생
 	void PlayCameraZoomOut(int StartSpringArmLength, float Speed);
 
+	//SceneShatter효과 생성
+	void CreateSceneShatter();
+
 private:
 	//마우스 방향으로 회전하는 함수
 	void RotateMouseDirection();
@@ -156,6 +175,9 @@ private:
 
 	//ZoomOut효과를 위한 SpringArm길이 Update함수
 	void UpdateZoomOutEffect(float DeltaTime);
+
+	void ApplyShatterForce();
+	void DestroyShatterEffect();
 
 private:
 	//카메라 관련 컴포넌트
@@ -307,6 +329,19 @@ private:
 	TSubclassOf<class ASceneShatter> SceneShatterClass;
 
 	UPROPERTY(EditAnywhere, Category = SceneShatter, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class ASceneShatterFieldSystemActor> FieldSystemActorClass;
+
+	UPROPERTY(EditAnywhere, Category = SceneShatter, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UUserWidget> SceneShatterWidgetClass;
+
+	class ASceneShatter* SceneShatter;
+	class ASceneShatterFieldSystemActor* FieldSystemActor;
+
+	UUserWidget* SceneShatterWidget;
+
+	FTimerHandle ShatterCreateTimerHandle; //부수는 효과 적용
+	FTimerHandle ShatterDestroyTimerHandle;//부수는 효과관련된 리소스 제거 
+	
+	EPlayerState PlayerState;
 
 };

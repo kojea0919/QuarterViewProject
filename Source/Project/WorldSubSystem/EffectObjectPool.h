@@ -78,6 +78,9 @@ public:
 
 	class ABossDomainExpansionEffect* GetBossDomainExpansionEffect();
 	void ReturnBossDomainExpansionEffect(class ABossDomainExpansionEffect* ReturnObj);
+
+	class ABossSoulSiphonLoopEffect* GetBossSoulSiphonLoopEffect();
+	void ReturnBossSoulSiphonLoopEffect(class ABossSoulSiphonLoopEffect* ReturnObj);
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -146,6 +149,9 @@ private:
 
 	UPROPERTY()
 	TArray<class ABossDomainExpansionEffect*> BossDomainExpansionEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossSoulSiphonLoopEffect*> BossSoulSiphonLoopEffectArr;
 };
 
 

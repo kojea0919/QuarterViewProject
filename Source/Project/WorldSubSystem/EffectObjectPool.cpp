@@ -21,6 +21,7 @@
 #include "Monster/Effect/BossMeteorOverlapEffect.h"
 #include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
 #include "Monster/Effect/BossDomainExpansionEffect.h"
+#include "Monster/Effect/BossSoulSiphonLoopEffect.h"
 
 
 UEffectObjectPool::UEffectObjectPool()
@@ -57,6 +58,7 @@ void UEffectObjectPool::Init()
 	InitArr(BossMeteorOverlapEffectArr, 12);
 	InitArr(BossStoneSpikeAreaMarkEffectArr, 1);
 	InitArr(BossDomainExpansionEffectArr, 1);
+	InitArr(BossSoulSiphonLoopEffectArr, 1);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -247,4 +249,14 @@ ABossDomainExpansionEffect* UEffectObjectPool::GetBossDomainExpansionEffect()
 void UEffectObjectPool::ReturnBossDomainExpansionEffect(ABossDomainExpansionEffect* ReturnObj)
 {
 	ReturnEffectObject(BossDomainExpansionEffectArr, ReturnObj);
+}
+
+ABossSoulSiphonLoopEffect* UEffectObjectPool::GetBossSoulSiphonLoopEffect()
+{
+	return GetEffectObject(BossSoulSiphonLoopEffectArr);
+}
+
+void UEffectObjectPool::ReturnBossSoulSiphonLoopEffect(ABossSoulSiphonLoopEffect* ReturnObj)
+{
+	ReturnEffectObject(BossSoulSiphonLoopEffectArr, ReturnObj);
 }

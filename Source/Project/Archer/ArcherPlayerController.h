@@ -74,6 +74,10 @@ public:
 
 	void SetBoss(class ABoss* Boss) { if (Boss) CurrentBoss = Boss; }
 
+	void SetDisableInput();
+	void SetEnableInput();
+
+	
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------

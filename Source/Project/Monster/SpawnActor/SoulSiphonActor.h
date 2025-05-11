@@ -22,10 +22,14 @@ public:
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	void SetBoss(class ABoss* Boss) { CurrentBoss = Boss; }
+
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* MeshCollision;
+
+	class ABoss* CurrentBoss;
 };

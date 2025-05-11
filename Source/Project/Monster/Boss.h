@@ -46,6 +46,14 @@ public:
 	void SpawnDomainExpansion();
 
 	void SoulSiphon();
+	void SpawnSoulSiphonLoopEffect();
+	void SoulSiphonEnd();
+	void RemoveSoulSiphonLoopEffect();
+	void PlaySoulSiphonEnd();
+
+	void StartBehaviorTree();
+	
+	void BigSwing();
 
 public:
 	void CheckSoulSiphonOverlap();
@@ -62,6 +70,15 @@ public:
 	bool CanBasicComboAttack() const;
 
 	void SetOutLineEnable(bool Enable);
+
+	void MontageEnd();
+	void SoulSiphonEndMontageEnd();
+
+	bool GetPrevSkillIsDash() const { return PrevSkillIsDash; }
+
+	FVector GetPlayerLocation() const;
+
+	float GetBasicComboAttackRange() { return BasicComboAttackRange; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -131,7 +148,7 @@ private:
 
 	//스킬 사거리 관련 변수
 	//------------------------------------------------
-	const float BasicComboAttackRange = 200.0f;
+	const float BasicComboAttackRange = 300.0f;
 
 	const float SawToothAttackRange = 1200.0f;
 
@@ -146,6 +163,7 @@ private:
 	FTimerHandle DashEffectCreateTimer;	
 	const float DashEffectTermTime = 0.15f;
 
+	class ABossSoulSiphonLoopEffect* SoulSiphonLoopEffect;
 
-
+	bool PrevSkillIsDash; 
 };

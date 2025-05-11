@@ -4,6 +4,7 @@
 #include "Monster/Boss.h"
 #include "Engine/DamageEvents.h"
 #include "WorldSubSystem/EffectObjectPool.h"
+#include "WorldSubSystem/BossBattleSubSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -23,12 +24,14 @@
 #include "Monster/BossAIController.h"
 #include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
 #include "Monster/Effect/BossDomainExpansionEffect.h"
+#include "Monster/Effect/BossSoulSiphonLoopEffect.h"
 #include "Monster/SpawnActor/SoulSiphonActor.h"
 #include "DamageType/BossStiffDamageType.h"
+#include "DamageType/BossKnockBackDamageType.h"
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(500.f), CurrentBasicComboAttackIdx(0),
-	BasicComboAttackMaxIdx(3)
+	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -88,7 +91,10 @@ ABoss::ABoss()
 	//MPC Setting
 	BlackAndWhiteMPC = LoadObject<UMaterialParameterCollection>(nullptr, TEXT("/Game/GamePlay/GamePlayEffect/BlackAndWhite/MPC_BlackAndWhite.MPC_BlackAndWhite"));
 
+	AIControllerClass = ABossAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	//---------------------------------------------
 }
 
 void ABoss::PostInitializeComponents()
@@ -130,6 +136,8 @@ float ABoss::GetDistanceToPlayer() const
 	{
 		Distance = (Player->GetActorLocation() - GetActorLocation()).Length();
 	}
+	UE_LOG(LogTemp, Warning, TEXT("%f"), Distance);
+
 	return Distance;
 }
 
@@ -146,6 +154,31 @@ void ABoss::SetOutLineEnable(bool Enable)
 	GetMesh()->SetRenderCustomDepth(Enable);
 }
 
+void ABoss::MontageEnd()
+{
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->MontageEnd();
+	}
+}
+
+void ABoss::SoulSiphonEndMontageEnd()
+{
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->SoulSiphonSkillEnd();
+	}
+}
+
+FVector ABoss::GetPlayerLocation() const
+{
+	if (Player)
+		return Player->GetActorLocation();
+	return FVector();
+}
+
 void ABoss::BeginPlay()
 {
 	Super::BeginPlay();
@@ -156,7 +189,7 @@ void ABoss::BeginPlay()
 	if (TargetPlayer)
 	{
 		Player = TargetPlayer;
-	
+
 		AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
 		if (ArcherController)
 			ArcherController->SetBoss(this);
@@ -203,6 +236,7 @@ void ABoss::BasicComboAttack()
 	{
 		BossAnim->PlayBasicComboAttackMontage();
 		CurrentBasicComboAttackIdx = 0;
+
 	}
 }
 
@@ -307,6 +341,7 @@ void ABoss::Dash()
 		World->GetTimerManager().SetTimer(DashEffectCreateTimer, this, &ABoss::CreateDashEffect, DashEffectTermTime, false);
 	
 	GetCharacterMovement()->MaxWalkSpeed = 3500.0f;
+	PrevSkillIsDash = true;
 
 	ABossAIController * AIController = Cast<ABossAIController>(Controller);
 	if (AIController)
@@ -317,6 +352,7 @@ void ABoss::Dash()
 
 void ABoss::DashEnd()
 {
+	PrevSkillIsDash = false;
 	DashSkillEffect->Deactivate();
 	GetMesh()->SetVisibility(true);
 	BossLowerBodyEffect->Activate();
@@ -339,6 +375,8 @@ void ABoss::CreateDashEffect()
 
 void ABoss::StoneSpike()
 {
+	RotateToPlayer = true;
+
 	if (BossAnim)
 		BossAnim->PlayStoneSpikeMontage();
 }
@@ -384,7 +422,66 @@ void ABoss::SpawnDomainExpansion()
 void ABoss::SoulSiphon()
 {
 	if (BossAnim)
-		BossAnim->PlaySoulShipon();
+		BossAnim->PlaySoulSiphon();
+}
+
+void ABoss::SpawnSoulSiphonLoopEffect()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	if (SoulSiphonLoopEffect == nullptr)
+	{
+		SoulSiphonLoopEffect = EffectObjectPool->GetBossSoulSiphonLoopEffect();
+
+		SoulSiphonLoopEffect->SetActorTransform(Player->GetSoulSiphonEffectPos());
+	}
+}
+
+void ABoss::SoulSiphonEnd()
+{
+	//플레이어에게 넉백 공격
+	UGameplayStatics::ApplyDamage(
+		Player,
+		20.0f,
+		GetInstigatorController(),
+		this,
+		UBossKnockBackDamageType::StaticClass());
+}
+
+void ABoss::RemoveSoulSiphonLoopEffect()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	if (SoulSiphonLoopEffect)
+	{
+		EffectObjectPool->ReturnBossSoulSiphonLoopEffect(SoulSiphonLoopEffect);
+		SoulSiphonLoopEffect = nullptr;
+	}
+}
+
+void ABoss::PlaySoulSiphonEnd()
+{
+	if (BossAnim)
+		BossAnim->PlaySoulSiphonEnd();
+}
+
+void ABoss::StartBehaviorTree()
+{
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->StartBehaviorTree();
+	}
+}
+
+void ABoss::BigSwing()
+{
+	if (BossAnim)
+		BossAnim->PlayBigSwingMontage();
 }
 
 void ABoss::CheckSoulSiphonOverlap()
@@ -422,11 +519,20 @@ void ABoss::CheckSoulSiphonOverlap()
 				this,
 				UBossStiffDamageType::StaticClass());
 		}
+		ABossAIController* AIController = Cast<ABossAIController>(Controller);
+		if (AIController)
+		{
+			AIController->SetUsingSoulSiphonState(true);
+		}
 
-		GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
+		ASoulSiphonActor * Actor = GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
+		Actor->SetBoss(this);
 
+		//플레이어, 보스 Transform 저장
+		UBossBattleSubSystem * BossBattle = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+		BossBattle->SaveBossTransform(GetActorTransform());
+		BossBattle->SavePlayerTransform(Player->GetActorTransform());
 	}
-
 }
 
 void ABoss::BasicTypeDamageProc()

@@ -38,6 +38,10 @@ void UBossAnimInstance::PlayBasicComboAttackMontage()
 	if (!Montage_IsPlaying(BasicComboAttackMontage))
 	{
 		Montage_Play(BasicComboAttackMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, BasicComboAttackMontage);
 	}
 }
 
@@ -46,6 +50,10 @@ void UBossAnimInstance::PlaySpawnSawToothMontage()
 	if (!Montage_IsPlaying(SpawnSawToothMontage))
 	{
 		Montage_Play(SpawnSawToothMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, SpawnSawToothMontage);
 	}
 }
 
@@ -54,6 +62,10 @@ void UBossAnimInstance::PlaySpawnMeteorMontage()
 	if (!Montage_IsPlaying(SpawnMeteorMontage))
 	{
 		Montage_Play(SpawnMeteorMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, SpawnMeteorMontage);
 	}
 }
 
@@ -70,6 +82,10 @@ void UBossAnimInstance::PlayBigSwingMontage()
 	if (!Montage_IsPlaying(BigSwingMontage))
 	{
 		Montage_Play(BigSwingMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, BigSwingMontage);
 	}
 }
 
@@ -78,6 +94,10 @@ void UBossAnimInstance::PlayStoneSpikeMontage()
 	if (!Montage_IsPlaying(StoneSpikeMontage))
 	{
 		Montage_Play(StoneSpikeMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, StoneSpikeMontage);
 	}
 }
 
@@ -86,14 +106,34 @@ void UBossAnimInstance::PlayDomainExpansion()
 	if (!Montage_IsPlaying(DomainExpansionMontage))
 	{
 		Montage_Play(DomainExpansionMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, DomainExpansionMontage);
 	}
 }
 
-void UBossAnimInstance::PlaySoulShipon()
+void UBossAnimInstance::PlaySoulSiphon()
 {
 	if (!Montage_IsPlaying(SoulSiphonMontage))
 	{
 		Montage_Play(SoulSiphonMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, SoulSiphonMontage);
+	}
+}
+
+void UBossAnimInstance::PlaySoulSiphonEnd()
+{
+	if (!Montage_IsPlaying(SoulSiphonEndMontage))
+	{
+		Montage_Play(SoulSiphonEndMontage);
+
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &UBossAnimInstance::BossSoulSiphonEndMontageEnd);
+		Montage_SetEndDelegate(EndDelegate, SoulSiphonEndMontage);
 	}
 }
 
@@ -116,7 +156,6 @@ void UBossAnimInstance::AnimNotify_BasicAttackComboCheck()
 	//플레이어와의 거리가 일정거리 이내면 다음 콤보 진행
 	if (Boss && Boss->CanBasicComboAttack())
 	{
-
 		int CurrentComboIdx = Boss->GetCurrentBasicCombo();
 
 		CurrentComboIdx = (CurrentComboIdx + 1) % Boss->GetBasicMaxCombo();
@@ -179,6 +218,15 @@ void UBossAnimInstance::AnimNotify_CheckSoulSiphonOverlap()
 	if (Boss)
 	{
 		Boss->CheckSoulSiphonOverlap();
+	}
+}
+
+void UBossAnimInstance::AnimNotify_SoulSiphonEnd()
+{
+	if (Boss)
+	{
+		Boss->RemoveSoulSiphonLoopEffect();
+		Boss->SoulSiphonEnd();
 	}
 }
 
@@ -255,6 +303,15 @@ void UBossAnimInstance::InitMontage()
 		SoulSiphonMontage = SOULSIPHON_MONTAGE.Object;
 	}
 	//-------------------------------------------
+
+	//Soul Siphon End Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SOULSIPHONEND_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossSoulSiphonEnd.BossSoulSiphonEnd"));
+	if (SOULSIPHONEND_MONTAGE.Succeeded())
+	{
+		SoulSiphonEndMontage = SOULSIPHONEND_MONTAGE.Object;
+	}
+	//-------------------------------------------
 }
 
 void UBossAnimInstance::PlayBasicComboAttackMontageSection(int32 NewSection)
@@ -264,4 +321,16 @@ void UBossAnimInstance::PlayBasicComboAttackMontageSection(int32 NewSection)
 
 	FName SectionName = *FString::Printf(TEXT("Attack%d"), NewSection + 1);
 	Montage_JumpToSection(SectionName);
+}
+
+void UBossAnimInstance::BossMontageEnd(UAnimMontage* Montage, bool value)
+{
+	if (Boss)
+		Boss->MontageEnd();
+}
+
+void UBossAnimInstance::BossSoulSiphonEndMontageEnd(UAnimMontage* Montage, bool value)
+{
+	if (Boss)
+		Boss->SoulSiphonEndMontageEnd();
 }

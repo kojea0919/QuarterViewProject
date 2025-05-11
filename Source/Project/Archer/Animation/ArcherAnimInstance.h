@@ -48,6 +48,7 @@ public:
 	//-----------------------------
 
 	void PlaySitffHitMontage();
+	void PlayKnockBackMontage();
 
 	//스킬 Montage Get함수
 	//-----------------------------
@@ -141,6 +142,9 @@ private:
 	UFUNCTION()
 	void ANimNotify_StartMultiHitSkillEnemyOverlap();
 
+	UFUNCTION()
+	void ANimNotify_SetNormalState();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);
@@ -151,6 +155,9 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsBound;
 
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
@@ -179,6 +186,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Hit, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* StiffHitMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Hit, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* KnockBackMontage;
 
 	class AArcher* Archer;
 

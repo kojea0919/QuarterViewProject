@@ -16,15 +16,15 @@ ASceneShatter::ASceneShatter()
 	GeometryCollectionComponent->SetupAttachment(RootComponent);
 	Plane->SetupAttachment(RootComponent);
 
-	static ConstructorHelpers::FObjectFinder<UGeometryCollection> GC(TEXT("/Game/GamePlay/GamePlayEffect/SceneShatter/Text_Text/GC_SceneShatter.GC_SceneShatter"));
+	static ConstructorHelpers::FObjectFinder<UGeometryCollection> GC(TEXT("/Game/GamePlay/GamePlayEffect/SceneShatter/Text_Text/GC_SceneShatterMesh.GC_SceneShatterMesh"));
 	if (GC.Succeeded())
 	{
 		GeometryCollectionComponent->SetRestCollection(GC.Object);
 
 		FJsonSerializableArrayFloat DamageThresholdArr;
-		DamageThresholdArr.Push(0);
-		DamageThresholdArr.Push(0);
-		DamageThresholdArr.Push(0);
+		DamageThresholdArr.Push(100);
+		DamageThresholdArr.Push(100);
+		DamageThresholdArr.Push(100);
 		GeometryCollectionComponent->SetDamageThreshold(DamageThresholdArr);
 	}
 
@@ -33,36 +33,17 @@ ASceneShatter::ASceneShatter()
 	{
 		Plane->SetStaticMesh(SM_PLANE.Object);
 	}
-
-	FieldSystem = CreateDefaultSubobject<UFieldSystemComponent>(TEXT("test"));
-	FieldSystem->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	
 	GetCaptureComponent2D()->bCaptureOnMovement = false;
 	GeometryCollectionComponent->SetEnableGravity(false);
+	GeometryCollectionComponent->BodyInstance.LinearDamping = 5.0f; // 느리게 떨어지도록
+	GeometryCollectionComponent->BodyInstance.AngularDamping = 5.0f;
 }
-
-void ASceneShatter::Shatter()
-{
-
-	FieldSystem->ApplyRadialForce(true, GetActorLocation(), 25000.0f);
-	GeometryCollectionComponent->AddImpulseAtLocation(FVector(100.0f, 0.0f, 0.0f), FVector(GetActorLocation()));
-}
-
-	/*UE_LOG(LogTemp, Warning, TEXT("%s"), *GetActorLocation().ToString());
-
-	FieldSystem->ApplyRadialForce(true, GetActorLocation(), 500.0f);*/
-	//GeometryCollectionComponent->AddImpulseAtLocation(FVector(100.0f, 0.0f, 0.0f), FVector(GetActorLocation()));
-
 
 void ASceneShatter::BeginPlay()
 {
 	Super::BeginPlay();
 
 	GeometryCollectionComponent->SetSimulatePhysics(true);
-
-
-	//GeometryCollectionComponent->AddImpulseAtLocation(FVector(6000.0f, 0.0f, 0.0f), FVector(GetActorLocation()));
-	//GeometryCollectionComponent->SetEnableGravity(true);
-	//GeometryCollectionComponent->ApplyPhysicsField(true, EGeometryCollectionPhysicsTypeEnum::)
-	//UGameplayStatics::ApplyRadialDamage(GeometryCollection,100,100,100)
+	GeometryCollectionComponent->SetEnableGravity(false);
 }

@@ -9,7 +9,7 @@ public class Project : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "AIModule", "Niagara", "EnhancedInput", "GeometryCollectionEngine",
-         "FieldSystemEngine"});
+         "FieldSystemEngine", "GameplayTasks"});
 
         PrivateIncludePaths.AddRange(new string[] { "Project" });
     }

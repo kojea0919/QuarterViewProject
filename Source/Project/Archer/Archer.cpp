@@ -34,12 +34,16 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DamageType/ArcherDamageType.h"
 #include "DamageType/ArcherBasicDamageType.h"
+#include "DamageType/BossDamageType.h"
+#include "Engine/DamageEvents.h"
 #include "GamePlayEffect/SceneShatter/SceneShatter.h"
+#include "GamePlayEffect/SceneShatter/SceneShatterFieldSystemActor.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
 	DefaultArmLength(800.0f), DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
-	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false)
+	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false),
+    PlayerState(EPlayerState::Normal)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -250,9 +254,30 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	//기본공격 Montage 실행
 	if (nullptr != ArcherAnim)
-		ArcherAnim->PlaySitffHitMontage();
+	{
+		//Damage Type에 따라 경직모션 or 넉백모션
+		UBossDamageType* DamageType = nullptr;
+		if (DamageEvent.DamageTypeClass)
+		{
+			DamageType = DamageEvent.DamageTypeClass->GetDefaultObject<UBossDamageType>();
+		}
+
+		if (nullptr == DamageType)
+			return 0;
+
+		switch (DamageType->GetDamageType())
+		{
+		case EBossDamageType::Stiff:
+			PlayerState = EPlayerState::Stiff;
+			ArcherAnim->PlaySitffHitMontage();			
+			break;
+		case EBossDamageType::KnockBack:
+			PlayerState = EPlayerState::Down;
+			ArcherAnim->PlayKnockBackMontage();
+		}
+
+	}
 
 	return 0.0f;
 }
@@ -368,6 +393,11 @@ void AArcher::SetVisibleInteractionUI(bool Enable)
 	}
 }
 
+FTransform AArcher::GetSoulSiphonEffectPos() const
+{
+	return GetMesh()->GetSocketTransform(TEXT("SoulSiphonLoopPos"));
+}
+
 UBaseItem* AArcher::EquipItem(UBaseItem* Item)
 {
 	if (!Equip)
@@ -388,7 +418,10 @@ UBaseItem* AArcher::EquipItem(UBaseItem* Item)
 
 void AArcher::BasicAttackAction()
 {
-	//이동 스킬 중에는 공격 불가능
+	if (EPlayerState::Normal != PlayerState)
+		return;
+
+	//이동 스킬 중이면 공격 불가능
 	if (MoveSkillOn)
 		return;
 
@@ -522,37 +555,31 @@ void AArcher::BasicAttackShot()
 
 void AArcher::MoveSkillAction()
 {
-	SceneCapture->CaptureScene();
+	if (EPlayerState::Normal != PlayerState)
+		return;
 
-	ASceneShatter * test = GetWorld()->SpawnActor<ASceneShatter>(SceneShatterClass,FVector(0.0f,0.0f,-4000.0f),FRotator());
+	if (!MoveSkillOn)
+	{
+		MoveSkillOn = true;
+		SetMoveAble(true);
 
-	UUserWidget * SceneShatterWidget = CreateWidget<UUserWidget>(GetWorld(), SceneShatterWidgetClass);
-	SceneShatterWidget->AddToViewport(5);
-	test->Shatter();
-	
+		//현재 동작중인 Montage Cancel
+		ArcherAnim->Montage_Stop(0.0f);
+		ArcherAnim->PlayMoveSkillMontage();
 
-	//if (!MoveSkillOn)
-	//{
-	//	MoveSkillOn = true;
-	//	SetMoveAble(true);
+		//마우스가 가리키는 좌표를 이동 방향으로 Setting
+		//------------------------------------------
+		FVector MouseWorldLocation = ArcherController->GetMouseWorldLocation();
+		FVector MoveDir = MouseWorldLocation - GetActorLocation();
+		MoveDir.Z = 0.0f;
+		MoveDir.Normalize();
 
-	//	//현재 동작중인 Montage Cancel
-	//	ArcherAnim->Montage_Stop(0.0f);
-	//	ArcherAnim->PlayMoveSkillMontage();
+		RotateTargetLocation(MoveDir);
+		//------------------------------------------
 
-	//	//마우스가 가리키는 좌표를 이동 방향으로 Setting
-	//	//------------------------------------------
-	//	FVector MouseWorldLocation = ArcherController->GetMouseWorldLocation();
-	//	FVector MoveDir = MouseWorldLocation - GetActorLocation();
-	//	MoveDir.Z = 0.0f;
-	//	MoveDir.Normalize();
-
-	//	RotateTargetLocation(MoveDir);
-	//	//------------------------------------------
-
-	//	//이전에 이동은 멈추기
-	//	ArcherController->StopMovement();
-	//}
+		//이전에 이동은 멈추기
+		ArcherController->StopMovement();
+	}
 }
 
 void AArcher::SpawnMoveSkillFootDecal()
@@ -714,6 +741,19 @@ void AArcher::PlayCameraZoomOut(int StartSpringArmLength, float Speed)
 		SpringArm->TargetArmLength = StartSpringArmLength;
 }
 
+void AArcher::CreateSceneShatter()
+{
+	SceneCapture->CaptureScene();
+
+	SceneShatter = GetWorld()->SpawnActor<ASceneShatter>(SceneShatterClass, FVector(0.0f, 0.0f, -4000.0f), FRotator());
+	FieldSystemActor = GetWorld()->SpawnActor<ASceneShatterFieldSystemActor>(FieldSystemActorClass, FVector(79.0f, 0.0f, -4000.0f), FRotator());
+
+	SceneShatterWidget = CreateWidget<UUserWidget>(GetWorld(), SceneShatterWidgetClass);
+	SceneShatterWidget->AddToViewport(1);
+
+	GetWorld()->GetTimerManager().SetTimer(ShatterCreateTimerHandle, this, &AArcher::ApplyShatterForce, 0.4f, false);
+}
+
 void AArcher::RotateMouseDirection()
 {
 	if (nullptr == ArcherController)
@@ -850,6 +890,20 @@ void AArcher::UpdateZoomOutEffect(float DeltaTime)
 
 	SpringArm->TargetArmLength = NewArmLength;
 
+}
+
+void AArcher::ApplyShatterForce()
+{
+	FieldSystemActor->Explode();
+
+	GetWorld()->GetTimerManager().SetTimer(ShatterDestroyTimerHandle, this, &AArcher::DestroyShatterEffect, 2.3f, false);
+}
+
+void AArcher::DestroyShatterEffect()
+{
+	SceneShatter->Destroy();
+	FieldSystemActor->Destroy();
+	SceneShatterWidget->RemoveFromParent();
 }
 
 void AArcher::UpdateRotation(float Alpha)

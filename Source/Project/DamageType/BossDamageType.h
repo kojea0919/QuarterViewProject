@@ -10,7 +10,7 @@
 enum class EBossDamageType
 {
 	Stiff,
-	KnockDown
+	KnockBack
 };
 
 /**

@@ -29,7 +29,8 @@ public:
 	void PlayBigSwingMontage();
 	void PlayStoneSpikeMontage();
 	void PlayDomainExpansion();
-	void PlaySoulShipon();
+	void PlaySoulSiphon();
+	void PlaySoulSiphonEnd();
 
 private:
 	UFUNCTION()
@@ -62,10 +63,20 @@ private:
 	UFUNCTION()
 	void AnimNotify_CheckSoulSiphonOverlap();
 
+	UFUNCTION()
+	void AnimNotify_SoulSiphonEnd();
+	
 private:
 	void InitMontage();
 
 	void PlayBasicComboAttackMontageSection(int32 NewSection);
+
+private:
+	UFUNCTION()
+	void BossMontageEnd(UAnimMontage* Montage, bool value);
+
+	UFUNCTION()
+	void BossSoulSiphonEndMontageEnd(UAnimMontage* Montage, bool value);
 
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
@@ -91,6 +102,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* SoulSiphonMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* SoulSiphonEndMontage;
 
 private:
 	class ABoss* Boss;

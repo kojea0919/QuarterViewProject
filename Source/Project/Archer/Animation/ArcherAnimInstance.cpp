@@ -9,7 +9,7 @@
 #include "Archer/Effect/ArcherDesperadoSkillEffect.h"
 
 UArcherAnimInstance::UArcherAnimInstance()
-	: CurrentSpeed(0.0f), Archer(nullptr), CurSkill(nullptr)
+	: CurrentSpeed(0.0f),IsBound(false), Archer(nullptr), CurSkill(nullptr)
 {
 	InitMontage();
 }
@@ -23,6 +23,7 @@ void UArcherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (Archer)
 	{
 		CurrentSpeed = Archer->GetVelocity().Size();
+		IsBound = Archer->GetIsBound();
 	}
 	//-------------------------------
 }
@@ -46,7 +47,6 @@ void UArcherAnimInstance::PlayBasicAttackMontage()
 		FOnMontageEnded EndDelegate;
 		EndDelegate.BindUObject(this, &UArcherAnimInstance::BasicAttackMontageEnd);
 		Montage_SetEndDelegate(EndDelegate, BasicAttackMontage);
-
 	}
 }
 
@@ -130,6 +130,14 @@ void UArcherAnimInstance::PlaySitffHitMontage()
 	if (!Montage_IsPlaying(StiffHitMontage))
 	{
 		Montage_Play(StiffHitMontage, 1.0f);
+	}
+}
+
+void UArcherAnimInstance::PlayKnockBackMontage()
+{
+	if (!Montage_IsPlaying(KnockBackMontage))
+	{
+		Montage_Play(KnockBackMontage, 1.0f);
 	}
 }
 
@@ -296,6 +304,12 @@ void UArcherAnimInstance::ANimNotify_StartMultiHitSkillEnemyOverlap()
 		CurSkill->StartMutliHitSkillEnemyOverlap();
 }
 
+void UArcherAnimInstance::ANimNotify_SetNormalState()
+{
+	if (Archer)
+		Archer->SetNormalState();
+}
+
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
 {
 	if (Archer)
@@ -365,6 +379,13 @@ void UArcherAnimInstance::InitMontage()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> STIFFHIT_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/StiffHitMontage.StiffHitMontage"));
 	if (STIFFHIT_MONTAGE.Succeeded())
 		StiffHitMontage = STIFFHIT_MONTAGE.Object;
+	//-------------------------------------------
+
+	//KnockBack Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> KNOCKBACK_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/KnockBackMontage.KnockBackMontage"));
+	if (KNOCKBACK_MONTAGE.Succeeded())
+		KnockBackMontage = KNOCKBACK_MONTAGE.Object;
 	//-------------------------------------------
 }
 

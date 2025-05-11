@@ -80,6 +80,7 @@ void AArcherPlayerController::BeginPlay()
 	AreaMarkEffect->SetHidden(true);
 
 	InitPlayerHUD();
+	
 }
 
 void AArcherPlayerController::SetupInputComponent()
@@ -128,7 +129,7 @@ void AArcherPlayerController::MoveTargetAction()
 {
 	//현재 캐릭터가 이동 가능 상태가 아니면 return
 	AArcher* Archer = Cast<AArcher>(GetCharacter());
-	if (!Archer->GetMoveAble())
+	if (!Archer->GetMoveAble() || Archer->GetPlayerState() != EPlayerState::Normal)
 		return;
 
 	//마우스 클릭 위치를 월드 좌표로
@@ -199,6 +200,10 @@ FVector AArcherPlayerController::GetMouseWorldLocation()
 
 void AArcherPlayerController::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->SetQuickSlotSkill(Skill, SlotKey);
@@ -215,6 +220,10 @@ void AArcherPlayerController::SetVisibilityIntersectionKey(bool Enable)
 
 void AArcherPlayerController::UseQSlot()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotQ);
@@ -231,6 +240,10 @@ void AArcherPlayerController::ReleaseQSlot()
 
 void AArcherPlayerController::UseWSlot()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotW);
@@ -247,6 +260,10 @@ void AArcherPlayerController::ReleaseWSlot()
 
 void AArcherPlayerController::UseESlot()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotE);
@@ -263,6 +280,10 @@ void AArcherPlayerController::ReleaseESlot()
 
 void AArcherPlayerController::UseRSlot()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotR);
@@ -279,6 +300,10 @@ void AArcherPlayerController::ReleaseRSlot()
 
 void AArcherPlayerController::UseFSlot()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotF);
@@ -295,6 +320,10 @@ void AArcherPlayerController::ReleaseFSlot()
 
 void AArcherPlayerController::UseDSlot()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
+
 	if (PlayerHUD)
 	{
 		PlayerHUD->UseSkill(ESkillQuickSlot::SlotD);
@@ -338,7 +367,7 @@ void AArcherPlayerController::UseBossTestKey()
 {
 	if (CurrentBoss)
 	{
-		CurrentBoss->SoulSiphon();
+		CurrentBoss->StartBehaviorTree();
 	}
 	
 }
@@ -385,4 +414,14 @@ UInventory* AArcherPlayerController::GetInventory()
 UEquipment* AArcherPlayerController::GetEquipment()
 {
 	return PlayerHUD->GetEquipment();
+}
+
+void AArcherPlayerController::SetDisableInput()
+{
+	DisableInput(this);
+}
+
+void AArcherPlayerController::SetEnableInput()
+{
+	EnableInput(this);
 }
