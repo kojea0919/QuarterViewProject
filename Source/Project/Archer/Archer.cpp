@@ -41,9 +41,10 @@
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
-	DefaultArmLength(800.0f), DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
+	DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false),
-    PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1)
+    PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1), IsUpdateCameraTransform(false),
+	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -94,7 +95,7 @@ AArcher::AArcher()
 	SceneCapture->bCaptureOnMovement = false;
 
 	SpringArm->TargetArmLength = DefaultArmLength;
-	SpringArm->SetRelativeRotation(FRotator(-45.0f, -45.0f, 0.0f));
+	SpringArm->SetRelativeRotation(DefaultCameraRotation);
 	SpringArm->SetUsingAbsoluteRotation(true);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ARCHER(TEXT("/Game/GamePlay/Player/Archer/Mesh/Player.Player"));
@@ -159,7 +160,7 @@ AArcher::AArcher()
 void AArcher::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	//Bow Setting
 	//----------------------------------------------
 	Bow = GetWorld()->SpawnActor<ABow>();
@@ -212,8 +213,8 @@ void AArcher::Tick(float DeltaTime)
 	if (IsCameraZoomOut)
 		UpdateZoomOutEffect(DeltaTime);
 
-	if (RotateToBoss)
-		RotateBossDirection(DeltaTime);
+	if(IsUpdateCameraTransform)
+		UpdateCameraTransform(DeltaTime);
 }
 
 void AArcher::PostInitializeComponents()
@@ -402,6 +403,26 @@ void AArcher::SetVisibleInteractionUI(bool Enable)
 FTransform AArcher::GetSoulSiphonEffectPos() const
 {
 	return GetMesh()->GetSocketTransform(TEXT("SoulSiphonLoopPos"));
+}
+
+void AArcher::SetUpdateCameraTransform(bool Reverse)
+{
+	IsUpdateCameraTransform = true;
+	CurCameraTransformAlpha = 0.f;
+
+	if (Reverse)
+	{
+		StartCameraRotation = TargetCameraRotation;
+		StartArmLength = TargetArmLength;
+
+		TargetCameraRotation = SpringArm->GetRelativeRotation();
+		TargetArmLength = SpringArm->TargetArmLength;
+	}
+	else
+	{
+		StartCameraRotation = SpringArm->GetRelativeRotation();
+		StartArmLength = SpringArm->TargetArmLength;
+	}
 }
 
 UBaseItem* AArcher::EquipItem(UBaseItem* Item)
@@ -949,6 +970,30 @@ void AArcher::DestroyShatterEffect()
 	SceneShatter->Destroy();
 	FieldSystemActor->Destroy();
 	SceneShatterWidget->RemoveFromParent();
+}
+
+void AArcher::UpdateCameraTransform(float DeltaTime)
+{
+	CurCameraTransformAlpha += DeltaTime * CameraTransformSpeed;
+
+	float CurArmLength = FMath::Lerp(StartArmLength, TargetArmLength, CurCameraTransformAlpha);
+
+	FQuat CurQ = StartCameraRotation.Quaternion();
+	FQuat TargetQ = TargetCameraRotation.Quaternion();
+	FQuat ResultQ = FQuat::Slerp(CurQ, TargetQ, CurCameraTransformAlpha);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *ResultQ.Rotator().ToString());
+
+	if (CurCameraTransformAlpha >= 1.0f)
+	{
+		IsUpdateCameraTransform = false;
+		SpringArm->TargetArmLength = TargetArmLength;
+		SpringArm->SetRelativeRotation(TargetCameraRotation);
+		return;
+	}
+
+	SpringArm->TargetArmLength = CurArmLength;
+	SpringArm->SetRelativeRotation(ResultQ.Rotator());
 }
 
 void AArcher::UpdateRotation(float Alpha)

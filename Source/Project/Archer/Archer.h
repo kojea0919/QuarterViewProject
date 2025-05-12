@@ -88,6 +88,12 @@ public:
 
 	EPlayerState GetPlayerState() const { return PlayerState; }
 	void SetNormalState() { PlayerState = EPlayerState::Normal; }
+
+	void SetTargetCameraRotation(const FRotator Rotation) { TargetCameraRotation = Rotation; }
+	void SetTargetArmLength(float ArmLength) { TargetArmLength = ArmLength; }
+	void SetUpdateCameraTransform(bool Reverse = false);
+	void SetCameraTransformSpeed(float Speed) { CameraTransformSpeed = Speed; }
+
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
@@ -185,6 +191,8 @@ private:
 	void ApplyShatterForce();
 	void DestroyShatterEffect();
 
+	void UpdateCameraTransform(float DeltaTime);
+
 private:
 	//카메라 관련 컴포넌트
 	//-----------------------------------------------------------------------------------------------
@@ -268,8 +276,6 @@ private:
 
 
 private:
-	//SpringArm 기본 길이
-	float DefaultArmLength;
 
 	//캐릭터 이동 속도
 	float DefaultSpeed = 600.0f;
@@ -353,5 +359,21 @@ private:
 	bool RotateToBoss;
 	const float KnockBackRotateSpeed = 360.f;
 	short RotationDirectionToBoss;
+
+	//연출용 카메라 위치, 회전 정보
+	//--------------------------------------------
+	const FRotator DefaultCameraRotation = FRotator(-45.0f, -45.0f, 0.0f);
+	const float DefaultArmLength = 800.f;
+
+	FRotator StartCameraRotation;
+	float StartArmLength;
+	FRotator TargetCameraRotation;
+	float TargetArmLength;
+
+	bool IsUpdateCameraTransform; 
+	float CameraTransformSpeed;
+	float CurCameraTransformAlpha;
+	//--------------------------------------------
+	
 
 };
