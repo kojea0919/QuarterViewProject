@@ -162,6 +162,12 @@ private:
 	//마우스 방향으로 회전하는 함수
 	void RotateMouseDirection();
 
+	//보스 방향으로 회전하는 함수
+	void RotateBossDirection(float DeltaSecond);
+
+	//보스 방향으로 회전할 때 회전 방향 계산 함수
+	void ComputeRotateDirectionToBoss();
+
 	void UpdateAttackTargetLocation();
 
 	//Material초기화 함수
@@ -343,5 +349,9 @@ private:
 	FTimerHandle ShatterDestroyTimerHandle;//부수는 효과관련된 리소스 제거 
 	
 	EPlayerState PlayerState;
+
+	bool RotateToBoss;
+	const float KnockBackRotateSpeed = 360.f;
+	short RotationDirectionToBoss;
 
 };

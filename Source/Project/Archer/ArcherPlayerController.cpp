@@ -156,6 +156,12 @@ void AArcherPlayerController::InitPlayerHUD()
 		if (PlayerHUD)
 		{
 			PlayerHUD->AddToViewport();
+
+			if (CurrentBoss)
+			{
+				PlayerHUD->SetBossMaxHP(CurrentBoss->GetMaxHP());
+				PlayerHUD->SetBossCurrentHP(CurrentBoss->GetCurrentHP());
+			}
 		}
 	}
 }
@@ -416,6 +422,26 @@ UEquipment* AArcherPlayerController::GetEquipment()
 	return PlayerHUD->GetEquipment();
 }
 
+void AArcherPlayerController::SetBoss(ABoss* Boss)
+{
+	if (Boss) 
+		CurrentBoss = Boss; 
+
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetBossMaxHP(Boss->GetMaxHP());
+		PlayerHUD->SetBossCurrentHP(Boss->GetCurrentHP());
+	}
+}
+
+FVector AArcherPlayerController::GetBossLocation() const
+{
+	if (CurrentBoss)
+		return CurrentBoss->GetActorLocation();
+
+	return FVector();
+}
+
 void AArcherPlayerController::SetDisableInput()
 {
 	DisableInput(this);
@@ -424,4 +450,20 @@ void AArcherPlayerController::SetDisableInput()
 void AArcherPlayerController::SetEnableInput()
 {
 	EnableInput(this);
+}
+
+void AArcherPlayerController::SetBossCurrentHP(float HP)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetBossCurrentHP(HP);
+	}
+}
+
+void AArcherPlayerController::SetVisibleBossClearWindow()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetVisibilityBossClear();
+	}
 }

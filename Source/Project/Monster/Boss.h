@@ -52,13 +52,15 @@ public:
 	void SoulSiphonEnd();
 	void RemoveSoulSiphonLoopEffect();
 	void PlaySoulSiphonEnd();
+	void IllusionOff();
 
 	void StartBehaviorTree();
 	
 	void BigSwing();
-
+	void SpawnBigSwingMarkEffect();
 public:
 	void CheckSoulSiphonOverlap();
+	void CheckBigSwingOverlap();
 
 public:
 	void SetRotateToPlayer(bool Enable) { RotateToPlayer = Enable; }
@@ -81,6 +83,9 @@ public:
 	FVector GetPlayerLocation() const;
 
 	float GetBasicComboAttackRange() { return BasicComboAttackRange; }
+
+	float GetCurrentHP() const { return CurHP; }
+	float GetMaxHP() const { return MaxHP; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -158,6 +163,7 @@ private:
 	const float SoulSiphonForwardOffset = 200.0f;
 	//const float SoulSiphonHeightOffset = 0.0f
 	const float SoulSiphonCollisionRadius = 100.0f;
+	const float BigSwingCollisionRadius = 350.f;
 	//------------------------------------------------
 
 	FTimerHandle DashEffectCreateTimer;	
@@ -166,4 +172,12 @@ private:
 	class ABossSoulSiphonLoopEffect* SoulSiphonLoopEffect;
 
 	bool PrevSkillIsDash; 
+
+
+	//체력 관련 변수
+	//------------------------------------------------
+	const float MaxHP = 300000000.f;
+	float CurHP = 300000000.f;
+	//------------------------------------------------
+
 };

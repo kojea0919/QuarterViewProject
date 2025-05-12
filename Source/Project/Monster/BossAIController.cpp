@@ -59,6 +59,7 @@ void ABossAIController::SoulSiphonSkillEnd()
 	{
 		BlackboardComp->SetValueAsBool(TEXT("IsPlayingMontage"), false);
 		BlackboardComp->SetValueAsBool(TEXT("IsUsingSoulSiphon"), false);
+		BlackboardComp->SetValueAsBool(TEXT("IllusionEnd"), false);
 	}
 }
 
@@ -67,6 +68,20 @@ void ABossAIController::SetUsingSoulSiphonState(bool Enable)
 	UBlackboardComponent* BlackboardComp = Blackboard.Get();
 	if (BlackboardComp)
 		BlackboardComp->SetValueAsBool(TEXT("IsUsingSoulSiphon"), Enable);
+}
+
+void ABossAIController::SetUsingMontage()
+{
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	if (BlackboardComp)
+		BlackboardComp->SetValueAsBool(TEXT("IsPlayingMontage"), true);
+}
+
+void ABossAIController::SetIllusionEnd(bool Enable)
+{
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	if (BlackboardComp)
+		BlackboardComp->SetValueAsBool(TEXT("IllusionEnd"), Enable);
 }
 
 void ABossAIController::BeginPlay()

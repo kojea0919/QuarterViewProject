@@ -66,6 +66,12 @@ private:
 	UFUNCTION()
 	void AnimNotify_SoulSiphonEnd();
 	
+	UFUNCTION()
+	void AnimNotify_SpawnBigSwingAreaMarkEffect();
+
+	UFUNCTION()
+	void AnimNotify_CheckBigSwingOverlap();
+
 private:
 	void InitMontage();
 
@@ -111,4 +117,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	float CurrentHP;
 };

@@ -81,6 +81,9 @@ public:
 
 	class ABossSoulSiphonLoopEffect* GetBossSoulSiphonLoopEffect();
 	void ReturnBossSoulSiphonLoopEffect(class ABossSoulSiphonLoopEffect* ReturnObj);
+
+	class ABossBigSwingAreaMarkEffect* GetBossBigSwingAreaMarkEffect();
+	void ReturnBossBigSwingAreaMarkEffect(class ABossBigSwingAreaMarkEffect* ReturnObj);
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -152,6 +155,9 @@ private:
 
 	UPROPERTY()
 	TArray<class ABossSoulSiphonLoopEffect*> BossSoulSiphonLoopEffectArr;
+
+	UPROPERTY()
+	TArray<class ABossBigSwingAreaMarkEffect*> BossBigSwingAreaMarkEffectArr;
 };
 
 

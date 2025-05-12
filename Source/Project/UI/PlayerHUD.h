@@ -28,6 +28,7 @@ public:
 	void SetVisibilityInventory();
 	void SetVisibilityEquipment();
 	void SetVisibilityStore();
+	void SetVisibilityBossClear();
 
 	class UInventory* GetInventory() { return Inventory; }
 	class UEquipment* GetEquipment() { return Equipment; }
@@ -36,6 +37,9 @@ public:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	void SetupStoreUI(class AStoreNPC * Npc,class AArcher * Player);
+
+	void SetBossMaxHP(float HP) { BossMaxHP = HP; }
+	void SetBossCurrentHP(float newHP);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -59,4 +63,17 @@ private:
 
 	UPROPERTY()
 	class UStore* Store;
+
+	UPROPERTY()
+	class UBossClear* BossClear;
+
+	//------------------------------------
+	UPROPERTY()
+	class UProgressBar* BossHPBar;
+
+	UPROPERTY()
+	class UTextBlock* BossHPText;
+
+	float BossMaxHP;
+	//------------------------------------
 };

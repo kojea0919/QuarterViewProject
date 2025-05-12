@@ -29,6 +29,9 @@ public:
 	void SoulSiphonSkillEnd();
 
 	void SetUsingSoulSiphonState(bool Enable);
+	void SetUsingMontage();
+
+	void SetIllusionEnd(bool Enable);
 
 protected:
 	virtual void BeginPlay() override;

@@ -9,6 +9,9 @@
 #include "Store.h"
 #include "SkillBase/BaseSkill.h"
 #include "StoreWidgetDrag.h"
+#include "BossClear.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 
 void UPlayerHUD::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
 {
@@ -103,6 +106,14 @@ void UPlayerHUD::SetVisibilityStore()
 	}
 }
 
+void UPlayerHUD::SetVisibilityBossClear()
+{
+	if (BossClear->IsValidLowLevel())
+	{
+		BossClear->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
 bool UPlayerHUD::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UStoreWidgetDrag * WidgetDrag = Cast<UStoreWidgetDrag>(InOperation);
@@ -130,6 +141,21 @@ void UPlayerHUD::SetupStoreUI(AStoreNPC* Npc,AArcher * Player)
 	{
 		Store->SetStoreNPC(Npc);
 		Store->SetPlayer(Player);
+	}
+}
+
+void UPlayerHUD::SetBossCurrentHP(float newHP)
+{
+	if (BossHPBar && BossHPText)
+	{
+		BossHPBar->SetPercent(newHP / BossMaxHP);
+		
+
+		FString HPStr = FString::FromInt(newHP);
+		HPStr += TEXT(" / ");
+		HPStr += FString::FromInt(BossMaxHP);
+
+		BossHPText->SetText(FText::FromString(HPStr));
 	}
 }
 
@@ -213,5 +239,20 @@ void UPlayerHUD::NativeConstruct()
 		Store->InitStore();
 		Store->SetVisibility(ESlateVisibility::Hidden);
 	}
+	//---------------------------------------------------------------
+
+	//보스Clear창 초기화
+	//---------------------------------------------------------------
+	BossClear = Cast<UBossClear>(GetWidgetFromName(TEXT("UI_BossClear")));
+	if (BossClear)
+	{
+		BossClear->SetVisibility(ESlateVisibility::Hidden);
+	}
+	//---------------------------------------------------------------
+
+	//보스 체력 UI
+	//---------------------------------------------------------------
+	BossHPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("BossHPBar")));
+	BossHPText = Cast<UTextBlock>(GetWidgetFromName(TEXT("BossHPText")));
 	//---------------------------------------------------------------
 }

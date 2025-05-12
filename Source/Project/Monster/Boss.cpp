@@ -21,6 +21,7 @@
 #include "Monster/Effect/BossSawToothSkillEffect.h"
 #include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
 #include "Monster/Effect/BossMeteorTargetAreaMarkEffect.h"
+#include "Monster/Effect/BossBigSwingAreaMarkEffect.h"
 #include "Monster/BossAIController.h"
 #include "Monster/Effect/BossStoneSpikeAreaMarkEffect.h"
 #include "Monster/Effect/BossDomainExpansionEffect.h"
@@ -126,6 +127,21 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		break;
 	}
 
+	CurHP -= 100000000;
+
+	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
+	if (ArcherController)
+	{
+		ArcherController->SetBossCurrentHP(CurHP);
+	}
+
+	if (CurHP <= 0)
+	{
+		ArcherController->SetVisibleBossClearWindow();
+		return 0.0f;
+	}
+
+
 	return 0.0f;
 }
 
@@ -136,7 +152,6 @@ float ABoss::GetDistanceToPlayer() const
 	{
 		Distance = (Player->GetActorLocation() - GetActorLocation()).Length();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Distance);
 
 	return Distance;
 }
@@ -469,6 +484,18 @@ void ABoss::PlaySoulSiphonEnd()
 		BossAnim->PlaySoulSiphonEnd();
 }
 
+void ABoss::IllusionOff()
+{
+	if (BossAnim)
+		BossAnim->Montage_Stop(0);
+
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->SetIllusionEnd(true);
+	}
+}
+
 void ABoss::StartBehaviorTree()
 {
 	ABossAIController* AIController = Cast<ABossAIController>(Controller);
@@ -484,6 +511,19 @@ void ABoss::BigSwing()
 		BossAnim->PlayBigSwingMontage();
 }
 
+void ABoss::SpawnBigSwingMarkEffect()
+{
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	ABossBigSwingAreaMarkEffect* Effect = EffectObjectPool->GetBossBigSwingAreaMarkEffect();
+	FTransform BossTransform = GetActorTransform();
+	BossTransform.AddToTranslation(FVector(0.0f, 0.0f, -89.f));
+
+	Effect->SpwanNiagaraEffect(BossTransform);
+}
+
 void ABoss::CheckSoulSiphonOverlap()
 {
 	TArray<FHitResult> HitResults;
@@ -494,7 +534,7 @@ void ABoss::CheckSoulSiphonOverlap()
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	FVector SphereLocation = GetActorLocation() + GetActorForwardVector() * SoulSiphonForwardOffset;
+	FVector SphereLocation = GetActorLocation();
 
 	bool IsHit = GetWorld()->SweepMultiByObjectType(HitResults,
 		SphereLocation, SphereLocation,
@@ -512,6 +552,7 @@ void ABoss::CheckSoulSiphonOverlap()
 	{
 		for (auto& Hit : HitResults)
 		{
+
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
 				20.0f,
@@ -532,6 +573,56 @@ void ABoss::CheckSoulSiphonOverlap()
 		UBossBattleSubSystem * BossBattle = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
 		BossBattle->SaveBossTransform(GetActorTransform());
 		BossBattle->SavePlayerTransform(Player->GetActorTransform());
+	}
+}
+
+void ABoss::CheckBigSwingOverlap()
+{
+	TArray<FHitResult> HitResults;
+
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	FVector SphereLocation = GetActorLocation();
+
+	bool IsHit = GetWorld()->SweepMultiByObjectType(HitResults,
+		SphereLocation, SphereLocation,
+		GetActorQuat(), ObjectQueryParams,
+		FCollisionShape::MakeSphere(BigSwingCollisionRadius),
+		Params);
+
+	DrawDebugSphere(GetWorld(),
+		SphereLocation,
+		BigSwingCollisionRadius, 12,
+		FColor::Green, false, 2);
+
+	//충돌이 된 경우
+	if (IsHit)
+	{
+		for (auto& Hit : HitResults)
+		{
+			//BigSwing은 반원 Check로직 추가
+			FVector BossToHitActorVector = (Hit.GetActor()->GetActorLocation() - GetActorLocation());
+			BossToHitActorVector.Normalize();
+			float DotResult = BossToHitActorVector.Dot(GetActorForwardVector());
+			if (DotResult < 0)
+				continue;
+
+			UGameplayStatics::ApplyDamage(
+				Hit.GetActor(),
+				20.0f,
+				GetInstigatorController(),
+				this,
+				UBossKnockBackDamageType::StaticClass());
+		}
+		ABossAIController* AIController = Cast<ABossAIController>(Controller);
+		if (AIController)
+		{
+			AIController->SetUsingSoulSiphonState(true);
+		}
 	}
 }
 

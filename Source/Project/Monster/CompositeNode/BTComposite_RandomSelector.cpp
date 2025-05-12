@@ -37,10 +37,10 @@ int32 UBTComposite_RandomSelector::GetNextChildHandler(FBehaviorTreeSearchData& 
 		NextChildIdx = FMath::RandRange(0, GetChildrenNum() - 1);
 
 		//이전에 성공한 인덱스와 동일하면 다음 Child로 선택
-		if (NextChildIdx == LastSuccessfulChildIdx && GetChildrenNum() > 1)
+		/*if (NextChildIdx == LastSuccessfulChildIdx && GetChildrenNum() > 1)
 		{
 			NextChildIdx = (NextChildIdx + 1) % GetChildrenNum();
-		}
+		}*/
 	}
 	else
 	{

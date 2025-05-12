@@ -67,7 +67,7 @@ float ASoulSiphonActor::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 		CurrentBoss->SpawnSoulSiphonLoopEffect();
 		Archer->SetBoundState();
 
-		CurrentBoss->PlaySoulSiphonEnd();
+		CurrentBoss->IllusionOff();
 	}
 
 

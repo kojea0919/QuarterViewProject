@@ -43,7 +43,7 @@ AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
 	DefaultArmLength(800.0f), DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false),
-    PlayerState(EPlayerState::Normal)
+    PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -211,6 +211,9 @@ void AArcher::Tick(float DeltaTime)
 
 	if (IsCameraZoomOut)
 		UpdateZoomOutEffect(DeltaTime);
+
+	if (RotateToBoss)
+		RotateBossDirection(DeltaTime);
 }
 
 void AArcher::PostInitializeComponents()
@@ -275,6 +278,9 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		case EBossDamageType::KnockBack:
 			PlayerState = EPlayerState::Down;
 			ArcherAnim->PlayKnockBackMontage();
+			ComputeRotateDirectionToBoss();
+			//RotateToBoss = true;
+
 		}
 
 	}
@@ -761,6 +767,45 @@ void AArcher::RotateMouseDirection()
 
 	FVector TargetLocation = ArcherController->GetMouseWorldLocation();
 	RotateTargetLocation(TargetLocation - GetActorLocation());
+}
+
+void AArcher::RotateBossDirection(float DeltaSecond)
+{
+	if (nullptr == ArcherController)
+		return;
+
+	FVector BossLocation = ArcherController->GetBossLocation();
+	FVector PlayerToBossVector = BossLocation - GetActorLocation();
+	PlayerToBossVector.Normalize();
+
+	if (PlayerToBossVector.Equals(GetActorForwardVector(), 0.07f))
+	{
+		RotateToBoss = false;
+		return;
+	}
+
+	AddActorWorldRotation(FRotator(0.0f, DeltaSecond * KnockBackRotateSpeed * RotationDirectionToBoss, 0.0f));}
+
+void AArcher::ComputeRotateDirectionToBoss()
+{
+	if (nullptr == ArcherController)
+		return;
+
+	FVector BossLocation = ArcherController->GetBossLocation();
+	FVector PlayerToBossVector = BossLocation - GetActorLocation();
+	PlayerToBossVector.Normalize();
+
+
+	SetActorRotation(PlayerToBossVector.Rotation());
+	return;
+
+
+	float Z = PlayerToBossVector.Cross(GetActorForwardVector()).Z;
+	
+	if (Z)
+		Z = 1;
+	else
+		Z = -1;
 }
 
 void AArcher::UpdateAttackTargetLocation()

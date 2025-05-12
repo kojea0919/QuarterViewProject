@@ -20,6 +20,7 @@ void UBossAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (Boss)
 	{
 		CurrentSpeed = Boss->GetVelocity().Size();
+		CurrentHP = Boss->GetCurrentHP();
 	}
 	//-------------------------------
 }
@@ -227,6 +228,22 @@ void UBossAnimInstance::AnimNotify_SoulSiphonEnd()
 	{
 		Boss->RemoveSoulSiphonLoopEffect();
 		Boss->SoulSiphonEnd();
+	}
+}
+
+void UBossAnimInstance::AnimNotify_SpawnBigSwingAreaMarkEffect()
+{
+	if (Boss)
+	{
+		Boss->SpawnBigSwingMarkEffect();
+	}
+}
+
+void UBossAnimInstance::AnimNotify_CheckBigSwingOverlap()
+{
+	if (Boss)
+	{
+		Boss->CheckBigSwingOverlap();
 	}
 }
 

@@ -72,12 +72,16 @@ public:
 	class UInventory* GetInventory();
 	class UEquipment* GetEquipment();
 
-	void SetBoss(class ABoss* Boss) { if (Boss) CurrentBoss = Boss; }
+	void SetBoss(class ABoss* Boss);
+	FVector GetBossLocation() const;
 
 	void SetDisableInput();
 	void SetEnableInput();
 
-	
+	void SetBossCurrentHP(float HP);
+	void SetVisibleBossClearWindow();
+
+
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
