@@ -61,6 +61,8 @@ AArcher::AArcher()
 	Equip = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EQUIP"));
 
 	AttackRotationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ATTACKROTATIONTIMELINE"));
+	JumpLocationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("JUMPLOCATIONTIMELINE"));
+	CameraShakeJumpLocationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("CAMERASHAKEJUMPLOCATIONTIMELINE"));
 
 	InteractionUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("INTERACTION"));
 	//---------------------------------------------
@@ -78,11 +80,11 @@ AArcher::AArcher()
 
 	//Curve Setting
 	//---------------------------------------------
-	const ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/GamePlay/Player/Archer/CF_ArcherAttackRotate.CF_ArcherAttackRotate"));
+	const ConstructorHelpers::FObjectFinder<UCurveFloat> C_ROTATION(TEXT("/Game/GamePlay/Player/Archer/CF_ArcherAttackRotate.CF_ArcherAttackRotate"));
 
-	if (Curve.Succeeded())
+	if (C_ROTATION.Succeeded())
 	{
-		RotationCurve = Curve.Object;
+		RotationCurve = C_ROTATION.Object;
 	}
 	//---------------------------------------------
 
@@ -178,8 +180,14 @@ void AArcher::BeginPlay()
 	//----------------------------------------------
 	RotateTimelineProgress.BindUFunction(this, FName("UpdateRotation"));
 	AttackRotationTimeline->AddInterpFloat(RotationCurve, RotateTimelineProgress);
-	//----------------------------------------------
 
+	JumpLocatoinTimelineProgress.BindUFunction(this, FName("UpdateJumpLocation"));
+	JumpLocationTimeline->AddInterpVector(JumpCurve, JumpLocatoinTimelineProgress);
+	
+	CameraShakeJumpLocatoinTimelineProgress.BindUFunction(this, FName("UpdateJumpLocation"));
+	CameraShakeJumpLocationTimeline->AddInterpVector(CameraShakeJumpCurve, CameraShakeJumpLocatoinTimelineProgress);
+	//----------------------------------------------
+	
 	AArcherPlayerController* PlayerController = GetController<AArcherPlayerController>();
 	if (PlayerController)
 	{
@@ -386,6 +394,7 @@ void AArcher::SetVisibleInteractionUI(bool Enable)
 		if (Enable)
 		{
 			InteractionUI->SetHiddenInGame(!Enable);
+			InteractionUI->SetVisibility(true);
 			UArcherInteractionUI * UI = Cast<UArcherInteractionUI>(InteractionUI->GetWidget());
 			if (UI)
 				UI->PlayScaleUpAnimation();
@@ -393,6 +402,8 @@ void AArcher::SetVisibleInteractionUI(bool Enable)
 		}
 		else
 		{
+			InteractionUI->SetHiddenInGame(Enable);
+			InteractionUI->SetVisibility(false);
 			UArcherInteractionUI* UI = Cast<UArcherInteractionUI>(InteractionUI->GetWidget());
 			if (UI)
 				UI->PlayScaleDownAnimation();
@@ -413,17 +424,47 @@ void AArcher::SetUpdateCameraTransform(bool Reverse)
 	if (Reverse)
 	{
 		StartCameraRotation = TargetCameraRotation;
+		StartCameraLocation = TargetCameraLocation;
 		StartArmLength = TargetArmLength;
 
-		TargetCameraRotation = SpringArm->GetRelativeRotation();
-		TargetArmLength = SpringArm->TargetArmLength;
+		TargetCameraRotation = DefaultCameraRotation;
+		TargetCameraLocation = FVector(0.0f,0.0f,0.0f);
+		TargetArmLength = DefaultArmLength;
 	}
 	else
 	{
 		StartCameraRotation = SpringArm->GetRelativeRotation();
+		StartCameraLocation = SpringArm->GetRelativeLocation();
 		StartArmLength = SpringArm->TargetArmLength;
 	}
 }
+
+void AArcher::JumpingStart()
+{
+	IsJumping = true;
+
+	JumpStartPoint = GetActorLocation();
+
+	if (IsCameraShakeJump)
+	{
+		CameraShakeJumpLocationTimeline->PlayFromStart();
+
+		GetWorld()->GetTimerManager().SetTimer(JumpCameraShakeTimerHandle, this, &AArcher::PlayJumpCameraShake, 0.9f, false);
+	}
+	else
+		JumpLocationTimeline->PlayFromStart();
+}
+
+bool AArcher::GetIsVisibleInteractionUI() const
+{
+	if (InteractionUI)
+	{
+		return InteractionUI->IsVisible();
+	}
+
+	return false;
+}
+
 
 UBaseItem* AArcher::EquipItem(UBaseItem* Item)
 {
@@ -487,7 +528,6 @@ void AArcher::BasicAttackAction()
 	//--------------------------------
 	UpdateAttackTargetLocation();
 	AttackRotationTimeline->PlayFromStart();
-
 }
 
 void AArcher::BasicAttackMontageEnded()
@@ -758,6 +798,14 @@ void AArcher::PlayCameraShake()
 		ArcherController->ClientStartCameraShake(ArcherSkillCameraShakeClass);
 }
 
+void AArcher::PlayJumpCameraShake()
+{
+	if (ArcherJumpCameraShakeClass && ArcherController)
+	{
+		ArcherController->ClientStartCameraShake(ArcherJumpCameraShakeClass);
+	}
+}
+
 void AArcher::PlayCameraZoomOut(int StartSpringArmLength, float Speed)
 {
 	IsCameraZoomOut = true;
@@ -982,18 +1030,20 @@ void AArcher::UpdateCameraTransform(float DeltaTime)
 	FQuat TargetQ = TargetCameraRotation.Quaternion();
 	FQuat ResultQ = FQuat::Slerp(CurQ, TargetQ, CurCameraTransformAlpha);
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *ResultQ.Rotator().ToString());
+	FVector ResultVec = FMath::Lerp(StartCameraLocation, TargetCameraLocation, CurCameraTransformAlpha);
 
 	if (CurCameraTransformAlpha >= 1.0f)
 	{
 		IsUpdateCameraTransform = false;
 		SpringArm->TargetArmLength = TargetArmLength;
 		SpringArm->SetRelativeRotation(TargetCameraRotation);
+		SpringArm->SetRelativeLocation(TargetCameraLocation);
 		return;
 	}
 
 	SpringArm->TargetArmLength = CurArmLength;
 	SpringArm->SetRelativeRotation(ResultQ.Rotator());
+	SpringArm->SetRelativeLocation(ResultVec);
 }
 
 void AArcher::UpdateRotation(float Alpha)
@@ -1006,6 +1056,17 @@ void AArcher::UpdateRotation(float Alpha)
 
 	FRotator NewRotation = FMath::Lerp(StartRotator, TargetRotator, Alpha);
 	SetActorRotation(NewRotation);
+}
+
+void AArcher::UpdateJumpLocation(FVector Alpha)
+{
+	if (Alpha.X > 0.95f)
+	{
+		IsJumping = false;
+	}
+
+	FVector NewLocation = FMath::Lerp(JumpStartPoint, JumpEndPoint, Alpha);
+	SetActorLocation(NewLocation);
 }
 
 void AArcher::RotateTargetLocation(FVector TargetVector)

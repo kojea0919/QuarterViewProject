@@ -17,6 +17,7 @@ enum class EPlayerState
 	Down
 };
 
+class UCurveVector;
 
 UCLASS()
 class PROJECT_API AArcher : public ACharacter
@@ -89,11 +90,18 @@ public:
 	EPlayerState GetPlayerState() const { return PlayerState; }
 	void SetNormalState() { PlayerState = EPlayerState::Normal; }
 
-	void SetTargetCameraRotation(const FRotator Rotation) { TargetCameraRotation = Rotation; }
+	void SetTargetCameraRotation(const FRotator & Rotation) { TargetCameraRotation = Rotation; }
+	void SetTargetCameraLocation(const FVector& Location) { TargetCameraLocation = Location; }
 	void SetTargetArmLength(float ArmLength) { TargetArmLength = ArmLength; }
 	void SetUpdateCameraTransform(bool Reverse = false);
 	void SetCameraTransformSpeed(float Speed) { CameraTransformSpeed = Speed; }
 
+	void SetJumpEndPoint(const FVector& Location) { JumpEndPoint = Location; }
+	void JumpingStart();
+	bool GetIsJumping() const { return IsJumping; }
+
+	bool GetIsVisibleInteractionUI() const;
+	void SetIsCameraShakeJump(bool IsShake) { IsCameraShakeJump = IsShake; }
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
@@ -157,6 +165,9 @@ public:
 
 	//카메라 Shake 재생
 	void PlayCameraShake();
+
+	//Jump시 카메라 Shake재생
+	void PlayJumpCameraShake();
 
 	//카메라 ZoomOut 효과 재생
 	void PlayCameraZoomOut(int StartSpringArmLength, float Speed);
@@ -247,7 +258,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CharacterMove, meta = (AllowPrivateAccess = "true"))
 	class UTimelineComponent* AttackRotationTimeline;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	UCurveFloat* RotationCurve;
 	
 	FOnTimelineFloat RotateTimelineProgress;
@@ -366,8 +377,10 @@ private:
 	const float DefaultArmLength = 800.f;
 
 	FRotator StartCameraRotation;
+	FVector StartCameraLocation;
 	float StartArmLength;
 	FRotator TargetCameraRotation;
+	FVector TargetCameraLocation;
 	float TargetArmLength;
 
 	bool IsUpdateCameraTransform; 
@@ -375,5 +388,37 @@ private:
 	float CurCameraTransformAlpha;
 	//--------------------------------------------
 	
+	//점프용 캐릭터 위치
+	//--------------------------------------------
+	FVector JumpStartPoint;
+	FVector JumpEndPoint;
+	
+	bool IsJumping;
+	bool IsCameraShakeJump;
+
+	UPROPERTY(EditDefaultsOnly)
+	UCurveVector* JumpCurve;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CharacterMove, meta = (AllowPrivateAccess = "true"))
+	class UTimelineComponent* JumpLocationTimeline;
+
+	FOnTimelineVector JumpLocatoinTimelineProgress;
+
+	UFUNCTION()
+	void UpdateJumpLocation(FVector Alpha);
+
+	UPROPERTY(EditDefaultsOnly)
+	UCurveVector* CameraShakeJumpCurve;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CharacterMove, meta = (AllowPrivateAccess = "true"))
+	class UTimelineComponent* CameraShakeJumpLocationTimeline;
+	
+	FOnTimelineVector CameraShakeJumpLocatoinTimelineProgress;
+
+	UPROPERTY(EditAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UCameraShakeBase> ArcherJumpCameraShakeClass;
+
+	FTimerHandle JumpCameraShakeTimerHandle;
+	//--------------------------------------------
 
 };

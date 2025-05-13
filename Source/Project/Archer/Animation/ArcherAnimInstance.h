@@ -159,6 +159,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsBound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsJumping;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* BasicAttackMontage;
@@ -197,4 +199,7 @@ private:
 
 	//현재 사용중인 ComboSkill
 	class UComboSkill* CurExcuteComboSkill;
+
+
+
 };

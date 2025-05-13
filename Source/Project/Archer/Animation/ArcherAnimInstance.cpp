@@ -9,7 +9,7 @@
 #include "Archer/Effect/ArcherDesperadoSkillEffect.h"
 
 UArcherAnimInstance::UArcherAnimInstance()
-	: CurrentSpeed(0.0f),IsBound(false), Archer(nullptr), CurSkill(nullptr)
+	: CurrentSpeed(0.0f),IsBound(false),IsJumping(false), Archer(nullptr), CurSkill(nullptr)
 {
 	InitMontage();
 }
@@ -24,6 +24,7 @@ void UArcherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		CurrentSpeed = Archer->GetVelocity().Size();
 		IsBound = Archer->GetIsBound();
+		IsJumping = Archer->GetIsJumping();
 	}
 	//-------------------------------
 }

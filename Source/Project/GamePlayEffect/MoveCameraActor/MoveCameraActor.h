@@ -16,9 +16,12 @@ public:
 
 public:
 	UFUNCTION()
-	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	
+	UFUNCTION()
+	void EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,8 +34,14 @@ private:
 	FRotator TargetCameraRotator;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	FVector TargetCameraLocation;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float TargetCameraArmLength;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float CameraTransformSpeed;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	bool IsUseRecorvery;//카메라를 Default로 바꾸는 경우에는 true
 };

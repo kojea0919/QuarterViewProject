@@ -362,10 +362,25 @@ void AArcherPlayerController::UseEquipmentKey()
 
 void AArcherPlayerController::UseInteractionKey()
 {
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (!Archer->GetIsVisibleInteractionUI())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Call"));
+		return;
+	}
+
 	if (PlayerHUD)
 	{
-		if(IsSetStoreNPC)
-			PlayerHUD->SetVisibilityStore();
+		/*if(IsSetStoreNPC)
+			PlayerHUD->SetVisibilityStore();*/
+
+		
+
+	}
+
+	if (Archer)
+	{
+		Archer->JumpingStart();
 	}
 }
 
