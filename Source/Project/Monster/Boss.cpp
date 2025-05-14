@@ -127,7 +127,7 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		break;
 	}
 
-	CurHP -= 100000000;
+	CurHP -= 3000000;
 
 	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
 	if (ArcherController)

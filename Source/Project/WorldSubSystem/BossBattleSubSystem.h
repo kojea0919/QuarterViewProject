@@ -23,9 +23,14 @@ public:
 
 	void SetPlayerSpawnTransform(const FTransform& Transform) { BossMapPlayerSpawnTransform = Transform; }
 	const FTransform& GetPlayerSpawnTransform() const { return BossMapPlayerSpawnTransform; }
+
+	void SetBossSpawnTransform(const FTransform& Transform) { BossMapBossSpawnTransform = Transform; }
+	const FTransform& GetBossSpawnTransform() const { return BossMapBossSpawnTransform; }
+
 private:
 	FTransform BossSavedTransform;
 	FTransform PlayerSavedTransform;
 
 	FTransform BossMapPlayerSpawnTransform;
+	FTransform BossMapBossSpawnTransform;
 };

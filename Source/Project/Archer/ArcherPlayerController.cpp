@@ -11,13 +11,20 @@
 #include "UI/Inventory.h"
 #include "Archer/Effect/AttackAreaMarkEffect.h"
 #include "Monster/Boss.h"
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
+#include "WorldSubSystem/BossBattleSubSystem.h"
 
 AArcherPlayerController::AArcherPlayerController()
-	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false)
+	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false), IsPlayingLevelSequence(false), CurLevelSequencePlayer(nullptr)
 {
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
 		PlayerHUDWidgetClass = UI_PLAYERHUD_C.Class;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_LEVELSEQUENCEHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_LevelSequenceHUD.UI_LevelSequenceHUD_C"));
+	if (UI_LEVELSEQUENCEHUD_C.Succeeded())
+		LevelSequenceHUDWidgetClass = UI_LEVELSEQUENCEHUD_C.Class;
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
 	if (IA_SLOTQ_INPUTACTION.Succeeded())
@@ -55,6 +62,10 @@ AArcherPlayerController::AArcherPlayerController()
 	if (IA_INTERACTION_INPUTACTION.Succeeded())
 		InteractionInputAction = IA_INTERACTION_INPUTACTION.Object;
 
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_STOPSEQUENCE_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_StopSequence.IA_StopSequence"));
+	if (IA_STOPSEQUENCE_INPUTACTION.Succeeded())
+		SequenceStopInputAction = IA_STOPSEQUENCE_INPUTACTION.Object;
+
 	//testcode
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_BOSSTESTKEY_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_BossTestKey.IA_BossTestKey"));
 	if (IA_BOSSTESTKEY_INPUTACTION.Succeeded())
@@ -79,7 +90,7 @@ void AArcherPlayerController::BeginPlay()
 	AreaMarkEffect->SetController(this);
 	AreaMarkEffect->SetHidden(true);
 
-	InitPlayerHUD();
+	InitHUD();
 	
 }
 
@@ -106,6 +117,8 @@ void AArcherPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseFSlot);
 		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseFSlot);
+
+		EnhancedInputComponent->BindAction(SequenceStopInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseStopSequenceButton);
 		
 		EnhancedInputComponent->BindAction(InventoryKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInventoryKey);
 		EnhancedInputComponent->BindAction(EquipmentKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseEquipmentKey);
@@ -148,7 +161,7 @@ void AArcherPlayerController::MoveTarget(FVector TargetLocation)
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, TargetLocation);
 }
 
-void AArcherPlayerController::InitPlayerHUD()
+void AArcherPlayerController::InitHUD()
 {
 	if (PlayerHUDWidgetClass)
 	{
@@ -160,8 +173,18 @@ void AArcherPlayerController::InitPlayerHUD()
 			if (CurrentBoss)
 			{
 				PlayerHUD->SetBossMaxHP(CurrentBoss->GetMaxHP());
-				PlayerHUD->SetBossCurrentHP(CurrentBoss->GetCurrentHP());
+				PlayerHUD->InitBossHP();
 			}
+		}
+	}
+
+	if (LevelSequenceHUDWidgetClass)
+	{		
+		LevelSequenceHUD = CreateWidget<UUserWidget>(this, LevelSequenceHUDWidgetClass);
+		if (LevelSequenceHUD)
+		{
+			LevelSequenceHUD->AddToViewport();
+			LevelSequenceHUD->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
@@ -344,6 +367,16 @@ void AArcherPlayerController::ReleaseDSlot()
 	}
 }
 
+void AArcherPlayerController::UseStopSequenceButton()
+{
+	if (IsPlayingLevelSequence && CurLevelSequencePlayer)
+	{
+		CurLevelSequencePlayer->Stop();
+	
+		StopLevelSequence();
+	}
+}
+
 void AArcherPlayerController::UseInventoryKey()
 {
 	if (PlayerHUD)
@@ -365,7 +398,6 @@ void AArcherPlayerController::UseInteractionKey()
 	AArcher* Archer = Cast<AArcher>(GetCharacter());
 	if (!Archer->GetIsVisibleInteractionUI())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Call"));
 		return;
 	}
 
@@ -481,4 +513,70 @@ void AArcherPlayerController::SetVisibleBossClearWindow()
 	{
 		PlayerHUD->SetVisibilityBossClear();
 	}
+}
+
+void AArcherPlayerController::SetVisiblePlayerHUD(bool Enable)
+{
+	if (nullptr == PlayerHUD)
+		return;
+
+	if (Enable)
+	{
+		PlayerHUD->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		PlayerHUD->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void AArcherPlayerController::SetVisibleLevelSequenceHUD(bool Enable)
+{
+	if (nullptr == LevelSequenceHUD)
+		return;
+
+	if (Enable)
+	{
+		LevelSequenceHUD->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		LevelSequenceHUD->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void AArcherPlayerController::PlayLevelSequence(ULevelSequencePlayer* SequencePlayer)
+{
+	SetVisiblePlayerHUD(false);
+	SetIsPlayingLevelSequence(true);
+	CurLevelSequencePlayer = SequencePlayer;
+	SetVisibleLevelSequenceHUD(true);
+}
+
+void AArcherPlayerController::StopLevelSequence()
+{
+	CurLevelSequencePlayer = nullptr;
+	IsPlayingLevelSequence = false;
+	CurLevelSequencePlayer = nullptr;
+
+	SetVisiblePlayerHUD(true);
+
+	//보스 소환
+	UBossBattleSubSystem * BossBattleSubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+	if (nullptr == BossBattleSubSystem)
+	{
+		return;
+	}
+
+	FTransform BossTransform = BossBattleSubSystem->GetBossSpawnTransform();
+	if (CurrentBoss)
+	{
+		CurrentBoss->SetActorTransform(BossTransform);
+		CurrentBoss->SetActorHiddenInGame(false);
+	}
+
+	//BosHPBarUI On
+	if (PlayerHUD)
+		PlayerHUD->SetVisibilityBossHPBar(true);
+
 }

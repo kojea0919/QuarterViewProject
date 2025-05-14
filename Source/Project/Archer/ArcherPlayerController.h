@@ -54,6 +54,8 @@ public:
 	void ReleaseDSlot();
 	//-------------------------------------------------
 
+	void UseStopSequenceButton();
+
 	void UseInventoryKey();
 	void UseEquipmentKey();
 	void UseInteractionKey();
@@ -81,6 +83,15 @@ public:
 	void SetBossCurrentHP(float HP);
 	void SetVisibleBossClearWindow();
 
+	void SetVisiblePlayerHUD(bool Enable);
+	
+	void SetIsPlayingLevelSequence(bool Enable) { IsPlayingLevelSequence = Enable; }
+	void SetLevelSequencePlayer(class ULevelSequencePlayer* SequencePlayer) { CurLevelSequencePlayer = SequencePlayer; }
+
+	void SetVisibleLevelSequenceHUD(bool Enable);
+
+	void PlayLevelSequence(class ULevelSequencePlayer* SequencePlayer);
+	void StopLevelSequence();
 
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
@@ -89,7 +100,7 @@ private:
 	void MoveTarget(FVector TargetLocation);
 	//-------------------------------------------------
 
-	void InitPlayerHUD();
+	void InitHUD();
 
 	void CheckMousePositionCollision();
 
@@ -101,6 +112,15 @@ private:
 
 	class UPlayerHUD* PlayerHUD;
 	//-------------------------------------------------
+
+	//LevelSequence HUD
+	//-------------------------------------------------
+	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
+	TSubclassOf<class UUserWidget> LevelSequenceHUDWidgetClass;
+
+	class UUserWidget* LevelSequenceHUD;
+	//-------------------------------------------------
+
 
 	//QuickSlot Key 관련 InputAction
 	//-------------------------------------------------
@@ -135,6 +155,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* InteractionInputAction;
 
+	//연출 스탑 키 InputAction
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SequenceStopInputAction;
+
 	//testcode
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* BossTestKey;
@@ -150,4 +174,10 @@ private:
 
 	const float MouseCollisionSearchRange = 5000.f;
 
+	//LevelSequence관련 변수
+	//-----------------------------------------------
+	bool IsPlayingLevelSequence;
+
+	class ULevelSequencePlayer* CurLevelSequencePlayer;
+	//-----------------------------------------------
 };

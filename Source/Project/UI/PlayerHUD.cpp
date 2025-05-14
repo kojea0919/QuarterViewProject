@@ -10,6 +10,7 @@
 #include "SkillBase/BaseSkill.h"
 #include "StoreWidgetDrag.h"
 #include "BossClear.h"
+#include "BossHPBar.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 
@@ -114,6 +115,18 @@ void UPlayerHUD::SetVisibilityBossClear()
 	}
 }
 
+void UPlayerHUD::SetVisibilityBossHPBar(bool Enable)
+{
+	if (BossHPBar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Call"));
+		if (Enable)
+			BossHPBar->SetVisibility(ESlateVisibility::Visible);
+		else
+			BossHPBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 bool UPlayerHUD::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UStoreWidgetDrag * WidgetDrag = Cast<UStoreWidgetDrag>(InOperation);
@@ -144,19 +157,22 @@ void UPlayerHUD::SetupStoreUI(AStoreNPC* Npc,AArcher * Player)
 	}
 }
 
+void UPlayerHUD::SetBossMaxHP(float HP)
+{
+	if (BossHPBar)
+		BossHPBar->SetBossMaxHP(HP);
+}
+
 void UPlayerHUD::SetBossCurrentHP(float newHP)
 {
-	if (BossHPBar && BossHPText)
-	{
-		BossHPBar->SetPercent(newHP / BossMaxHP);
-		
+	if (BossHPBar)
+		BossHPBar->SetBossCurrentHP(newHP);
+}
 
-		FString HPStr = FString::FromInt(newHP);
-		HPStr += TEXT(" / ");
-		HPStr += FString::FromInt(BossMaxHP);
-
-		BossHPText->SetText(FText::FromString(HPStr));
-	}
+void UPlayerHUD::InitBossHP()
+{
+	if (BossHPBar)
+		BossHPBar->InitBossHP();
 }
 
 void UPlayerHUD::NativeConstruct()
@@ -252,7 +268,10 @@ void UPlayerHUD::NativeConstruct()
 
 	//보스 체력 UI
 	//---------------------------------------------------------------
-	BossHPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("BossHPBar")));
-	BossHPText = Cast<UTextBlock>(GetWidgetFromName(TEXT("BossHPText")));
+	BossHPBar = Cast<UBossHPBar>(GetWidgetFromName(TEXT("UI_BossHPBar")));
+	if (BossHPBar)
+	{
+		BossHPBar->SetVisibility(ESlateVisibility::Hidden);
+	}
 	//---------------------------------------------------------------
 }

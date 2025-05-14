@@ -29,6 +29,7 @@ public:
 	void SetVisibilityEquipment();
 	void SetVisibilityStore();
 	void SetVisibilityBossClear();
+	void SetVisibilityBossHPBar(bool Enable);
 
 	class UInventory* GetInventory() { return Inventory; }
 	class UEquipment* GetEquipment() { return Equipment; }
@@ -38,8 +39,9 @@ public:
 
 	void SetupStoreUI(class AStoreNPC * Npc,class AArcher * Player);
 
-	void SetBossMaxHP(float HP) { BossMaxHP = HP; }
+	void SetBossMaxHP(float HP);
 	void SetBossCurrentHP(float newHP);
+	void InitBossHP();
 
 protected:
 	virtual void NativeConstruct() override;
@@ -67,13 +69,6 @@ private:
 	UPROPERTY()
 	class UBossClear* BossClear;
 
-	//------------------------------------
 	UPROPERTY()
-	class UProgressBar* BossHPBar;
-
-	UPROPERTY()
-	class UTextBlock* BossHPText;
-
-	float BossMaxHP;
-	//------------------------------------
+	class UBossHPBar* BossHPBar;
 };
