@@ -32,7 +32,7 @@
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
-	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false)
+	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBosPhase(1)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -459,7 +459,7 @@ void ABoss::SoulSiphonEnd()
 	//플레이어에게 넉백 공격
 	UGameplayStatics::ApplyDamage(
 		Player,
-		20.0f,
+		SoulSiphonEndDamage,
 		GetInstigatorController(),
 		this,
 		UBossKnockBackDamageType::StaticClass());
@@ -529,7 +529,7 @@ void ABoss::CheckSoulSiphonOverlap()
 	TArray<FHitResult> HitResults;
 
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel4);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
@@ -555,7 +555,7 @@ void ABoss::CheckSoulSiphonOverlap()
 
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
-				20.0f,
+				SoulSiphonStartDamage,
 				GetInstigatorController(),
 				this,
 				UBossStiffDamageType::StaticClass());
@@ -581,7 +581,7 @@ void ABoss::CheckBigSwingOverlap()
 	TArray<FHitResult> HitResults;
 
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel4);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
@@ -613,7 +613,7 @@ void ABoss::CheckBigSwingOverlap()
 
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
-				20.0f,
+				BigSwingDamage,
 				GetInstigatorController(),
 				this,
 				UBossKnockBackDamageType::StaticClass());

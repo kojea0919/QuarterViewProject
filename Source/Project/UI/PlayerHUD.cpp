@@ -11,6 +11,7 @@
 #include "StoreWidgetDrag.h"
 #include "BossClear.h"
 #include "BossHPBar.h"
+#include "PlayerProgressBar.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 
@@ -175,6 +176,14 @@ void UPlayerHUD::InitBossHP()
 		BossHPBar->InitBossHP();
 }
 
+void UPlayerHUD::SetPlayerCurrentHPRate(float Rate)
+{
+	if (PlayerProgressBar)
+	{
+		PlayerProgressBar->SetPlayerCurrentHPRate(Rate);
+	}
+}
+
 void UPlayerHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -273,5 +282,10 @@ void UPlayerHUD::NativeConstruct()
 	{
 		BossHPBar->SetVisibility(ESlateVisibility::Hidden);
 	}
+	//---------------------------------------------------------------
+
+	//보스 체력 UI
+	//---------------------------------------------------------------
+	PlayerProgressBar = Cast<UPlayerProgressBar>(GetWidgetFromName(TEXT("UI_PlayerProgressBar")));
 	//---------------------------------------------------------------
 }

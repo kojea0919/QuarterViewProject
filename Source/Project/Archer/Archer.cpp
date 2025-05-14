@@ -127,6 +127,8 @@ AArcher::AArcher()
 	InteractionUI->SetupAttachment(GetMesh());
 	InteractionUI->SetHiddenInGame(true);
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
+
 	//---------------------------------------------
 
 	//Camera Setting

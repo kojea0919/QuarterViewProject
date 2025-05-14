@@ -43,6 +43,8 @@ public:
 	void SetBossCurrentHP(float newHP);
 	void InitBossHP();
 
+	void SetPlayerCurrentHPRate(float Rate);
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -71,4 +73,7 @@ private:
 
 	UPROPERTY()
 	class UBossHPBar* BossHPBar;
+
+	UPROPERTY()
+	class UPlayerProgressBar* PlayerProgressBar;
 };

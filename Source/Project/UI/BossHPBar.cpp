@@ -6,6 +6,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+
 void UBossHPBar::InitBossHP()
 {
 	BossHPBar->SetPercent(1.0f);
@@ -16,10 +17,17 @@ void UBossHPBar::InitBossHP()
 	BossHPText->SetText(FText::FromString(HPStr));
 
 	CurHPLine = HPLineCount;
+
+	NextHPBar->SetVisibility(ESlateVisibility::Visible);
+
+	BossIsDead = false;
 }
 
 void UBossHPBar::SetBossCurrentHP(float newHP)
 {
+	if (BossIsDead)
+		return;
+
 	if (BossHPBar && BossHPText && NextHPBar)
 	{
 		float OneLineHP = (int)newHP % (int)OneLineHPAmount;
@@ -32,10 +40,13 @@ void UBossHPBar::SetBossCurrentHP(float newHP)
 			BossHPBar->SetPercent(1.0f);
 			CurLineRate = 1.0f;
 		}
-		else if (newHP == 0)
+		else if (newHP <= 0)
 		{
+			newHP = 0;
 			BossHPBar->SetPercent(0.0f);
 			CurLineRate = 0.0f;
+			NextHPBar->SetVisibility(ESlateVisibility::Hidden);
+			BossIsDead = true;
 		}
 		else
 		{
@@ -84,6 +95,6 @@ void UBossHPBar::NativeConstruct()
 	//---------------------------------------------------------------
 
 	HpBarColor.Add(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-	HpBarColor.Add(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+	HpBarColor.Add(FLinearColor(1.0f, 0.0f, 1.0f, 1.0f));
 	CurColorIdx = 0;
 }

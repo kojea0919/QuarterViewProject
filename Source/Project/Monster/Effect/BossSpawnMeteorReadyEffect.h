@@ -28,4 +28,6 @@ private:
 
 	//¿Â∆« LifeTime
 	const float TelegraphRectangleLifeTime = 1.18;
+
+	float Damage = 300.0f;
 };

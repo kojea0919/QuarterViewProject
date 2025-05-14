@@ -128,7 +128,7 @@ void UArcherAnimInstance::StopKickShotMontage()
 
 void UArcherAnimInstance::PlaySitffHitMontage()
 {
-	if (!Montage_IsPlaying(StiffHitMontage))
+	if (!Montage_IsPlaying(StiffHitMontage) && !Montage_IsPlaying(KnockBackMontage))
 	{
 		Montage_Play(StiffHitMontage, 1.0f);
 	}

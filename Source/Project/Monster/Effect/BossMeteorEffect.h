@@ -40,4 +40,6 @@ private:
 
 	//현재 이동 거리
 	float CurMoveDistance;
+
+	float MeteorDamage = 100.0f;
 };

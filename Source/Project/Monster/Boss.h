@@ -153,7 +153,7 @@ private:
 
 	//스킬 사거리 관련 변수
 	//------------------------------------------------
-	const float BasicComboAttackRange = 300.0f;
+	const float BasicComboAttackRange = 400.0f;
 
 	const float SawToothAttackRange = 1200.0f;
 
@@ -178,6 +178,21 @@ private:
 	//------------------------------------------------
 	const float MaxHP = 100000000.f;
 	float CurHP = 100000000.f;
+	//------------------------------------------------
+	
+	//보스 페이즈 관련 변수
+	//------------------------------------------------
+	int CurBosPhase;
+	const int MaxBosPhase = 3;
+	//------------------------------------------------
+
+
+	//데미지 관련 변수
+	//------------------------------------------------
+	float BigSwingDamage = 250.0f;
+	float SoulSiphonStartDamage = 100.0f;
+	float SoulSiphonEndDamage = 300.0f;
+
 	//------------------------------------------------
 
 };

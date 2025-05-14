@@ -456,16 +456,21 @@ void AArcherPlayerController::SetupStoreUI(AStoreNPC* Npc,AArcher * TargetPlayer
 	else
 		IsSetStoreNPC = true;
 	
-	PlayerHUD->SetupStoreUI(Npc, TargetPlayer);
+	if(PlayerHUD)
+		PlayerHUD->SetupStoreUI(Npc, TargetPlayer);
 }
 
 UInventory* AArcherPlayerController::GetInventory()
 {
+	if (nullptr == PlayerHUD)
+		return nullptr;
 	return PlayerHUD->GetInventory();
 }
 
 UEquipment* AArcherPlayerController::GetEquipment()
 {
+	if (nullptr == PlayerHUD)
+		return nullptr;
 	return PlayerHUD->GetEquipment();
 }
 
@@ -560,6 +565,7 @@ void AArcherPlayerController::StopLevelSequence()
 	CurLevelSequencePlayer = nullptr;
 
 	SetVisiblePlayerHUD(true);
+	SetVisibleLevelSequenceHUD(false);
 
 	//보스 소환
 	UBossBattleSubSystem * BossBattleSubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();

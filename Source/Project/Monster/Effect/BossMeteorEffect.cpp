@@ -6,7 +6,9 @@
 #include "WorldSubSystem/EffectObjectPool.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Monster/Effect/BossMeteorOverlapEffect.h"
-
+#include "Archer/Archer.h"
+#include "Kismet/GameplayStatics.h"
+#include "DamageType/BossStiffDamageType.h"
 
 ABossMeteorEffect::ABossMeteorEffect()
 	: CurMoveDistance(0)
@@ -52,6 +54,18 @@ void ABossMeteorEffect::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedC
 
 	EffectObjPool->ReturnBossMeteorEffect(this);
 	CurMoveDistance = 0;
+
+	AArcher* Archer = Cast<AArcher>(OtherActor);
+	if (Archer)
+	{
+		UGameplayStatics::ApplyDamage(
+			Archer,
+			MeteorDamage,
+			GetInstigatorController(),
+			this,
+			UBossStiffDamageType::StaticClass());
+	}
+
 }
 
 void ABossMeteorEffect::SetOverlapEventOn()

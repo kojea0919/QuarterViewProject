@@ -52,4 +52,5 @@ private:
 	const int LineRight = 1008;
 	const int Distance = 891;
 
+	bool BossIsDead = false;
 };
