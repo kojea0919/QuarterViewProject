@@ -123,7 +123,6 @@ void UPlayerHUD::SetVisibilityBossHPBar(bool Enable)
 {
 	if (BossHPBar)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Call"));
 		if (Enable)
 			BossHPBar->SetVisibility(ESlateVisibility::Visible);
 		else

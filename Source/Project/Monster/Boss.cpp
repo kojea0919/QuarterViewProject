@@ -375,7 +375,7 @@ void ABoss::Dash()
 	ABossAIController * AIController = Cast<ABossAIController>(Controller);
 	if (AIController)
 	{
-		AIController->MoveToLocation(Player->GetActorLocation());
+		AIController->MoveToLocation(Player->GetActorLocation(),50.f);
 	}
 }
 
@@ -388,6 +388,14 @@ void ABoss::DashEnd()
 	WeaponEffect->Activate();
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+
+	if (Player)
+	{
+		FVector BossToPlayer = Player->GetActorLocation() - GetActorLocation();
+		BossToPlayer.Normalize();
+		SetActorRotation(BossToPlayer.Rotation());
+	}
 
 	//후속타 진행
 	if (BossAnim)

@@ -1,0 +1,24 @@
+float2 UV = TextureCoordinates;
+float2 center = float2(0.5, 0.5); // 화면 중앙 (원형 충격파 기준)
+float2 dir = UV - center;
+float dist = length(dir); // 중심으로부터의 거리
+
+// 충격파 파라미터
+float time = 0.3; // 시간
+float shockSpeed = 1.0;
+float shockWidth = 0.1;
+float shockStrength = 0.08;
+
+
+
+// 충격파 중심에서 특정 반지름만큼 위치한 지점에만 영향을 주기
+float shockCenter = time * shockSpeed;
+float shock = exp(-pow((dist - shockCenter) / shockWidth, 2)) * shockStrength;
+
+//return float3(UV.x,UV.y,0);
+
+// 방향 벡터로 UV를 밀어줌 (왜곡)
+UV += normalize(dir) * shock;
+
+float3 test = float3(UV.x,UV.y, 0);
+return test;
