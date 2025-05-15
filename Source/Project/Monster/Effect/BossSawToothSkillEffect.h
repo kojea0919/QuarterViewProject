@@ -25,8 +25,16 @@ public:
 
 	void StartTelegraphRectangle();
 
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
 public:
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	void UpdateScale(float DeltaTime);
@@ -38,6 +46,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = Effect)
 	class UNiagaraComponent* TelegraphComp;
+
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* BoxCollider;
 
 	//톱니 이동 거리
 	const float SawToothMoveDistance = 2500.f;
@@ -62,4 +73,6 @@ protected:
 
 	//이동 속도
 	float MoveSpeed;
+
+	const float SawToothDamage = 200.0f;
 };

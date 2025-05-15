@@ -68,7 +68,10 @@ void UBossHPBar::SetBossCurrentHP(float newHP)
 		FWidgetTransform LineTransform = BossHPLine->GetRenderTransform();
 		LineTransform.Translation = FVector2D(NewTransform, LineTransform.Translation.Y);
 		BossHPLine->SetRenderTransform(LineTransform);
-
+		if (BossHPLineAnimation)
+		{
+			PlayAnimation(BossHPLineAnimation);
+		}
 
 		FString HPStr = FString::FromInt(newHP);
 		HPStr += TEXT(" / ");
@@ -95,6 +98,6 @@ void UBossHPBar::NativeConstruct()
 	//---------------------------------------------------------------
 
 	HpBarColor.Add(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-	HpBarColor.Add(FLinearColor(1.0f, 0.0f, 1.0f, 1.0f));
+	HpBarColor.Add(FLinearColor(0.3f, 1.0f, 0.7f, 1.0f));
 	CurColorIdx = 0;
 }

@@ -2,4 +2,9 @@
 
 
 #include "WorldSubSystem/BossBattleSubSystem.h"
+#include "GamePlayEffect/LevelSequence/PlayeLevelSequenceActor.h"
 
+void UBossBattleSubSystem::ResetSequence()
+{
+	BossSpawnSequence->ResetIsPlayed();
+}

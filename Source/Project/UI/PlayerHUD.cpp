@@ -108,11 +108,14 @@ void UPlayerHUD::SetVisibilityStore()
 	}
 }
 
-void UPlayerHUD::SetVisibilityBossClear()
+void UPlayerHUD::SetVisibilityBossClear(bool Enable)
 {
 	if (BossClear->IsValidLowLevel())
 	{
-		BossClear->SetVisibility(ESlateVisibility::Visible);
+		if(Enable)
+			BossClear->SetVisibility(ESlateVisibility::Visible);
+		else
+			BossClear->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 

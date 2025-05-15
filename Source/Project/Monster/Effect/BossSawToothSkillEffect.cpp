@@ -6,6 +6,10 @@
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Components/BoxComponent.h"
+#include "Archer/Archer.h"
+#include "Kismet/GameplayStatics.h"
+#include "DamageType/BossStiffDamageType.h"
 
 ABossSawToothSkillEffect::ABossSawToothSkillEffect()
 	:TelegraphComp(nullptr), NeedToUpdateScale(true), IsCanMove(false), CurMoveDistance(0.0f), MoveSpeed(2000.0f)
@@ -17,11 +21,25 @@ ABossSawToothSkillEffect::ABossSawToothSkillEffect()
 	}
 
 	TelegraphRectangleEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Enemy/Effect/Niagara/FX_Telegrap_Rectangle.FX_Telegrap_Rectangle"));
+
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BOX"));
+	SetRootComponent(BoxCollider);
+	Effect->SetupAttachment(BoxCollider);
+
+	BoxCollider->SetCollisionProfileName(TEXT("BossSkillCollision"));
+
+	BoxCollider->SetGenerateOverlapEvents(false);
+	
+	Effect->SetRelativeLocation(FVector(0.0f, 0.0f, -120.0f));
+	BoxCollider->SetBoxExtent(FVector(120.0f, 20.f, 120.f));
+
 }
 
 void ABossSawToothSkillEffect::OnTelegraphFinished(UNiagaraComponent* PSystem)
 {
 	IsCanMove = true;
+
+	BoxCollider->SetGenerateOverlapEvents(true);
 }
 
 void ABossSawToothSkillEffect::OnParticleSystemFinished_Impl()
@@ -30,7 +48,7 @@ void ABossSawToothSkillEffect::OnParticleSystemFinished_Impl()
 }
 
 void ABossSawToothSkillEffect::StartTelegraphRectangle()
-{
+{	
 	NeedToUpdateScale = true;
 	IsCanMove = false;
 	CurMoveDistance = 0.0f;
@@ -51,6 +69,23 @@ void ABossSawToothSkillEffect::StartTelegraphRectangle()
 		TelegraphComp->Activate(true);
 	}
 	RootComponent->SetWorldScale3D(FVector(0.0f,1.0f,1.0f));
+	TelegraphComp->SetWorldLocation(GetActorLocation() - FVector(0.0f, 0.0f, 120.0f));
+}
+
+void ABossSawToothSkillEffect::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	BoxCollider->SetGenerateOverlapEvents(false);
+
+	AArcher* Archer = Cast<AArcher>(OtherActor);
+	if (Archer)
+	{
+		UGameplayStatics::ApplyDamage(
+			Archer,
+			SawToothDamage,
+			GetInstigatorController(),
+			this,
+			UBossStiffDamageType::StaticClass());
+	}
 }
 
 void ABossSawToothSkillEffect::Tick(float DeltaTime)
@@ -66,6 +101,13 @@ void ABossSawToothSkillEffect::Tick(float DeltaTime)
 	{
 		UpdateLocation(DeltaTime);
 	}
+}
+
+void ABossSawToothSkillEffect::BeginPlay()
+{
+	Super::BeginPlay();
+
+	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &ABossSawToothSkillEffect::OnComponentBeginOverlap);
 }
 
 void ABossSawToothSkillEffect::UpdateScale(float DeltaTime)

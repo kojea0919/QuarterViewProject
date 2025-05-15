@@ -9,8 +9,8 @@
 #include "DamageType/ArcherBasicDamageType.h"
 
 UBaseSkill::UBaseSkill()
-	: Archer(nullptr),AnimInstance(nullptr),SkillUIMaterial(nullptr), SkillType(ESkillType::Base), CurSlot(nullptr),
-	IsPlacedSkill(false), CurCollisionIdx(0), SkillMontage(nullptr),
+	: Archer(nullptr), AnimInstance(nullptr), SkillUIMaterial(nullptr), SkillType(ESkillType::Base), CurSlot(nullptr),
+	IsPlacedSkill(false), NeedRotation(false), CurCollisionIdx(0), SkillMontage(nullptr),
 	CoolTime(1.0f), ElapsedSkillTime(0), IsCoolDown(false)
 {
 }
@@ -32,6 +32,9 @@ bool UBaseSkill::Use()
 			CurSlot->PlayUseSkillAnimation();
 
 		Archer->SetUseSkill(true);
+		if (NeedRotation)
+			Archer->RotateMouseDirectionTimeLineVersion();
+
 		AnimInstance->Montage_Play(SkillMontage);
 
 		//AnimInstnace의 BindSkillMontageEndDeleegate함수를 호출해서

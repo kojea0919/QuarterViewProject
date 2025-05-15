@@ -102,6 +102,12 @@ public:
 
 	bool GetIsVisibleInteractionUI() const;
 	void SetIsCameraShakeJump(bool IsShake) { IsCameraShakeJump = IsShake; }
+
+	void RotateMouseDirectionTimeLineVersion();
+	bool IsDead() const { return Dead; }
+
+	void ResetState();
+
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
@@ -287,7 +293,6 @@ private:
 
 
 private:
-
 	//캐릭터 이동 속도
 	float DefaultSpeed = 600.0f;
 
@@ -419,6 +424,14 @@ private:
 	TSubclassOf<class UCameraShakeBase> ArcherJumpCameraShakeClass;
 
 	FTimerHandle JumpCameraShakeTimerHandle;
+	//--------------------------------------------
+
+	//HP
+	//--------------------------------------------
+	float CurHP;
+	float MaxHP;
+
+	bool Dead;
 	//--------------------------------------------
 
 };

@@ -43,8 +43,8 @@ AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
 	DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false),
-    PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1), IsUpdateCameraTransform(false),
-	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0)
+	PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1), IsUpdateCameraTransform(false),
+	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0), CurHP(2000), MaxHP(2000), Dead(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -294,6 +294,24 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 
 		}
 
+		CurHP -= Damage;
+		CurHP = 0;
+		if (CurHP <= 0)
+		{
+			if (DamageType->GetDamageType() == EBossDamageType::Stiff)
+				ArcherAnim->PlaySitffDeadMontage();
+			else
+				ArcherAnim->PlayKnockBackDeadMontage();
+
+			Dead = true;
+		}
+
+		if (ArcherController)
+		{
+			ArcherController->SetPlayerCurrentHPRate(CurHP / MaxHP);
+			ArcherController->PlayerDead();
+			ArcherController->StopMovement();
+		}
 	}
 
 	return 0.0f;
@@ -503,8 +521,7 @@ void AArcher::BasicAttackAction()
 		{
 			ComboInput = true;
 
-			UpdateAttackTargetLocation();
-			AttackRotationTimeline->PlayFromStart();
+			RotateMouseDirectionTimeLineVersion();
 		}
 		return;
 	}
@@ -528,8 +545,7 @@ void AArcher::BasicAttackAction()
 	//캐릭터의 부드러운 회전을 위해서 현재 플레이어의 Rotation과
 	//공격 방향으로의 Rotation을 저장후 Timeline 실행
 	//--------------------------------
-	UpdateAttackTargetLocation();
-	AttackRotationTimeline->PlayFromStart();
+	RotateMouseDirectionTimeLineVersion();
 }
 
 void AArcher::BasicAttackMontageEnded()
@@ -838,6 +854,34 @@ void AArcher::RotateMouseDirection()
 
 	FVector TargetLocation = ArcherController->GetMouseWorldLocation();
 	RotateTargetLocation(TargetLocation - GetActorLocation());
+}
+
+void AArcher::RotateMouseDirectionTimeLineVersion()
+{
+	UpdateAttackTargetLocation();
+	AttackRotationTimeline->PlayFromStart();
+}
+
+void AArcher::ResetState()
+{
+	IsCanRotate = true;
+	ComboInput = false;
+	MoveAble = true;
+	Attacking = false;
+	CurrentCombo = 0;
+	CanNextCombo = false;
+	MoveSkillOn = false;
+	IsUseSkill = false;
+	LookMouseDirection = false;
+	IsCameraZoomOut = false;
+	RotateToBoss = false;
+	Dead = false;
+	CurHP = MaxHP;
+
+	if (ArcherAnim)
+		ArcherAnim->PlayRespawnMontage();
+
+	PlayerState = EPlayerState::Normal;
 }
 
 void AArcher::RotateBossDirection(float DeltaSecond)

@@ -142,6 +142,27 @@ void UArcherAnimInstance::PlayKnockBackMontage()
 	}
 }
 
+void UArcherAnimInstance::PlaySitffDeadMontage()
+{
+	if (!Montage_IsPlaying(StiffDeadMontage))
+	{
+		Montage_Play(StiffDeadMontage, 1.0f);
+	}
+}
+
+void UArcherAnimInstance::PlayKnockBackDeadMontage()
+{
+	if (!Montage_IsPlaying(KnockBackDeadMontage))
+	{
+		Montage_Play(KnockBackDeadMontage, 1.0f);
+	}
+}
+
+void UArcherAnimInstance::PlayRespawnMontage()
+{
+	Montage_Play(RespawnMontage, 1.0f);
+}
+
 void UArcherAnimInstance::AnimNotify_BasicAttackComboCheck()
 {
 	if (Archer)
@@ -387,6 +408,27 @@ void UArcherAnimInstance::InitMontage()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> KNOCKBACK_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/KnockBackMontage.KnockBackMontage"));
 	if (KNOCKBACK_MONTAGE.Succeeded())
 		KnockBackMontage = KNOCKBACK_MONTAGE.Object;
+	//-------------------------------------------
+
+	//StiffDead Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> STIFFDEAD_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/SitffDeadMontage.SitffDeadMontage"));
+	if (STIFFDEAD_MONTAGE.Succeeded())
+		StiffDeadMontage = STIFFDEAD_MONTAGE.Object;
+	//-------------------------------------------
+
+	//KnockBackDead Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> KNOCKBACKDEAD_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/KnockBackDeadMontage.KnockBackDeadMontage"));
+	if (KNOCKBACKDEAD_MONTAGE.Succeeded())
+		KnockBackDeadMontage = KNOCKBACKDEAD_MONTAGE.Object;
+	//-------------------------------------------
+
+	//Respawn Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> RESPAWN_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/RespawnMontage.RespawnMontage"));
+	if (RESPAWN_MONTAGE.Succeeded())
+		RespawnMontage = RESPAWN_MONTAGE.Object;
 	//-------------------------------------------
 }
 

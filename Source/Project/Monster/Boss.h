@@ -46,6 +46,7 @@ public:
 
 	void DomainExpansion();
 	void SpawnDomainExpansion();
+	void RemoveDomainExpansion();
 
 	void SoulSiphon();
 	void SpawnSoulSiphonLoopEffect();
@@ -58,6 +59,8 @@ public:
 	
 	void BigSwing();
 	void SpawnBigSwingMarkEffect();
+
+	void ResetState();
 public:
 	void CheckSoulSiphonOverlap();
 	void CheckBigSwingOverlap();
@@ -87,6 +90,8 @@ public:
 	float GetCurrentHP() const { return CurHP; }
 	float GetMaxHP() const { return MaxHP; }
 
+	void PlayerDead();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -94,6 +99,9 @@ private:
 	void BasicTypeDamageProc();
 
 	FVector GetRandomVector();
+
+	void IncreasePatternCount();
+	void IncreaseSoulSiphonPatternCount();
 
 private:
 	//Particle
@@ -192,7 +200,19 @@ private:
 	float BigSwingDamage = 250.0f;
 	float SoulSiphonStartDamage = 100.0f;
 	float SoulSiphonEndDamage = 300.0f;
+	//------------------------------------------------
 
+	//Patter 잠시 휴식
+	//------------------------------------------------
+	const int MaxRestPatternCount = 1;
+	int CurPatternCount;
+	//------------------------------------------------
+
+	//SoulSiphon
+	//------------------------------------------------
+	bool IsIllusionState;
+	int SoulSiphonUsePatternCount;
+	const int MaxSoulSiphonPatternCount = 10;	//일반 패턴을 10번 사용해야 SoulSiphon한번 사용 가능
 	//------------------------------------------------
 
 };

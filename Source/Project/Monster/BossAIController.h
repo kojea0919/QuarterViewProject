@@ -24,6 +24,7 @@ public:
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 
 	void StartBehaviorTree();
+	void StopBehaviorTree();
 
 	void MontageEnd();
 	void SoulSiphonSkillEnd();
@@ -32,6 +33,11 @@ public:
 	void SetUsingMontage();
 
 	void SetIllusionEnd(bool Enable);
+
+	void SetRestPattern();
+
+	void SetBossPhase(int CurPhase);
+	void SetCanUseSoulSiphon(bool Enable);
 
 protected:
 	virtual void BeginPlay() override;

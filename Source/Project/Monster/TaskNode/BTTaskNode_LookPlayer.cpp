@@ -19,6 +19,7 @@ EBTNodeResult::Type UBTTaskNode_LookPlayer::ExecuteTask(UBehaviorTreeComponent& 
 void UBTTaskNode_LookPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
+
 	if (!AIController)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
@@ -33,9 +34,22 @@ void UBTTaskNode_LookPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* 
 	}
 
 
+	UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent();
+	if (!Blackboard)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		return;
+	}
+
 	if(Boss->LookPlayer(DeltaSeconds))
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		Blackboard->SetValueAsBool(TEXT("IsRotateToPlayer"), false);
+
 		return;
+	}
+	else
+	{
+		Blackboard->SetValueAsBool(TEXT("IsRotateToPlayer"), true);
 	}
 }

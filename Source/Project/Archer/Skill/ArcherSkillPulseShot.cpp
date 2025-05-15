@@ -6,6 +6,8 @@
 
 UArcherSkillPulseShot::UArcherSkillPulseShot()
 {
+	NeedRotation = true;
+
 	CollisionForwardScaleArr.Push(600);
 	CollisionTypeArr.Push(ECollisionType::Box);
 	CollisionExtentArr.Push(FVector(600.0f, 40.f, 70.0f));

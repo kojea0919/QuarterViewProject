@@ -14,6 +14,7 @@
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
 #include "WorldSubSystem/BossBattleSubSystem.h"
+#include "UI/PlayerDeadHUD.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false), IsPlayingLevelSequence(false), CurLevelSequencePlayer(nullptr)
@@ -25,6 +26,10 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_LEVELSEQUENCEHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_LevelSequenceHUD.UI_LevelSequenceHUD_C"));
 	if (UI_LEVELSEQUENCEHUD_C.Succeeded())
 		LevelSequenceHUDWidgetClass = UI_LEVELSEQUENCEHUD_C.Class;
+
+	static ConstructorHelpers::FClassFinder<UPlayerDeadHUD> UI_PLAYERDEADHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerDeadHUD.UI_PlayerDeadHUD_C"));
+	if (UI_PLAYERDEADHUD_C.Succeeded())
+		PlayerDeadHUDWidgetClass = UI_PLAYERDEADHUD_C.Class;
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
 	if (IA_SLOTQ_INPUTACTION.Succeeded())
@@ -145,6 +150,8 @@ void AArcherPlayerController::MoveTargetAction()
 	if (!Archer->GetMoveAble() || Archer->GetPlayerState() != EPlayerState::Normal)
 		return;
 
+
+
 	//마우스 클릭 위치를 월드 좌표로
 	FVector TargetLocation = GetMouseWorldLocation();
 
@@ -185,6 +192,16 @@ void AArcherPlayerController::InitHUD()
 		{
 			LevelSequenceHUD->AddToViewport();
 			LevelSequenceHUD->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+
+	if (PlayerDeadHUDWidgetClass)
+	{
+		PlayerDeadHUD = CreateWidget<UPlayerDeadHUD>(this, PlayerDeadHUDWidgetClass);
+		if (PlayerDeadHUD)
+		{
+			PlayerDeadHUD->AddToViewport();
+			PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
@@ -516,7 +533,15 @@ void AArcherPlayerController::SetVisibleBossClearWindow()
 {
 	if (PlayerHUD)
 	{
-		PlayerHUD->SetVisibilityBossClear();
+		PlayerHUD->SetVisibilityBossClear(true);
+	}
+}
+
+void AArcherPlayerController::SetPlayerCurrentHPRate(float Rate)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetPlayerCurrentHPRate(Rate);
 	}
 }
 
@@ -552,6 +577,9 @@ void AArcherPlayerController::SetVisibleLevelSequenceHUD(bool Enable)
 
 void AArcherPlayerController::PlayLevelSequence(ULevelSequencePlayer* SequencePlayer)
 {
+	if (CurrentBoss)
+		CurrentBoss->SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+
 	SetVisiblePlayerHUD(false);
 	SetIsPlayingLevelSequence(true);
 	CurLevelSequencePlayer = SequencePlayer;
@@ -583,6 +611,64 @@ void AArcherPlayerController::StopLevelSequence()
 
 	//BosHPBarUI On
 	if (PlayerHUD)
+	{
+		PlayerHUD->InitBossHP();
 		PlayerHUD->SetVisibilityBossHPBar(true);
+	}
+
+}
+
+void AArcherPlayerController::SetVisiblePlayerDeadHUD(bool Enable)
+{
+	if (PlayerDeadHUD)
+	{
+		if(Enable)
+			PlayerDeadHUD->SetVisibility(ESlateVisibility::Visible);
+		else
+			PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void AArcherPlayerController::PlayerDead()
+{
+	if (PlayerDeadHUD)
+	{
+		PlayerDeadHUD->SetVisibility(ESlateVisibility::Visible);
+		PlayerDeadHUD->PlayFailAnimation();
+	}
+
+
+	if (CurrentBoss)
+	{
+		CurrentBoss->PlayerDead();
+	}
+}
+
+void AArcherPlayerController::ResetPlayerAndBoss()
+{
+	if (PlayerDeadHUD)
+		PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
+
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer)
+	{
+		UBossBattleSubSystem* BossBattleSubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+		const FTransform & RespawnTransform =  BossBattleSubSystem->GetPlayerRespawnTransform();
+
+		Archer->ResetState();
+		Archer->SetActorTransform(RespawnTransform);
+
+		BossBattleSubSystem->ResetSequence();
+	}
+
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetPlayerCurrentHPRate(1.0f);
+		PlayerHUD->SetVisibilityBossHPBar(false);
+		PlayerHUD->SetVisibilityBossClear(false);
+	}
+
+	if (CurrentBoss)
+		CurrentBoss->ResetState();
 
 }

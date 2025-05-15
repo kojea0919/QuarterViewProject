@@ -125,6 +125,9 @@ protected:
 	//현재 스킬이 설치형 스킬인지 나타내는 변수
 	bool IsPlacedSkill;			
 
+	//현재 스킬이 회전이 필요한 스킬인지 나타내는 변수
+	bool NeedRotation;
+
 	//스킬 범위
 	//------------------------
 	TArray<float> CollisionForwardScaleArr;		//캐릭터 앞방향으로 얼만큼 위치에 생성할지 나타내는 변수
@@ -158,5 +161,8 @@ private:
 
 	FTimerHandle CooldownTimerHandle;//쿨타임 적용하기 위한 FTimerHandle
 	//------------------------
+
+
+
 };
  

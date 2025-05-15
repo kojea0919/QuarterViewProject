@@ -33,4 +33,7 @@ private:
 	//장판 각도
 	const float TelegraphAngle = 40.f;
 
+	//데미지
+	const float StoneSpikeDamage = 450.0f;
+
 };

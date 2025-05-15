@@ -83,6 +83,8 @@ public:
 	void SetBossCurrentHP(float HP);
 	void SetVisibleBossClearWindow();
 
+	void SetPlayerCurrentHPRate(float Rate);
+
 	void SetVisiblePlayerHUD(bool Enable);
 	
 	void SetIsPlayingLevelSequence(bool Enable) { IsPlayingLevelSequence = Enable; }
@@ -93,6 +95,10 @@ public:
 	void PlayLevelSequence(class ULevelSequencePlayer* SequencePlayer);
 	void StopLevelSequence();
 
+	void SetVisiblePlayerDeadHUD(bool Enable);
+	void PlayerDead();
+
+	void ResetPlayerAndBoss();
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
@@ -121,6 +127,13 @@ private:
 	class UUserWidget* LevelSequenceHUD;
 	//-------------------------------------------------
 
+	//Fail UI
+	//-------------------------------------------------
+	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
+	TSubclassOf<class UPlayerDeadHUD> PlayerDeadHUDWidgetClass;
+
+	class UPlayerDeadHUD* PlayerDeadHUD;
+	//-------------------------------------------------
 
 	//QuickSlot Key 관련 InputAction
 	//-------------------------------------------------

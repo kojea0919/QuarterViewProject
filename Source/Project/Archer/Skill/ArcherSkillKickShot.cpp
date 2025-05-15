@@ -6,6 +6,8 @@
 
 UArcherSkillKickShot::UArcherSkillKickShot()
 {
+	NeedRotation = true;
+
 	CollisionForwardScaleArr.Push(160);
 	CollisionTypeArr.Push(ECollisionType::Box);
 	CollisionExtentArr.Push(FVector(100.0f,50.f,50.f));

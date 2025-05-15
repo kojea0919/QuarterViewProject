@@ -32,7 +32,8 @@
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
-	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBosPhase(1)
+	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBosPhase(1), CurPatternCount(0),
+	IsIllusionState(false), SoulSiphonUsePatternCount(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -127,7 +128,8 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		break;
 	}
 
-	CurHP -= 3000000;
+	if(!IsIllusionState)
+		CurHP -= 34321;
 
 	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
 	if (ArcherController)
@@ -175,6 +177,8 @@ void ABoss::MontageEnd()
 	if (AIController)
 	{
 		AIController->MontageEnd();
+		IncreasePatternCount();
+		IncreaseSoulSiphonPatternCount();
 	}
 }
 
@@ -192,6 +196,16 @@ FVector ABoss::GetPlayerLocation() const
 	if (Player)
 		return Player->GetActorLocation();
 	return FVector();
+}
+
+void ABoss::PlayerDead()
+{
+	//플레이어가 죽었으면 ai멈추기
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->StopBehaviorTree();
+	}
 }
 
 void ABoss::BeginPlay()
@@ -250,8 +264,8 @@ void ABoss::BasicComboAttack()
 	if (BossAnim)
 	{
 		BossAnim->PlayBasicComboAttackMontage();
-		CurrentBasicComboAttackIdx = 0;
 
+		CurrentBasicComboAttackIdx = 0;
 	}
 }
 
@@ -287,7 +301,7 @@ void ABoss::SpawnSawTooth()
 	FRotator SawToPlayerRotator = SawToPlayerVector.GetSafeNormal().Rotation();
 
 
-	SawToothEffect->SetActorLocation(SawSpawnLocation - FVector(0.0f,0.0f,90.f));
+	SawToothEffect->SetActorLocation(SawSpawnLocation + FVector(0.0f,0.0f,30.0f));
 	SawToothEffect->SetActorRotation(SawToPlayerRotator);
 	SawToothEffect->StartTelegraphRectangle();
 
@@ -390,10 +404,10 @@ void ABoss::CreateDashEffect()
 
 void ABoss::StoneSpike()
 {
-	RotateToPlayer = true;
-
 	if (BossAnim)
+	{
 		BossAnim->PlayStoneSpikeMontage();
+	}
 }
 
 void ABoss::SpawnStoneSpikeMarkEffect()
@@ -404,9 +418,11 @@ void ABoss::SpawnStoneSpikeMarkEffect()
 
 	ABossStoneSpikeAreaMarkEffect* Effect = EffectObjectPool->GetBossStoneSpikeAreaMarkEffect();
 	FTransform BossTransform = GetActorTransform();
-	BossTransform.SetLocation(GetMesh()->GetSocketLocation(TEXT("StoneSpikePos")));
+	BossTransform.SetLocation(GetMesh()->GetSocketLocation(TEXT("StoneSpikeMarkPos")));
 
 	Effect->SpwanNiagaraEffect(BossTransform);
+	Effect->SetOwner(this);
+
 }
 
 void ABoss::DomainExpansion()
@@ -434,10 +450,20 @@ void ABoss::SpawnDomainExpansion()
 	Effect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(TEXT("HammerCenter")));	
 }
 
+void ABoss::RemoveDomainExpansion()
+{
+	if (BlackAndWhiteMPCInstance)
+	{
+		BlackAndWhiteMPCInstance->SetScalarParameterValue(TEXT("Radius"), 0);
+	}
+}
+
 void ABoss::SoulSiphon()
 {
 	if (BossAnim)
+	{
 		BossAnim->PlaySoulSiphon();
+	}
 }
 
 void ABoss::SpawnSoulSiphonLoopEffect()
@@ -456,6 +482,8 @@ void ABoss::SpawnSoulSiphonLoopEffect()
 
 void ABoss::SoulSiphonEnd()
 {
+	IsIllusionState = false;
+
 	//플레이어에게 넉백 공격
 	UGameplayStatics::ApplyDamage(
 		Player,
@@ -463,6 +491,8 @@ void ABoss::SoulSiphonEnd()
 		GetInstigatorController(),
 		this,
 		UBossKnockBackDamageType::StaticClass());
+
+	SoulSiphonUsePatternCount = 0;
 }
 
 void ABoss::RemoveSoulSiphonLoopEffect()
@@ -493,6 +523,7 @@ void ABoss::IllusionOff()
 	if (AIController)
 	{
 		AIController->SetIllusionEnd(true);
+		AIController->MontageEnd();
 	}
 }
 
@@ -508,7 +539,9 @@ void ABoss::StartBehaviorTree()
 void ABoss::BigSwing()
 {
 	if (BossAnim)
+	{
 		BossAnim->PlayBigSwingMontage();
+	}
 }
 
 void ABoss::SpawnBigSwingMarkEffect()
@@ -524,6 +557,20 @@ void ABoss::SpawnBigSwingMarkEffect()
 	Effect->SpwanNiagaraEffect(BossTransform);
 }
 
+void ABoss::ResetState()
+{
+	//흑백처리 제거
+	RemoveDomainExpansion();
+	RotateToPlayer = false;
+	CurrentBasicComboAttackIdx = 0;
+	PrevSkillIsDash = false;
+
+	CurBosPhase = 1;
+	CurPatternCount = 0;
+	IsIllusionState = false;
+	SoulSiphonUsePatternCount = 0;
+}
+
 void ABoss::CheckSoulSiphonOverlap()
 {
 	TArray<FHitResult> HitResults;
@@ -534,7 +581,7 @@ void ABoss::CheckSoulSiphonOverlap()
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	FVector SphereLocation = GetActorLocation();
+	FVector SphereLocation = GetActorLocation() + GetActorForwardVector() * SoulSiphonForwardOffset;
 
 	bool IsHit = GetWorld()->SweepMultiByObjectType(HitResults,
 		SphereLocation, SphereLocation,
@@ -564,6 +611,7 @@ void ABoss::CheckSoulSiphonOverlap()
 		if (AIController)
 		{
 			AIController->SetUsingSoulSiphonState(true);
+			AIController->SetCanUseSoulSiphon(false);			
 		}
 
 		ASoulSiphonActor * Actor = GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
@@ -573,6 +621,8 @@ void ABoss::CheckSoulSiphonOverlap()
 		UBossBattleSubSystem * BossBattle = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
 		BossBattle->SaveBossTransform(GetActorTransform());
 		BossBattle->SavePlayerTransform(Player->GetActorTransform());
+
+		IsIllusionState = true;
 	}
 }
 
@@ -617,11 +667,6 @@ void ABoss::CheckBigSwingOverlap()
 				GetInstigatorController(),
 				this,
 				UBossKnockBackDamageType::StaticClass());
-		}
-		ABossAIController* AIController = Cast<ABossAIController>(Controller);
-		if (AIController)
-		{
-			AIController->SetUsingSoulSiphonState(true);
 		}
 	}
 }
@@ -673,6 +718,39 @@ FVector ABoss::GetRandomVector()
 	ReturnVector.Y = FMath::RandRange(-Range, Range);
 	ReturnVector.Z = FMath::RandRange(-Range, Range);
 	return ReturnVector;
+}
+
+void ABoss::IncreasePatternCount()
+{
+	++CurPatternCount;
+
+	if (CurPatternCount == MaxRestPatternCount)
+	{
+		ABossAIController* AIController = Cast<ABossAIController>(Controller);
+		if (AIController)
+		{
+			AIController->SetRestPattern();
+			CurPatternCount = 0;
+		}
+	}
+
+}
+
+void ABoss::IncreaseSoulSiphonPatternCount()
+{
+	if (SoulSiphonUsePatternCount > MaxSoulSiphonPatternCount)
+		return;
+
+	++SoulSiphonUsePatternCount;
+
+	if (SoulSiphonUsePatternCount == MaxSoulSiphonPatternCount)
+	{
+		ABossAIController* AIController = Cast<ABossAIController>(Controller);
+		if (AIController)
+		{
+			AIController->SetCanUseSoulSiphon(true);
+		}
+	}
 }
 
 bool ABoss::LookPlayer(float DeltaTime)

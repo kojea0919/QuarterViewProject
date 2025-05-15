@@ -53,4 +53,8 @@ private:
 	const int Distance = 891;
 
 	bool BossIsDead = false;
+
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* BossHPLineAnimation;
 };

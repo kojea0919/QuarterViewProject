@@ -27,10 +27,22 @@ public:
 	void SetBossSpawnTransform(const FTransform& Transform) { BossMapBossSpawnTransform = Transform; }
 	const FTransform& GetBossSpawnTransform() const { return BossMapBossSpawnTransform; }
 
+	void SetPlayerRespawnTransform(const FTransform& Transform) { PlayerRespawnTransform = Transform; }
+	const FTransform& GetPlayerRespawnTransform() const { return PlayerRespawnTransform; }
+
+	void ResetSequence();
+	void SetBossSpawnSequence(class APlayeLevelSequenceActor* Sequence) { BossSpawnSequence = Sequence; }
+	
+
 private:
 	FTransform BossSavedTransform;
 	FTransform PlayerSavedTransform;
 
 	FTransform BossMapPlayerSpawnTransform;
 	FTransform BossMapBossSpawnTransform;
+
+	FTransform PlayerRespawnTransform;
+
+	class APlayeLevelSequenceActor* BossSpawnSequence;
+
 };

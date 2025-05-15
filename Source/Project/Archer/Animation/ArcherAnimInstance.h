@@ -50,6 +50,11 @@ public:
 	void PlaySitffHitMontage();
 	void PlayKnockBackMontage();
 
+	void PlaySitffDeadMontage();
+	void PlayKnockBackDeadMontage();
+
+	void PlayRespawnMontage();
+
 	//스킬 Montage Get함수
 	//-----------------------------
 	UAnimMontage* GetDesperadoMontage() const { return DesperadoMontage; }
@@ -191,6 +196,15 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Hit, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* KnockBackMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Dead, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* StiffDeadMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Dead, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* KnockBackDeadMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Respawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* RespawnMontage;
 
 	class AArcher* Archer;
 

@@ -4,6 +4,7 @@
 #include "LevelSequencePlayer.h"
 #include "Archer/ArcherPlayerController.h"
 #include "Archer/Archer.h"
+#include "WorldSubSystem/BossBattleSubSystem.h"
 
 APlayeLevelSequenceActor::APlayeLevelSequenceActor()
 	: IsPlayed(false), ArcherController(nullptr)
@@ -52,7 +53,9 @@ void APlayeLevelSequenceActor::BeginPlay()
 
 	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayeLevelSequenceActor::BeginOverlap);
 
-
+	UBossBattleSubSystem * SubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+	if (SubSystem)
+		SubSystem->SetBossSpawnSequence(this);
 }
 
 void APlayeLevelSequenceActor::FinishedSequence()

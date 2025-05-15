@@ -3,6 +3,7 @@
 
 #include "Monster/Animation/BossAnimInstance.h"
 #include "Monster/Boss.h"
+#include "Monster/BossAIController.h"
 
 UBossAnimInstance::UBossAnimInstance()
 	: Boss(nullptr)

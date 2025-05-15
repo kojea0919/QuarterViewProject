@@ -28,7 +28,7 @@ public:
 	void SetVisibilityInventory();
 	void SetVisibilityEquipment();
 	void SetVisibilityStore();
-	void SetVisibilityBossClear();
+	void SetVisibilityBossClear(bool Enable);
 	void SetVisibilityBossHPBar(bool Enable);
 
 	class UInventory* GetInventory() { return Inventory; }

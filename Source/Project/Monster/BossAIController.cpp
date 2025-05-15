@@ -45,6 +45,16 @@ void ABossAIController::StartBehaviorTree()
 		RunBehaviorTree(BossBT);
 }
 
+void ABossAIController::StopBehaviorTree()
+{
+	UBehaviorTreeComponent* BehaviorTreeComponent = FindComponentByClass< UBehaviorTreeComponent>();
+
+	if (BehaviorTreeComponent)
+	{
+		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
+	}
+}
+
 void ABossAIController::MontageEnd()
 {
 	UBlackboardComponent* BlackboardComp = Blackboard.Get();
@@ -82,6 +92,27 @@ void ABossAIController::SetIllusionEnd(bool Enable)
 	UBlackboardComponent* BlackboardComp = Blackboard.Get();
 	if (BlackboardComp)
 		BlackboardComp->SetValueAsBool(TEXT("IllusionEnd"), Enable);
+}
+
+void ABossAIController::SetRestPattern()
+{
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	if (BlackboardComp)
+		BlackboardComp->SetValueAsBool(TEXT("RestPattern"), true);
+}
+
+void ABossAIController::SetBossPhase(int CurPhase)
+{
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	if (BlackboardComp)
+		BlackboardComp->SetValueAsBool(TEXT("CurrentPhase"), true);
+}
+
+void ABossAIController::SetCanUseSoulSiphon(bool Enable)
+{
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	if (BlackboardComp)
+		BlackboardComp->SetValueAsBool(TEXT("CanUseSoulSiphon"), Enable);
 }
 
 void ABossAIController::BeginPlay()
