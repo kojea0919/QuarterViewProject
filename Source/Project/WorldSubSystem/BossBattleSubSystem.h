@@ -32,7 +32,8 @@ public:
 
 	void ResetSequence();
 	void SetBossSpawnSequence(class APlayeLevelSequenceActor* Sequence) { BossSpawnSequence = Sequence; }
-	
+	void SetBossPhase2Sequence(class APlayeLevelSequenceActor* Sequence) { BossPhase2Sequence = Sequence; }
+	void PlayBossPhase2Sequence();
 
 private:
 	FTransform BossSavedTransform;
@@ -44,5 +45,6 @@ private:
 	FTransform PlayerRespawnTransform;
 
 	class APlayeLevelSequenceActor* BossSpawnSequence;
+	class APlayeLevelSequenceActor* BossPhase2Sequence;
 
 };

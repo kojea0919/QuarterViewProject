@@ -15,6 +15,7 @@
 #include "LevelSequencePlayer.h"
 #include "WorldSubSystem/BossBattleSubSystem.h"
 #include "UI/PlayerDeadHUD.h"
+//#include "UI/CircleFadeOutHUD.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false), IsPlayingLevelSequence(false), CurLevelSequencePlayer(nullptr)
@@ -204,6 +205,16 @@ void AArcherPlayerController::InitHUD()
 			PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+
+	/*if (CircleFadeOutWidgetClass)
+	{
+		CircleFadeOut = CreateWidget<UCircleFadeOutHUD>(this, CircleFadeOutWidgetClass);
+		if (CircleFadeOut)
+		{
+			CircleFadeOut->AddToViewport();
+			CircleFadeOut->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}*/
 }
 
 void AArcherPlayerController::CheckMousePositionCollision()
@@ -439,7 +450,6 @@ void AArcherPlayerController::UseBossTestKey()
 	{
 		CurrentBoss->StartBehaviorTree();
 	}
-	
 }
 
 USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const
@@ -616,6 +626,12 @@ void AArcherPlayerController::StopLevelSequence()
 		PlayerHUD->SetVisibilityBossHPBar(true);
 	}
 
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer)
+	{
+		Archer->SetNormalState();
+	}
+
 }
 
 void AArcherPlayerController::SetVisiblePlayerDeadHUD(bool Enable)
@@ -672,3 +688,23 @@ void AArcherPlayerController::ResetPlayerAndBoss()
 		CurrentBoss->ResetState();
 
 }
+
+//void AArcherPlayerController::SetVisibleCircleFadeOut(bool Enable)
+//{
+//	if (CircleFadeOut)
+//	{
+//		if (Enable)
+//			CircleFadeOut->SetVisibility(ESlateVisibility::Visible);
+//		else
+//			CircleFadeOut->SetVisibility(ESlateVisibility::Hidden);
+//	}
+//}
+//
+//void AArcherPlayerController::PlayCircleFadeOut()
+//{
+//	if (CircleFadeOut)
+//	{
+//		CircleFadeOut->SetVisibility(ESlateVisibility::Visible);
+//		CircleFadeOut->PlayCircleFadeOut();
+//	}
+//}

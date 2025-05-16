@@ -7,4 +7,13 @@
 void UBossBattleSubSystem::ResetSequence()
 {
 	BossSpawnSequence->ResetIsPlayed();
+	BossPhase2Sequence->ResetIsPlayed();
+}
+
+void UBossBattleSubSystem::PlayBossPhase2Sequence()
+{
+	if (BossPhase2Sequence)
+	{
+		BossPhase2Sequence->PlayLevelSequence();
+	}
 }

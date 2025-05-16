@@ -19,7 +19,6 @@ public:
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -61,6 +60,8 @@ public:
 	void SpawnBigSwingMarkEffect();
 
 	void ResetState();
+	void PlayNextPhaseCinematic();
+
 public:
 	void CheckSoulSiphonOverlap();
 	void CheckBigSwingOverlap();
@@ -190,10 +191,13 @@ private:
 	
 	//보스 페이즈 관련 변수
 	//------------------------------------------------
-	int CurBosPhase;
+	int CurBossPhase;
 	const int MaxBosPhase = 3;
-	//------------------------------------------------
 
+	const float Phase1ToPhase2HP = 900000000;
+
+	bool NeedPlayLevelSequence;
+	//------------------------------------------------
 
 	//데미지 관련 변수
 	//------------------------------------------------

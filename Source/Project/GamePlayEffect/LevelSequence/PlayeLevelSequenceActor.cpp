@@ -7,7 +7,7 @@
 #include "WorldSubSystem/BossBattleSubSystem.h"
 
 APlayeLevelSequenceActor::APlayeLevelSequenceActor()
-	: IsPlayed(false), ArcherController(nullptr)
+	: IsPlayed(false), ArcherController(nullptr), IsUseCollision(true)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -15,10 +15,18 @@ APlayeLevelSequenceActor::APlayeLevelSequenceActor()
 
 	SetRootComponent(BoxCollider);
 
-	BoxCollider->SetCollisionProfileName(TEXT("OverlapAll"));
+	if(IsUseCollision)
+		BoxCollider->SetCollisionProfileName(TEXT("OverlapAll"));
+	else
+		BoxCollider->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
 void APlayeLevelSequenceActor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	PlayLevelSequence();
+}
+
+void APlayeLevelSequenceActor::PlayLevelSequence()
 {
 	if (IsPlayed)
 		return;
@@ -34,13 +42,16 @@ void APlayeLevelSequenceActor::BeginOverlap(UPrimitiveComponent* OverlappedCompo
 
 			LevelSequencePlayer->Play();
 			IsPlayed = true;
-			AArcher* Archer = Cast<AArcher>(OtherActor);
-			if (Archer)
+
+			ArcherController = GetWorld()->GetFirstPlayerController<AArcherPlayerController>();
+			if (ArcherController)
 			{
-				ArcherController = Archer->GetController<AArcherPlayerController>();
-				if (ArcherController)
+				ArcherController->PlayLevelSequence(LevelSequencePlayer);
+
+				AArcher* Archer = Cast<AArcher>(ArcherController->GetCharacter());
+				if (Archer)
 				{
-					ArcherController->PlayLevelSequence(LevelSequencePlayer);
+					Archer->SetPlayingLevelSequenceState();
 				}
 			}
 		}
@@ -51,11 +62,26 @@ void APlayeLevelSequenceActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayeLevelSequenceActor::BeginOverlap);
+	if(IsUseCollision)
+		BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayeLevelSequenceActor::BeginOverlap);
 
 	UBossBattleSubSystem * SubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
 	if (SubSystem)
-		SubSystem->SetBossSpawnSequence(this);
+	{
+		switch (Type)
+		{
+		case ECinematicType::BossSpawn:
+			SubSystem->SetBossSpawnSequence(this);
+			break;
+		case ECinematicType::BossPhase2:
+			SubSystem->SetBossPhase2Sequence(this);
+			break;
+		}
+
+	}
+
+
+
 }
 
 void APlayeLevelSequenceActor::FinishedSequence()
@@ -63,5 +89,9 @@ void APlayeLevelSequenceActor::FinishedSequence()
 	if (ArcherController)
 	{
 		ArcherController->StopLevelSequence();
+
+		AArcher* Archer = Cast<AArcher>(ArcherController->GetCharacter());
+		if (Archer)
+			Archer->SetNormalState();
 	}
 }

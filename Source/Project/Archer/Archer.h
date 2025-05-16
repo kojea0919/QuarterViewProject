@@ -9,12 +9,13 @@
 #include "Archer.generated.h"
 
 
-enum class EPlayerState 
+enum class EPlayerState
 {
 	Normal,
 	Bound,
 	Stiff,
-	Down
+	Down,
+	PlayingLevelSequence
 };
 
 class UCurveVector;
@@ -88,7 +89,16 @@ public:
 	FTransform GetSoulSiphonEffectPos() const;
 
 	EPlayerState GetPlayerState() const { return PlayerState; }
-	void SetNormalState() { PlayerState = EPlayerState::Normal; }
+	void SetNormalState() 
+	{
+		PlayerState = EPlayerState::Normal; 
+		SetActorHiddenInGame(false);
+	}
+	void SetPlayingLevelSequenceState()
+	{
+		PlayerState = EPlayerState::PlayingLevelSequence;
+		SetActorHiddenInGame(true);
+	}
 
 	void SetTargetCameraRotation(const FRotator & Rotation) { TargetCameraRotation = Rotation; }
 	void SetTargetCameraLocation(const FVector& Location) { TargetCameraLocation = Location; }

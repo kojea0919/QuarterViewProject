@@ -32,7 +32,7 @@
 
 ABoss::ABoss()
 	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
-	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBosPhase(1), CurPatternCount(0),
+	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBossPhase(1), NeedPlayLevelSequence(false), CurPatternCount(0),
 	IsIllusionState(false), SoulSiphonUsePatternCount(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -129,12 +129,18 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 	}
 
 	if(!IsIllusionState)
-		CurHP -= 34321;
+		CurHP -= 30000000;
 
 	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
 	if (ArcherController)
 	{
 		ArcherController->SetBossCurrentHP(CurHP);
+	}
+
+	if (CurHP <= Phase1ToPhase2HP)
+	{
+		CurBossPhase = 2;
+		NeedPlayLevelSequence = true;
 	}
 
 	if (CurHP <= 0)
@@ -180,6 +186,11 @@ void ABoss::MontageEnd()
 		IncreasePatternCount();
 		IncreaseSoulSiphonPatternCount();
 	}
+
+	if (NeedPlayLevelSequence)
+	{
+		PlayNextPhaseCinematic();
+	}
 }
 
 void ABoss::SoulSiphonEndMontageEnd()
@@ -188,6 +199,11 @@ void ABoss::SoulSiphonEndMontageEnd()
 	if (AIController)
 	{
 		AIController->SoulSiphonSkillEnd();
+	}
+
+	if (NeedPlayLevelSequence)
+	{
+		PlayNextPhaseCinematic();
 	}
 }
 
@@ -206,6 +222,30 @@ void ABoss::PlayerDead()
 	{
 		AIController->StopBehaviorTree();
 	}
+}
+
+void ABoss::PlayNextPhaseCinematic()
+{
+	NeedPlayLevelSequence = false; 
+
+	if (CurBossPhase == 2)
+	{
+		UBossBattleSubSystem * SubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+		if (SubSystem)
+		{
+			SubSystem->PlayBossPhase2Sequence();
+		}
+
+		if (Player)
+			Player->SetPlayingLevelSequenceState();
+	}
+
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->StopBehaviorTree();
+	}
+
 }
 
 void ABoss::BeginPlay()
@@ -573,7 +613,7 @@ void ABoss::ResetState()
 	CurrentBasicComboAttackIdx = 0;
 	PrevSkillIsDash = false;
 
-	CurBosPhase = 1;
+	CurBossPhase = 1;
 	CurPatternCount = 0;
 	IsIllusionState = false;
 	SoulSiphonUsePatternCount = 0;

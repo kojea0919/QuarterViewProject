@@ -99,6 +99,9 @@ public:
 	void PlayerDead();
 
 	void ResetPlayerAndBoss();
+
+	void SetVisibleCircleFadeOut(bool Enable);
+	void PlayCircleFadeOut();
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
@@ -134,6 +137,14 @@ private:
 
 	class UPlayerDeadHUD* PlayerDeadHUD;
 	//-------------------------------------------------
+
+	////CircleFadeOut
+	////-------------------------------------------------
+	//UPROPERTY(EditAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
+	//TSubclassOf<class UCircleFadeOutHUD> CircleFadeOutWidgetClass;
+
+	//class UCircleFadeOutHUD* CircleFadeOut;
+	////-------------------------------------------------
 
 	//QuickSlot Key 관련 InputAction
 	//-------------------------------------------------

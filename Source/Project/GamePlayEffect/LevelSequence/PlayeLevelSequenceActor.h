@@ -6,6 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "PlayeLevelSequenceActor.generated.h"
 
+UENUM(BlueprintType)
+enum class ECinematicType : uint8
+{
+	BossSpawn UMETA(DisplayName = "BossSpawn"),
+	BossPhase2 UMETA(DisplayName = "BossPhase2")
+};
+
 UCLASS()
 class PROJECT_API APlayeLevelSequenceActor : public AActor
 {
@@ -21,6 +28,8 @@ public:
 
 	void ResetIsPlayed() { IsPlayed = false; }
 
+	void PlayLevelSequence();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -32,7 +41,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxCollider;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	bool IsUseCollision;
+
+	UPROPERTY(EditAnywhere, meta= (AllowPrivateAccess = "true"))
+	ECinematicType Type;
+
 	bool IsPlayed;
+
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class ULevelSequence* LevelSequence;
