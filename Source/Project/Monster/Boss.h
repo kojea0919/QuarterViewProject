@@ -62,6 +62,8 @@ public:
 	void ResetState();
 	void PlayNextPhaseCinematic();
 
+	void ClearDomainExpansionEffect() { DomainExpansionEffect = nullptr; }
+
 public:
 	void CheckSoulSiphonOverlap();
 	void CheckBigSwingOverlap();
@@ -93,6 +95,12 @@ public:
 
 	void PlayerDead();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayShockWave();
+
+	int GetCurrentPhase() const { return CurBossPhase; }
+
+	void SetStartPhase2();
 protected:
 	virtual void BeginPlay() override;
 
@@ -103,6 +111,8 @@ private:
 
 	void IncreasePatternCount();
 	void IncreaseSoulSiphonPatternCount();
+
+	void UpdateShockWave(float DeltaTime);
 
 private:
 	//Particle
@@ -126,10 +136,20 @@ private:
 	UPROPERTY()
 	UCurveFloat* ExpansionCurve;
 
+	UPROPERTY()
+	UCurveFloat* ExpansionCurveReverse;
+
+	bool IsExpansion;
+
 	FOnTimelineFloat DomainExpansionTimelineProgress;
 
 	UFUNCTION()
 	void UpdateDomainExpansionRadius(float Alpha);
+
+	FTimerHandle RemoveDomainExpansionTimer;
+	const float DomainExpansionHoldingTime = 10.f;
+
+	class ABossDomainExpansionEffect* DomainExpansionEffect;
 	//-----------------------------------------------------------------------------
 
 	//흑백 처리 MPC
@@ -138,6 +158,17 @@ private:
 	
 	UMaterialParameterCollectionInstance* BlackAndWhiteMPCInstance;
 	//-----------------------------------------------------------------------------
+
+	//충격파 PostProcess
+	//-----------------------------------------------------------------------------
+	UMaterialParameterCollection* ShockWaveMPC;
+
+	UMaterialParameterCollectionInstance* ShockWaveMPCInstance;
+
+	float CurTime;
+	bool IsUpdateShockWave;
+	//-----------------------------------------------------------------------------
+
 
 	//Damage관련 변수
 	//-----------------------------------------------------------------------------

@@ -882,6 +882,16 @@ void AArcher::ResetState()
 		ArcherAnim->PlayRespawnMontage();
 
 	PlayerState = EPlayerState::Normal;
+
+	CustomTimeDilation = 1.f;
+}
+
+void AArcher::SetSlowState(bool Enable)
+{
+	if (Enable)
+		CustomTimeDilation = 0.7f;
+	else
+		CustomTimeDilation = 1.0f;
 }
 
 void AArcher::RotateBossDirection(float DeltaSecond)

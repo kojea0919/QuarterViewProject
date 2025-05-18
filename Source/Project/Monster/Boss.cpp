@@ -31,7 +31,7 @@
 #include "DamageType/BossKnockBackDamageType.h"
 
 ABoss::ABoss()
-	: Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
+	: CurTime(0),IsUpdateShockWave(false), Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
 	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBossPhase(1), NeedPlayLevelSequence(false), CurPatternCount(0),
 	IsIllusionState(false), SoulSiphonUsePatternCount(0)
 {
@@ -88,10 +88,18 @@ ABoss::ABoss()
 	{  
 		ExpansionCurve = C_RADIUSCURVE.Object;
 	}
+
+	const ConstructorHelpers::FObjectFinder<UCurveFloat> C_RADIUSCURVEREVERSE(TEXT("/Game/GamePlay/GamePlayEffect/BlackAndWhite/C_BlackAndWhiteRadiusReverse.C_BlackAndWhiteRadiusReverse"));
+
+	if (C_RADIUSCURVEREVERSE.Succeeded())
+	{
+		ExpansionCurveReverse = C_RADIUSCURVEREVERSE.Object;
+	}
 	//---------------------------------------------
 
 	//MPC Setting
 	BlackAndWhiteMPC = LoadObject<UMaterialParameterCollection>(nullptr, TEXT("/Game/GamePlay/GamePlayEffect/BlackAndWhite/MPC_BlackAndWhite.MPC_BlackAndWhite"));
+	ShockWaveMPC = LoadObject<UMaterialParameterCollection>(nullptr, TEXT("/Game/GamePlay/GamePlayEffect/Shockwave/MPC_ShockWave.MPC_ShockWave"));
 
 	AIControllerClass = ABossAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -106,6 +114,7 @@ void ABoss::PostInitializeComponents()
 	UBossAnimInstance* Anim = Cast<UBossAnimInstance>(GetMesh()->GetAnimInstance());
 	if (Anim)
 		BossAnim = Anim;
+
 }
 
 float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -137,7 +146,7 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		ArcherController->SetBossCurrentHP(CurHP);
 	}
 
-	if (CurHP <= Phase1ToPhase2HP)
+	if (CurHP <= Phase1ToPhase2HP && CurBossPhase == 1)
 	{
 		CurBossPhase = 2;
 		NeedPlayLevelSequence = true;
@@ -224,6 +233,17 @@ void ABoss::PlayerDead()
 	}
 }
 
+void ABoss::PlayShockWave()
+{
+	IsUpdateShockWave = true;
+	CurTime = 0.f;
+
+	if (ShockWaveMPCInstance)
+	{
+		ShockWaveMPCInstance->SetScalarParameterValue(TEXT("Enable"), IsUpdateShockWave);
+	}
+}
+
 void ABoss::PlayNextPhaseCinematic()
 {
 	NeedPlayLevelSequence = false; 
@@ -246,6 +266,15 @@ void ABoss::PlayNextPhaseCinematic()
 		AIController->StopBehaviorTree();
 	}
 
+}
+
+void ABoss::SetStartPhase2()
+{
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->SetStartPhase2(true);
+	}
 }
 
 void ABoss::BeginPlay()
@@ -279,6 +308,7 @@ void ABoss::BeginPlay()
 	if (!World) return;
 
 	BlackAndWhiteMPCInstance = World->GetParameterCollectionInstance(BlackAndWhiteMPC);
+	ShockWaveMPCInstance = World->GetParameterCollectionInstance(ShockWaveMPC);
 	//------------------------------
 }
 
@@ -290,6 +320,11 @@ void ABoss::Tick(float DeltaTime)
 	if (RotateToPlayer)
 	{
 		LookPlayer(DeltaTime);
+	}
+
+	if (IsUpdateShockWave) 
+	{
+		UpdateShockWave(DeltaTime);
 	}
 }
 
@@ -476,7 +511,15 @@ void ABoss::SpawnStoneSpikeMarkEffect()
 void ABoss::DomainExpansion()
 {
 	if (BossAnim)
+	{
 		BossAnim->PlayDomainExpansion();
+
+		ABossAIController* AIController = Cast<ABossAIController>(Controller);
+		if (AIController)
+		{
+			AIController->SetStartPhase2(false);
+		}
+	}
 }
 
 void ABoss::SpawnDomainExpansion()
@@ -494,16 +537,38 @@ void ABoss::SpawnDomainExpansion()
 	if (nullptr == EffectObjectPool)
 		return;
 
-	ABossDomainExpansionEffect * Effect = EffectObjectPool->GetBossDomainExpansionEffect();
-	Effect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(TEXT("HammerCenter")));	
+	DomainExpansionEffect = EffectObjectPool->GetBossDomainExpansionEffect();
+	DomainExpansionEffect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(TEXT("HammerCenter")));
+	DomainExpansionEffect->SetOwner(this);
+
+	if (Player)
+		Player->SetSlowState(true);
+
+	UWorld* World = GetWorld();
+	if (nullptr != World)
+		World->GetTimerManager().SetTimer(RemoveDomainExpansionTimer, this, &ABoss::RemoveDomainExpansion, DomainExpansionHoldingTime, false);
+
 }
 
 void ABoss::RemoveDomainExpansion()
 {
 	if (BlackAndWhiteMPCInstance)
 	{
-		BlackAndWhiteMPCInstance->SetScalarParameterValue(TEXT("Radius"), 0);
+		FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("HammerCenter"));
+
+		BlackAndWhiteMPCInstance->SetVectorParameterValue(TEXT("SpawnActorLocation"), SpawnLocation);
 	}
+
+	DomainExpansionTimeline->Reverse();
+
+	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjectPool)
+		return;
+
+	DomainExpansionEffect = EffectObjectPool->GetBossDomainExpansionEffect();
+	DomainExpansionEffect->SetReverse();
+	DomainExpansionEffect->SpwanNiagaraEffect(GetMesh()->GetSocketTransform(TEXT("HammerCenter")));
+	DomainExpansionEffect->SetOwner(this);
 }
 
 void ABoss::SoulSiphon()
@@ -608,7 +673,16 @@ void ABoss::SpawnBigSwingMarkEffect()
 void ABoss::ResetState()
 {
 	//흑백처리 제거
-	RemoveDomainExpansion();
+	if (BlackAndWhiteMPCInstance)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RemoveDomainExpansionTimer);
+		DomainExpansionTimeline->Stop();
+		BlackAndWhiteMPCInstance->SetScalarParameterValue(TEXT("Radius"), 0);
+	}
+
+	if (DomainExpansionEffect)
+		DomainExpansionEffect->OnNiagaraSystemFinished_Impl();
+
 	RotateToPlayer = false;
 	CurrentBasicComboAttackIdx = 0;
 	PrevSkillIsDash = false;
@@ -798,6 +872,22 @@ void ABoss::IncreaseSoulSiphonPatternCount()
 		{
 			AIController->SetCanUseSoulSiphon(true);
 		}
+	}
+}
+
+void ABoss::UpdateShockWave(float DeltaTime)
+{
+	CurTime += DeltaTime;
+	if (CurTime >= 1.0f)
+	{
+		IsUpdateShockWave = false;
+		
+		ShockWaveMPCInstance->SetScalarParameterValue(TEXT("Enable"), IsUpdateShockWave);
+	}
+
+	if (ShockWaveMPCInstance)
+	{
+		ShockWaveMPCInstance->SetScalarParameterValue(TEXT("Progress"), CurTime);
 	}
 }
 

@@ -66,6 +66,7 @@ void ANiagaraEffectActor::SetEffectEnable(bool Enable)
 	else
 	{
 		NiagaraComp->Deactivate();
+		NiagaraComp->DeactivateImmediate();
 	}
 }
 

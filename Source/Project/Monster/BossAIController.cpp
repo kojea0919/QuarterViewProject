@@ -115,6 +115,13 @@ void ABossAIController::SetCanUseSoulSiphon(bool Enable)
 		BlackboardComp->SetValueAsBool(TEXT("CanUseSoulSiphon"), Enable);
 }
 
+void ABossAIController::SetStartPhase2(bool Enable)
+{
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	if (BlackboardComp)
+		BlackboardComp->SetValueAsBool(TEXT("IsStartPhase2"), Enable);
+}
+
 void ABossAIController::BeginPlay()
 {
 	Super::BeginPlay();

@@ -35,6 +35,22 @@ public:
 	void SetBossPhase2Sequence(class APlayeLevelSequenceActor* Sequence) { BossPhase2Sequence = Sequence; }
 	void PlayBossPhase2Sequence();
 
+	void SetBurnSky(class ASky* Sky) { BurnSky = Sky; }
+	void SetDeathSky(class ASky* Sky) { DeathSky = Sky; }
+
+	void SetBurnSkyHidden();
+	void SetDeathSkyVisible();
+
+	void SetMainLevelLight(class AMainLevelLight* Light) { MainLevelLight = Light; }
+	void RecaptureSky();
+	void SetDirectionalLigthIntensity(float Intensity);
+
+	void SetPhase2Light();
+	
+	void ResetSky();
+	void ResetLight();
+
+
 private:
 	FTransform BossSavedTransform;
 	FTransform PlayerSavedTransform;
@@ -46,5 +62,10 @@ private:
 
 	class APlayeLevelSequenceActor* BossSpawnSequence;
 	class APlayeLevelSequenceActor* BossPhase2Sequence;
+
+	class ASky* BurnSky;
+	class ASky* DeathSky;
+	
+	class AMainLevelLight* MainLevelLight;
 
 };

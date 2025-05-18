@@ -7,7 +7,7 @@
 #include "WorldSubSystem/BossBattleSubSystem.h"
 
 APlayeLevelSequenceActor::APlayeLevelSequenceActor()
-	: IsPlayed(false), ArcherController(nullptr), IsUseCollision(true)
+	: IsPlayed(false), IsUseCollision(true), ArcherController(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = false;
 

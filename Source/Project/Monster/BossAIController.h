@@ -39,6 +39,8 @@ public:
 	void SetBossPhase(int CurPhase);
 	void SetCanUseSoulSiphon(bool Enable);
 
+	void SetStartPhase2(bool Enable);
+
 protected:
 	virtual void BeginPlay() override;
 

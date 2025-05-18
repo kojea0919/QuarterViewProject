@@ -49,7 +49,7 @@ void ABow::BeginPlay()
 {
 	Super::BeginPlay();	
 
-	BasicWeaponEffect->Deactivate();
+	SkillWeaponEffect->Deactivate();
 }
 
 void ABow::PostInitializeComponents()

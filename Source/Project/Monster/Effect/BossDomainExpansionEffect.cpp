@@ -5,7 +5,8 @@
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "WorldSubSystem/EffectObjectPool.h"
-
+#include "Archer/ArcherPlayerController.h"
+#include "Monster/Boss.h"
 
 ABossDomainExpansionEffect::ABossDomainExpansionEffect()
 	: CurTime(0)
@@ -29,6 +30,13 @@ void ABossDomainExpansionEffect::OnNiagaraSystemFinished_Impl()
 	EffectObjPool->ReturnBossDomainExpansionEffect(this);
 
 	PrimaryActorTick.bStartWithTickEnabled = false;
+	IsReverse = false;
+
+	ABoss* Boss = Cast<ABoss>(GetOwner());
+	if (Boss)
+	{
+		Boss->ClearDomainExpansionEffect();
+	}
 }
 
 void ABossDomainExpansionEffect::SpwanNiagaraEffect(const FTransform& Transform)
@@ -37,6 +45,12 @@ void ABossDomainExpansionEffect::SpwanNiagaraEffect(const FTransform& Transform)
 
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	NiagaraComp->SetWorldScale3D(FVector(0.0f));
+	CurTime = 0.f;
+}
+
+void ABossDomainExpansionEffect::SetEffectEnable(bool Enable)
+{
+	Super::SetEffectEnable(Enable);
 }
 
 void ABossDomainExpansionEffect::Tick(float DeltaTime)
@@ -46,14 +60,38 @@ void ABossDomainExpansionEffect::Tick(float DeltaTime)
 	CurTime += DeltaTime;
 	if (CurTime >= MaxTime)
 	{
-		CurTime = 0;
+		if (IsReverse)
+		{
+			AArcherPlayerController * Controller=  Cast<AArcherPlayerController>(GetWorld()->GetFirstPlayerController());
+			if (Controller)
+			{
+				Controller->StopPlayerSlow();
+			}
+		}
 
+
+		CurTime = 0;
 		EffectObjPool->ReturnBossDomainExpansionEffect(this);
+
+		ABoss* Boss = Cast<ABoss>(GetOwner());
+		if (Boss)
+		{
+			Boss->ClearDomainExpansionEffect();
+		}
+
 		return; 
 	}
 
-	float CurScale = ScaleCurve->GetFloatValue(CurTime);
+	float CurScale;
+	if (IsReverse)
+	{
+		CurScale = ScaleCurve->GetFloatValue((MaxTime-CurTime) * 0.67);
+	}
+	else
+	{
+		CurScale = ScaleCurve->GetFloatValue(CurTime* 0.67);
+	}
 
 	if(NiagaraComp)
-		NiagaraComp->SetWorldScale3D(FVector(CurScale / 50.0f));
+		NiagaraComp->SetWorldScale3D(FVector(CurScale / 33.3f));
 }

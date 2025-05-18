@@ -117,6 +117,8 @@ public:
 	bool IsDead() const { return Dead; }
 
 	void ResetState();
+	void SetSlowState(bool Enable);
+
 
 public:
 	//장비 장착 함수

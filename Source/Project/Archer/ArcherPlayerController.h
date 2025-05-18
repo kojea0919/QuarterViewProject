@@ -99,9 +99,11 @@ public:
 	void PlayerDead();
 
 	void ResetPlayerAndBoss();
+	void StopPlayerSlow();
 
-	void SetVisibleCircleFadeOut(bool Enable);
-	void PlayCircleFadeOut();
+	//void SetVisibleCircleFadeOut(bool Enable);
+	//void PlayCircleFadeOut();
+
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------

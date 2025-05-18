@@ -22,16 +22,21 @@ public:
 
 	virtual void SpwanNiagaraEffect(const FTransform& Transform) override;
 
+	virtual void SetEffectEnable(bool Enable);
+
 public:
 	virtual void Tick(float DeltaTime) override;
+
+	void SetReverse() { IsReverse = true; }
 
 private:
 	//Scale Curve
 	UPROPERTY()
 	UCurveFloat* ScaleCurve;
 
-	const float MaxTime = 3.0f;
+	const float MaxTime = 10;
 	float CurTime;
 
+	bool IsReverse = false;
 
 };

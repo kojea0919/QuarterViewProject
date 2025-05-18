@@ -15,6 +15,7 @@
 #include "LevelSequencePlayer.h"
 #include "WorldSubSystem/BossBattleSubSystem.h"
 #include "UI/PlayerDeadHUD.h"
+#include "GamePlayEffect/Sky/Sky.h"
 //#include "UI/CircleFadeOutHUD.h"
 
 AArcherPlayerController::AArcherPlayerController()
@@ -617,20 +618,31 @@ void AArcherPlayerController::StopLevelSequence()
 	{
 		CurrentBoss->SetActorTransform(BossTransform);
 		CurrentBoss->SetActorHiddenInGame(false);
+
+		if (CurrentBoss->GetCurrentPhase() == 2)
+		{
+			BossBattleSubSystem->SetPhase2Light();
+
+			CurrentBoss->SetStartPhase2();
+		}
+	
+		//BosHPBarUI On
+		if (PlayerHUD)
+		{
+			if (CurrentBoss->GetCurrentPhase() == 1)
+				PlayerHUD->InitBossHP();
+			PlayerHUD->SetVisibilityBossHPBar(true);	
+		}
 	}
 
-	//BosHPBarUI On
-	if (PlayerHUD)
-	{
-		PlayerHUD->InitBossHP();
-		PlayerHUD->SetVisibilityBossHPBar(true);
-	}
 
 	AArcher* Archer = Cast<AArcher>(GetCharacter());
 	if (Archer)
 	{
 		Archer->SetNormalState();
 	}
+
+
 
 }
 
@@ -675,6 +687,8 @@ void AArcherPlayerController::ResetPlayerAndBoss()
 		Archer->SetActorTransform(RespawnTransform);
 
 		BossBattleSubSystem->ResetSequence();
+		BossBattleSubSystem->ResetSky();
+		BossBattleSubSystem->ResetLight();
 	}
 
 	if (PlayerHUD)
@@ -687,6 +701,15 @@ void AArcherPlayerController::ResetPlayerAndBoss()
 	if (CurrentBoss)
 		CurrentBoss->ResetState();
 
+}
+
+void AArcherPlayerController::StopPlayerSlow()
+{
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer)
+	{
+		Archer->SetSlowState(false);
+	}
 }
 
 //void AArcherPlayerController::SetVisibleCircleFadeOut(bool Enable)
