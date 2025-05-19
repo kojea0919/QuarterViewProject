@@ -16,5 +16,5 @@ void ULobbyHUD::NativeConstruct()
 
 void ULobbyHUD::ClickGameStartButton()
 {
-	UGameplayStatics::OpenLevel(this, TEXT("/Game/TopDown/Maps/TopDownMap"));
+	UGameplayStatics::OpenLevel(this, TEXT("/Game/TopDown/Maps/TopDownMap.TopDownMap"));
 }

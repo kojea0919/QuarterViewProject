@@ -33,7 +33,9 @@ public:
 	void ResetSequence();
 	void SetBossSpawnSequence(class APlayeLevelSequenceActor* Sequence) { BossSpawnSequence = Sequence; }
 	void SetBossPhase2Sequence(class APlayeLevelSequenceActor* Sequence) { BossPhase2Sequence = Sequence; }
+	void SetBossPhase3Sequence(class APlayeLevelSequenceActor* Sequence) { BossPhase3Sequence = Sequence; }
 	void PlayBossPhase2Sequence();
+	void PlayBossPhase3Sequence();
 
 	void SetBurnSky(class ASky* Sky) { BurnSky = Sky; }
 	void SetDeathSky(class ASky* Sky) { DeathSky = Sky; }
@@ -50,6 +52,11 @@ public:
 	void ResetSky();
 	void ResetLight();
 
+	void SetPhase3BossTransform(const FTransform& Trasnform) { Phase3BossTransform = Trasnform; }
+	void SetPhase3PlayerTransform(const FTransform& Trasnform) { Phase3PlayerTransform = Trasnform; }
+
+	const FTransform& GetPhase3BossTransform() const { return Phase3BossTransform; }
+	const FTransform& GetPhase3PlayerTransform() const { return Phase3PlayerTransform; }
 
 private:
 	FTransform BossSavedTransform;
@@ -62,10 +69,14 @@ private:
 
 	class APlayeLevelSequenceActor* BossSpawnSequence;
 	class APlayeLevelSequenceActor* BossPhase2Sequence;
+	class APlayeLevelSequenceActor* BossPhase3Sequence;
 
 	class ASky* BurnSky;
 	class ASky* DeathSky;
 	
 	class AMainLevelLight* MainLevelLight;
+
+	FTransform Phase3BossTransform;
+	FTransform Phase3PlayerTransform;
 
 };

@@ -119,6 +119,7 @@ public:
 	void ResetState();
 	void SetSlowState(bool Enable);
 
+	void InitPhase3State();
 
 public:
 	//장비 장착 함수
@@ -445,5 +446,8 @@ private:
 
 	bool Dead;
 	//--------------------------------------------
+
+
+	bool IsReverseMouseInput;
 
 };

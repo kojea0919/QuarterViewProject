@@ -108,6 +108,7 @@ private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
 	//-------------------------------------------------
 	void MoveTargetAction();
+	void MoveTargetActionStart();
 	void MoveTarget(FVector TargetLocation);
 	//-------------------------------------------------
 
@@ -185,6 +186,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SequenceStopInputAction;
 
+	//이동키
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* MoveTargetInputAction;
+
 	//testcode
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* BossTestKey;
@@ -206,4 +211,11 @@ private:
 
 	class ULevelSequencePlayer* CurLevelSequencePlayer;
 	//-----------------------------------------------
+
+
+	bool IsMouseReverseState;
+
+	///클릭 이펙트
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = " true"))
+	class UNiagaraSystem* MouseClickEffect;
 };

@@ -151,6 +151,12 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		CurBossPhase = 2;
 		NeedPlayLevelSequence = true;
 	}
+	else if (CurHP <= Phase2ToPhase3HP && CurBossPhase == 2)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("F"));
+		CurBossPhase = 3;
+		NeedPlayLevelSequence = true;
+	}
 
 	if (CurHP <= 0)
 	{
@@ -195,10 +201,17 @@ void ABoss::MontageEnd()
 		IncreasePatternCount();
 		IncreaseSoulSiphonPatternCount();
 	}
+	else
+		return;
 
 	if (NeedPlayLevelSequence)
 	{
-		PlayNextPhaseCinematic();
+		UWorld* World = GetWorld();
+
+		if (nullptr != World)
+			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 2.0f, false);
+		
+		AIController->StopBehaviorTree();
 	}
 }
 
@@ -212,7 +225,12 @@ void ABoss::SoulSiphonEndMontageEnd()
 
 	if (NeedPlayLevelSequence)
 	{
-		PlayNextPhaseCinematic();
+		UWorld* World = GetWorld();
+
+		if (nullptr != World)
+			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 2.0f, false);
+
+		AIController->StopBehaviorTree();
 	}
 }
 
@@ -259,13 +277,17 @@ void ABoss::PlayNextPhaseCinematic()
 		if (Player)
 			Player->SetPlayingLevelSequenceState();
 	}
-
-	ABossAIController* AIController = Cast<ABossAIController>(Controller);
-	if (AIController)
+	else if (CurBossPhase == 3)
 	{
-		AIController->StopBehaviorTree();
-	}
+		UBossBattleSubSystem* SubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+		if (SubSystem)
+		{
+			SubSystem->PlayBossPhase3Sequence();
+		}
 
+		if (Player)
+			Player->SetPlayingLevelSequenceState();
+	}
 }
 
 void ABoss::SetStartPhase2()
@@ -275,6 +297,16 @@ void ABoss::SetStartPhase2()
 	{
 		AIController->SetStartPhase2(true);
 	}
+}
+
+void ABoss::SetStartPhase3()
+{
+	DestroyDomainExpansion();
+
+	//새로운 패턴
+	//------------------------------
+
+	//------------------------------
 }
 
 void ABoss::BeginPlay()
@@ -672,6 +704,22 @@ void ABoss::SpawnBigSwingMarkEffect()
 
 void ABoss::ResetState()
 {
+	DestroyDomainExpansion();
+
+	GetWorld()->GetTimerManager().ClearTimer(PlayNextCinematicTimer);
+
+	RotateToPlayer = false;
+	CurrentBasicComboAttackIdx = 0;
+	PrevSkillIsDash = false;
+
+	CurBossPhase = 1;
+	CurPatternCount = 0;
+	IsIllusionState = false;
+	SoulSiphonUsePatternCount = 0;
+}
+
+void ABoss::DestroyDomainExpansion()
+{
 	//흑백처리 제거
 	if (BlackAndWhiteMPCInstance)
 	{
@@ -682,15 +730,6 @@ void ABoss::ResetState()
 
 	if (DomainExpansionEffect)
 		DomainExpansionEffect->OnNiagaraSystemFinished_Impl();
-
-	RotateToPlayer = false;
-	CurrentBasicComboAttackIdx = 0;
-	PrevSkillIsDash = false;
-
-	CurBossPhase = 1;
-	CurPatternCount = 0;
-	IsIllusionState = false;
-	SoulSiphonUsePatternCount = 0;
 }
 
 void ABoss::CheckSoulSiphonOverlap()

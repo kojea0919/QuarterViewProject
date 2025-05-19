@@ -16,10 +16,13 @@
 #include "WorldSubSystem/BossBattleSubSystem.h"
 #include "UI/PlayerDeadHUD.h"
 #include "GamePlayEffect/Sky/Sky.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 //#include "UI/CircleFadeOutHUD.h"
 
 AArcherPlayerController::AArcherPlayerController()
-	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false), IsPlayingLevelSequence(false), CurLevelSequencePlayer(nullptr)
+	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false), IsPlayingLevelSequence(false), CurLevelSequencePlayer(nullptr),
+	IsMouseReverseState(false)
 {
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
@@ -72,6 +75,10 @@ AArcherPlayerController::AArcherPlayerController()
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_STOPSEQUENCE_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_StopSequence.IA_StopSequence"));
 	if (IA_STOPSEQUENCE_INPUTACTION.Succeeded())
 		SequenceStopInputAction = IA_STOPSEQUENCE_INPUTACTION.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_MOVETARGET_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_MoveTarget.IA_MoveTarget"));
+	if (IA_MOVETARGET_INPUTACTION.Succeeded())
+		MoveTargetInputAction = IA_MOVETARGET_INPUTACTION.Object;
 
 	//testcode
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_BOSSTESTKEY_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_BossTestKey.IA_BossTestKey"));
@@ -130,12 +137,13 @@ void AArcherPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(InventoryKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInventoryKey);
 		EnhancedInputComponent->BindAction(EquipmentKeyInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseEquipmentKey);
 		EnhancedInputComponent->BindAction(InteractionInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseInteractionKey);
+		
+		EnhancedInputComponent->BindAction(MoveTargetInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::MoveTargetAction);
+		EnhancedInputComponent->BindAction(MoveTargetInputAction, ETriggerEvent::Started, this, &AArcherPlayerController::MoveTargetActionStart);
 
 		EnhancedInputComponent->BindAction(BossTestKey, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseBossTestKey);//testcode
 	}
 
-
-	InputComponent->BindAction(TEXT("MoveTarget"), IE_Pressed, this, &AArcherPlayerController::MoveTargetAction);
 }
 
 void AArcherPlayerController::Tick(float DeltaSeconds)
@@ -152,11 +160,33 @@ void AArcherPlayerController::MoveTargetAction()
 	if (!Archer->GetMoveAble() || Archer->GetPlayerState() != EPlayerState::Normal)
 		return;
 
+	//마우스 클릭 위치를 월드 좌표로
+	FVector TargetLocation = GetMouseWorldLocation();
 
+	//해당 위치로 이동
+	MoveTarget(TargetLocation);
+}
+
+void AArcherPlayerController::MoveTargetActionStart()
+{
+	//현재 캐릭터가 이동 가능 상태가 아니면 return
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (!Archer->GetMoveAble() || Archer->GetPlayerState() != EPlayerState::Normal)
+		return;
 
 	//마우스 클릭 위치를 월드 좌표로
 	FVector TargetLocation = GetMouseWorldLocation();
 
+	if (MouseClickEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			this,
+			MouseClickEffect,
+			TargetLocation,
+			FRotator(),
+			FVector(1.5f)
+		);
+	}
 	//해당 위치로 이동
 	MoveTarget(TargetLocation);
 }
@@ -253,7 +283,18 @@ FVector AArcherPlayerController::GetMouseWorldLocation()
 	FHitResult HitResult;
 	GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
-	return HitResult.Location;
+	FVector TargetLocation = HitResult.Location;
+	//마우스 반전상태면 플레이러를 기준으로 대칭이동 후 반환
+	//------------------------------------------------------
+	if (IsMouseReverseState)
+	{
+		FVector TargetToPlayerVector = GetCharacter()->GetActorLocation() - TargetLocation;
+
+		TargetLocation = TargetToPlayerVector + GetCharacter()->GetActorLocation();
+	}
+	//------------------------------------------------------
+
+	return TargetLocation;
 }
 
 void AArcherPlayerController::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSlot SlotKey)
@@ -613,6 +654,12 @@ void AArcherPlayerController::StopLevelSequence()
 		return;
 	}
 
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	if (Archer)
+	{
+		Archer->SetNormalState();
+	}
+
 	FTransform BossTransform = BossBattleSubSystem->GetBossSpawnTransform();
 	if (CurrentBoss)
 	{
@@ -625,6 +672,19 @@ void AArcherPlayerController::StopLevelSequence()
 
 			CurrentBoss->SetStartPhase2();
 		}
+
+		if (CurrentBoss->GetCurrentPhase() == 3)
+		{
+			//마우스 반전
+			IsMouseReverseState = true;
+
+			CurrentBoss->SetStartPhase3();
+			Archer->InitPhase3State();
+
+			Archer->SetActorTransform(BossBattleSubSystem->GetPhase3PlayerTransform());
+			CurrentBoss->SetActorTransform(BossBattleSubSystem->GetPhase3BossTransform());
+
+		}
 	
 		//BosHPBarUI On
 		if (PlayerHUD)
@@ -634,14 +694,6 @@ void AArcherPlayerController::StopLevelSequence()
 			PlayerHUD->SetVisibilityBossHPBar(true);	
 		}
 	}
-
-
-	AArcher* Archer = Cast<AArcher>(GetCharacter());
-	if (Archer)
-	{
-		Archer->SetNormalState();
-	}
-
 
 
 }

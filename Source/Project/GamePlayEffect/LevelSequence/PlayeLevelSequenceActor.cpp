@@ -76,6 +76,9 @@ void APlayeLevelSequenceActor::BeginPlay()
 		case ECinematicType::BossPhase2:
 			SubSystem->SetBossPhase2Sequence(this);
 			break;
+		case ECinematicType::BossPhase3:
+			SubSystem->SetBossPhase3Sequence(this);
+			break;
 		}
 
 	}

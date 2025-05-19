@@ -20,6 +20,14 @@ void UBossBattleSubSystem::PlayBossPhase2Sequence()
 	}
 }
 
+void UBossBattleSubSystem::PlayBossPhase3Sequence()
+{
+	if (BossPhase3Sequence)
+	{
+		BossPhase3Sequence->PlayLevelSequence();
+	}
+}
+
 void UBossBattleSubSystem::SetBurnSkyHidden()
 {
 	if (BurnSky)

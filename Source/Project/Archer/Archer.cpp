@@ -894,6 +894,13 @@ void AArcher::SetSlowState(bool Enable)
 		CustomTimeDilation = 1.0f;
 }
 
+void AArcher::InitPhase3State()
+{
+	PlayerState = EPlayerState::Normal;
+
+	CustomTimeDilation = 1.f;
+}
+
 void AArcher::RotateBossDirection(float DeltaSecond)
 {
 	if (nullptr == ArcherController)

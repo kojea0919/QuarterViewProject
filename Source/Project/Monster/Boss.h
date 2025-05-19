@@ -64,6 +64,8 @@ public:
 
 	void ClearDomainExpansionEffect() { DomainExpansionEffect = nullptr; }
 
+	void DestroyDomainExpansion();
+
 public:
 	void CheckSoulSiphonOverlap();
 	void CheckBigSwingOverlap();
@@ -101,6 +103,7 @@ public:
 	int GetCurrentPhase() const { return CurBossPhase; }
 
 	void SetStartPhase2();
+	void SetStartPhase3();
 protected:
 	virtual void BeginPlay() override;
 
@@ -225,7 +228,8 @@ private:
 	int CurBossPhase;
 	const int MaxBosPhase = 3;
 
-	const float Phase1ToPhase2HP = 900000000;
+	const float Phase1ToPhase2HP = 90000000;
+	const float Phase2ToPhase3HP = 10000000;
 
 	bool NeedPlayLevelSequence;
 	//------------------------------------------------
@@ -250,4 +254,6 @@ private:
 	const int MaxSoulSiphonPatternCount = 10;	//일반 패턴을 10번 사용해야 SoulSiphon한번 사용 가능
 	//------------------------------------------------
 
+
+	FTimerHandle PlayNextCinematicTimer;
 };
