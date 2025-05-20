@@ -180,6 +180,7 @@ public:
 
 public:
 	//잔상 생성
+	UFUNCTION(BlueprintCallable)
 	void CreateAfterimage();
 
 	//카메라 Shake 재생
@@ -193,6 +194,9 @@ public:
 
 	//SceneShatter효과 생성
 	void CreateSceneShatter();
+
+	//궁극기 시네마틱 재생
+	void PlayUltimateSequence();
 
 private:
 	//마우스 방향으로 회전하는 함수
@@ -446,4 +450,7 @@ private:
 
 	bool Dead;
 	//--------------------------------------------
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class ULevelSequence* UltimateSequence;
 };

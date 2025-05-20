@@ -66,7 +66,6 @@ void AAfterimageEffect::Tick(float DeltaTime)
 			EffectObjPool->ReturnAfterimageEffect(this);
 	}
 	DynMaterial->SetScalarParameterValue(FName("Opacity"), Opacity);
-
 	//--------------------------------------------
 }
 

@@ -38,6 +38,8 @@
 #include "Engine/DamageEvents.h"
 #include "GamePlayEffect/SceneShatter/SceneShatter.h"
 #include "GamePlayEffect/SceneShatter/SceneShatterFieldSystemActor.h"
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
@@ -793,7 +795,7 @@ void AArcher::CreateAfterimage()
 {
 	FRotator ActorRotation = GetActorRotation();
 	FVector ActorLocation = GetActorLocation();
-	ActorLocation.Z = 0.0f;
+	//ActorLocation.Z = 0.0f;
 	ActorRotation += FRotator(0.0f, -90.0f, 0.0f);
 
 	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
@@ -846,6 +848,22 @@ void AArcher::CreateSceneShatter()
 	SceneShatterWidget->AddToViewport(1);
 
 	GetWorld()->GetTimerManager().SetTimer(ShatterCreateTimerHandle, this, &AArcher::ApplyShatterForce, 0.4f, false);
+}
+
+void AArcher::PlayUltimateSequence()
+{
+	if (UltimateSequence)
+	{
+		ALevelSequenceActor* SequenceActor;
+		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), UltimateSequence, FMovieSceneSequencePlaybackSettings(), SequenceActor);
+
+		if (LevelSequencePlayer)
+		{
+			//LevelSequencePlayer->OnFinished.AddDynamic(this, &APlayeLevelSequenceActor::FinishedSequence);
+
+			LevelSequencePlayer->Play();
+		}
+	}
 }
 
 void AArcher::RotateMouseDirection()

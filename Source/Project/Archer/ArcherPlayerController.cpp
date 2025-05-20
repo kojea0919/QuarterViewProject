@@ -489,10 +489,12 @@ void AArcherPlayerController::UseInteractionKey()
 
 void AArcherPlayerController::UseBossTestKey()
 {
-	if (CurrentBoss)
+	/*if (CurrentBoss)
 	{
 		CurrentBoss->StartBehaviorTree();
-	}
+	}*/
+	AArcher* Archer = Cast<AArcher>(GetCharacter());
+	Archer->PlayUltimateSequence();
 }
 
 USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const
