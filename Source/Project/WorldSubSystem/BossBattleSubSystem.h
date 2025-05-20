@@ -34,8 +34,10 @@ public:
 	void SetBossSpawnSequence(class APlayeLevelSequenceActor* Sequence) { BossSpawnSequence = Sequence; }
 	void SetBossPhase2Sequence(class APlayeLevelSequenceActor* Sequence) { BossPhase2Sequence = Sequence; }
 	void SetBossPhase3Sequence(class APlayeLevelSequenceActor* Sequence) { BossPhase3Sequence = Sequence; }
+	void SetBossDeadSequence(class APlayeLevelSequenceActor* Sequence) { BossDeadSequence = Sequence; }
 	void PlayBossPhase2Sequence();
 	void PlayBossPhase3Sequence();
+	void PlayBossDeadSequence();
 
 	void SetBurnSky(class ASky* Sky) { BurnSky = Sky; }
 	void SetDeathSky(class ASky* Sky) { DeathSky = Sky; }
@@ -70,6 +72,7 @@ private:
 	class APlayeLevelSequenceActor* BossSpawnSequence;
 	class APlayeLevelSequenceActor* BossPhase2Sequence;
 	class APlayeLevelSequenceActor* BossPhase3Sequence;
+	class APlayeLevelSequenceActor* BossDeadSequence;
 
 	class ASky* BurnSky;
 	class ASky* DeathSky;

@@ -284,6 +284,7 @@ FVector AArcherPlayerController::GetMouseWorldLocation()
 	GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
 	FVector TargetLocation = HitResult.Location;
+
 	//마우스 반전상태면 플레이러를 기준으로 대칭이동 후 반환
 	//------------------------------------------------------
 	if (IsMouseReverseState)
@@ -753,6 +754,8 @@ void AArcherPlayerController::ResetPlayerAndBoss()
 	if (CurrentBoss)
 		CurrentBoss->ResetState();
 
+
+	IsMouseReverseState = false;
 }
 
 void AArcherPlayerController::StopPlayerSlow()

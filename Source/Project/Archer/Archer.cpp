@@ -801,6 +801,7 @@ void AArcher::CreateAfterimage()
 		return;
 
 	AAfterimageEffect* AfterimageEffect = EffectObjPool->GetAfterimageEffect();
+
 	AfterimageEffect->SetActorLocation(ActorLocation);
 	AfterimageEffect->SetActorRotation(ActorRotation);
 	AfterimageEffect->SetOpacity(1.0f);

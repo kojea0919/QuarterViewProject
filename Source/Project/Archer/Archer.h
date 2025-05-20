@@ -446,8 +446,4 @@ private:
 
 	bool Dead;
 	//--------------------------------------------
-
-
-	bool IsReverseMouseInput;
-
 };

@@ -101,6 +101,8 @@ public:
 	void ResetPlayerAndBoss();
 	void StopPlayerSlow();
 
+	void RemoveMouseReverse() { IsMouseReverseState = false; }
+
 	//void SetVisibleCircleFadeOut(bool Enable);
 	//void PlayCircleFadeOut();
 

@@ -32,6 +32,8 @@ public:
 	void PlaySoulSiphon();
 	void PlaySoulSiphonEnd();
 
+	void StopCurMontage();
+
 private:
 	UFUNCTION()
 	void AnimNotify_RotateStart();

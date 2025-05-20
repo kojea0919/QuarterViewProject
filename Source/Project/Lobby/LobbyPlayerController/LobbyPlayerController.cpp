@@ -3,6 +3,7 @@
 
 #include "Lobby/LobbyPlayerController/LobbyPlayerController.h"
 #include "Lobby/UI/LobbyHUD.h"
+#include "GameInstance/ProjectGameInstance.h"
 
 ALobbyPlayerController::ALobbyPlayerController()
 {
@@ -16,6 +17,21 @@ void ALobbyPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitHUD();
+}
+
+void ALobbyPlayerController::LoadMainLevel()
+{
+	UProjectGameInstance * GameInstance = GetGameInstance<UProjectGameInstance>();
+	if (GameInstance)
+	{
+		GameInstance->LoadMainLevel();
+	}
+
+}
+
+void ALobbyPlayerController::SETSTET()
+{
+	LobbyHUD->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ALobbyPlayerController::InitHUD()

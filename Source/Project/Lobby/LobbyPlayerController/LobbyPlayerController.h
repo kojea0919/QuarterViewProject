@@ -19,6 +19,10 @@ public:
 
 	virtual void BeginPlay() override;
 
+	void LoadMainLevel();
+
+	void SETSTET();
+
 private:
 	void InitHUD();
 

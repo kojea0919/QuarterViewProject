@@ -139,6 +139,11 @@ void UBossAnimInstance::PlaySoulSiphonEnd()
 	}
 }
 
+void UBossAnimInstance::StopCurMontage()
+{
+	Montage_Stop(0.0f);
+}
+
 void UBossAnimInstance::AnimNotify_RotateStart()
 {
 	if (Boss)

@@ -11,7 +11,8 @@ enum class ECinematicType : uint8
 {
 	BossSpawn UMETA(DisplayName = "BossSpawn"),
 	BossPhase2 UMETA(DisplayName = "BossPhase2"),
-	BossPhase3 UMETA(DisplayName = "BossPhase3")
+	BossPhase3 UMETA(DisplayName = "BossPhase3"),
+	BossDead UMETA(DisplayName = "BossDead")
 };
 
 UCLASS()

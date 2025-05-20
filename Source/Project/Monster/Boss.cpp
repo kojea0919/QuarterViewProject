@@ -33,7 +33,7 @@
 ABoss::ABoss()
 	: CurTime(0),IsUpdateShockWave(false), Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
 	BasicComboAttackMaxIdx(3), SoulSiphonLoopEffect(nullptr), PrevSkillIsDash(false), CurBossPhase(1), NeedPlayLevelSequence(false), CurPatternCount(0),
-	IsIllusionState(false), SoulSiphonUsePatternCount(0)
+	IsIllusionState(false), SoulSiphonUsePatternCount(0), SoulSiphonActor(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -153,15 +153,17 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 	}
 	else if (CurHP <= Phase2ToPhase3HP && CurBossPhase == 2)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("F"));
 		CurBossPhase = 3;
 		NeedPlayLevelSequence = true;
 	}
-
-	if (CurHP <= 0)
+	else if (CurHP <= 0 && CurBossPhase == 3)
 	{
+		PlayDeadCinematic();
+
 		ArcherController->SetVisibleBossClearWindow();
-		return 0.0f;
+		ArcherController->RemoveMouseReverse();
+
+		SetActorLocation(FVector(0.0f));
 	}
 
 
@@ -209,7 +211,7 @@ void ABoss::MontageEnd()
 		UWorld* World = GetWorld();
 
 		if (nullptr != World)
-			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 2.0f, false);
+			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 1.2f, false);
 		
 		AIController->StopBehaviorTree();
 	}
@@ -228,7 +230,7 @@ void ABoss::SoulSiphonEndMontageEnd()
 		UWorld* World = GetWorld();
 
 		if (nullptr != World)
-			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 2.0f, false);
+			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 1.2f, false);
 
 		AIController->StopBehaviorTree();
 	}
@@ -287,6 +289,27 @@ void ABoss::PlayNextPhaseCinematic()
 
 		if (Player)
 			Player->SetPlayingLevelSequenceState();
+	}
+}
+
+void ABoss::PlayDeadCinematic()
+{
+	NeedPlayLevelSequence = false;
+
+	if (BossAnim)
+		BossAnim->StopCurMontage();
+
+	//플레이어가 죽었으면 ai멈추기
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->StopBehaviorTree();
+	}
+
+	UBossBattleSubSystem* SubSystem = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
+	if (SubSystem)
+	{
+		SubSystem->PlayBossDeadSequence();
 	}
 }
 
@@ -430,7 +453,7 @@ void ABoss::ReadyToSpawnMeteor()
 
 	ABossSpawnMeteorReadyEffect* Effect = EffectObjectPool->GetBossSpawnMeteorReadyEffect();
 	FTransform BossTransform = GetActorTransform();
-	BossTransform.AddToTranslation(FVector(0.0f, 0.0f, -89.f));
+	BossTransform.AddToTranslation(FVector(0.0f, 0.0f, -84.f));
 	Effect->SpwanNiagaraEffect(BossTransform);
 }
 
@@ -451,7 +474,7 @@ void ABoss::SpawnMeteor()
 
 	float Range = FMath::RandRange(MeteorSpawnMinDist, MeteorSpawnMaxDist);
 
-	FVector MeteorTargetLocation = BossLocation + FVector(RandomDir.X, RandomDir.Y, 0.0f) * Range + FVector(0.0f,0.0f,-89.f);
+	FVector MeteorTargetLocation = BossLocation + FVector(RandomDir.X, RandomDir.Y, 0.0f) * Range + FVector(0.0f,0.0f,-84.f);
 	//------------------------------------------------------------------------
 
 	FTransform BossTransform = GetActorTransform();
@@ -697,7 +720,7 @@ void ABoss::SpawnBigSwingMarkEffect()
 
 	ABossBigSwingAreaMarkEffect* Effect = EffectObjectPool->GetBossBigSwingAreaMarkEffect();
 	FTransform BossTransform = GetActorTransform();
-	BossTransform.AddToTranslation(FVector(0.0f, 0.0f, -89.f));
+	BossTransform.AddToTranslation(FVector(0.0f, 0.0f, -84.f));
 
 	Effect->SpwanNiagaraEffect(BossTransform);
 }
@@ -716,6 +739,9 @@ void ABoss::ResetState()
 	CurPatternCount = 0;
 	IsIllusionState = false;
 	SoulSiphonUsePatternCount = 0;
+
+	if (SoulSiphonActor)
+		SoulSiphonActor->Destroy();
 }
 
 void ABoss::DestroyDomainExpansion()
@@ -775,8 +801,8 @@ void ABoss::CheckSoulSiphonOverlap()
 			AIController->SetCanUseSoulSiphon(false);			
 		}
 
-		ASoulSiphonActor * Actor = GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
-		Actor->SetBoss(this);
+		SoulSiphonActor = GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
+		SoulSiphonActor->SetBoss(this);
 
 		//플레이어, 보스 Transform 저장
 		UBossBattleSubSystem * BossBattle = GetWorld()->GetSubsystem<UBossBattleSubSystem>();

@@ -18,7 +18,6 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -61,11 +60,13 @@ public:
 
 	void ResetState();
 	void PlayNextPhaseCinematic();
+	void PlayDeadCinematic();
 
 	void ClearDomainExpansionEffect() { DomainExpansionEffect = nullptr; }
 
 	void DestroyDomainExpansion();
-
+	void CleanSoulSiphonActor() { SoulSiphonActor = nullptr; }
+	
 public:
 	void CheckSoulSiphonOverlap();
 	void CheckBigSwingOverlap();
@@ -241,7 +242,7 @@ private:
 	float SoulSiphonEndDamage = 300.0f;
 	//------------------------------------------------
 
-	//Patter Àá½Ã ÈÞ½Ä
+	//Pattern Àá½Ã ÈÞ½Ä
 	//------------------------------------------------
 	const int MaxRestPatternCount = 1;
 	int CurPatternCount;
@@ -256,4 +257,6 @@ private:
 
 
 	FTimerHandle PlayNextCinematicTimer;
+
+	class ASoulSiphonActor* SoulSiphonActor;
 };
