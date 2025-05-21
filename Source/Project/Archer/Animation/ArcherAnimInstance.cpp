@@ -163,6 +163,15 @@ void UArcherAnimInstance::PlayRespawnMontage()
 	Montage_Play(RespawnMontage, 1.0f);
 }
 
+void UArcherAnimInstance::ResumeCurrentMontage()
+{
+	UAnimMontage* CurrentMontage = GetCurrentActiveMontage();
+	if (CurrentMontage)
+	{
+		Montage_Resume(CurrentMontage);
+	}
+}
+
 void UArcherAnimInstance::AnimNotify_BasicAttackComboCheck()
 {
 	if (Archer)
@@ -291,9 +300,9 @@ void UArcherAnimInstance::AnimNotify_CreateAfterimage()
 
 void UArcherAnimInstance::AnimNotify_Pause()
 {
-	UAnimMontage * CurrentMontage = GetCurrentActiveMontage();
-	if (CurrentMontage)
-		Montage_Pause(CurrentMontage);
+	UAnimMontage * PauseMontage = GetCurrentActiveMontage();
+	if (PauseMontage)
+		Montage_Pause(PauseMontage);
 }
 
 void UArcherAnimInstance::AnimNotify_ArrowShowerShot()
@@ -330,6 +339,12 @@ void UArcherAnimInstance::ANimNotify_SetNormalState()
 {
 	if (Archer)
 		Archer->SetNormalState();
+}
+
+void UArcherAnimInstance::AnimNotify_UltimateShot()
+{
+	if (Archer)
+		Archer->UltimateShot();
 }
 
 void UArcherAnimInstance::BasicAttackMontageEnd(UAnimMontage*, bool)
@@ -396,11 +411,18 @@ void UArcherAnimInstance::InitMontage()
 		DiveShotMontage = DIVESHOT_MONTAGE.Object;
 	//-------------------------------------------
 
-	//DiveShot Montage Init
+	//Stiff Montage Init
 	//-------------------------------------------
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> STIFFHIT_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/StiffHitMontage.StiffHitMontage"));
 	if (STIFFHIT_MONTAGE.Succeeded())
 		StiffHitMontage = STIFFHIT_MONTAGE.Object;
+	//-------------------------------------------
+
+	//Ultimate Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ULTIMATE_MONTAGE(TEXT("/Game/GamePlay/Player/Archer/Animation/UltimateIngameMontage.UltimateIngameMontage"));
+	if (ULTIMATE_MONTAGE.Succeeded())
+		UltimateMontage = ULTIMATE_MONTAGE.Object;
 	//-------------------------------------------
 
 	//KnockBack Montage Init

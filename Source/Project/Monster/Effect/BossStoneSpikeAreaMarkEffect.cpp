@@ -36,10 +36,10 @@ void ABossStoneSpikeAreaMarkEffect::OnNiagaraSystemFinished_Impl()
 		FCollisionShape::MakeSphere(TelegraphRadius / 2),
 		Params);
 
-	DrawDebugSphere(GetWorld(),
+	/*DrawDebugSphere(GetWorld(),
 		SphereLocation,
 		TelegraphRadius / 2, 12,
-		FColor::Green, false, 2);
+		FColor::Green, false, 2);*/
 
 	//충돌이 된 경우
 	if (IsHit)

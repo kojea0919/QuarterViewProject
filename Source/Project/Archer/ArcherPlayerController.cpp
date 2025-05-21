@@ -52,6 +52,10 @@ AArcherPlayerController::AArcherPlayerController()
 	if (IA_SLOTR_INPUTACTION.Succeeded())
 		SlotRInputAction = IA_SLOTR_INPUTACTION.Object;
 
+	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTS_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotS.IA_UseQuickSlotS"));
+	if (IA_SLOTS_INPUTACTION.Succeeded())
+		SlotSInputAction = IA_SLOTS_INPUTACTION.Object;
+
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTD_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotD.IA_UseQuickSlotD"));
 	if (IA_SLOTD_INPUTACTION.Succeeded())
 		SlotDInputAction = IA_SLOTD_INPUTACTION.Object;
@@ -131,6 +135,9 @@ void AArcherPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseFSlot);
 		EnhancedInputComponent->BindAction(SlotFInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseFSlot);
+
+		EnhancedInputComponent->BindAction(SlotSInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseSSlot);
+		EnhancedInputComponent->BindAction(SlotSInputAction, ETriggerEvent::Completed, this, &AArcherPlayerController::ReleaseSSlot);
 
 		EnhancedInputComponent->BindAction(SequenceStopInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseStopSequenceButton);
 		
@@ -292,6 +299,7 @@ FVector AArcherPlayerController::GetMouseWorldLocation()
 		FVector TargetToPlayerVector = GetCharacter()->GetActorLocation() - TargetLocation;
 
 		TargetLocation = TargetToPlayerVector + GetCharacter()->GetActorLocation();
+		TargetLocation.Z = GetCharacter()->GetActorLocation().Z - 90.0f;
 	}
 	//------------------------------------------------------
 
@@ -438,6 +446,22 @@ void AArcherPlayerController::ReleaseDSlot()
 	}
 }
 
+void AArcherPlayerController::UseSSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->UseSkill(ESkillQuickSlot::SlotS);
+	}
+}
+
+void AArcherPlayerController::ReleaseSSlot()
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->ReleaseSkill(ESkillQuickSlot::SlotS);
+	}
+}
+
 void AArcherPlayerController::UseStopSequenceButton()
 {
 	if (IsPlayingLevelSequence && CurLevelSequencePlayer)
@@ -489,12 +513,10 @@ void AArcherPlayerController::UseInteractionKey()
 
 void AArcherPlayerController::UseBossTestKey()
 {
-	/*if (CurrentBoss)
+	if (CurrentBoss)
 	{
 		CurrentBoss->StartBehaviorTree();
-	}*/
-	AArcher* Archer = Cast<AArcher>(GetCharacter());
-	Archer->PlayUltimateSequence();
+	}
 }
 
 USkillGaugeBar* AArcherPlayerController::GetSkillGaugeBar() const
@@ -767,6 +789,12 @@ void AArcherPlayerController::StopPlayerSlow()
 	{
 		Archer->SetSlowState(false);
 	}
+}
+
+void AArcherPlayerController::StartedUltimateSequence()
+{
+	if (CurrentBoss)
+		CurrentBoss->SetStunState();
 }
 
 //void AArcherPlayerController::SetVisibleCircleFadeOut(bool Enable)

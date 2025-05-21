@@ -36,6 +36,8 @@ public:
 
 	void SetChargingEffect(bool Enable);
 
+	void UltimateShot(class ABoss * Boss);
+
 private:
 	//화살 Effect를 생성하는 함수
 	//--------------------------------------------------------------------------------------------------

@@ -22,6 +22,4 @@ public:
 public:
 	virtual void CheckEnemyOverlap() override;
 
-private:
-
 };

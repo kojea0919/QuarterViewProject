@@ -15,6 +15,8 @@ UArcherSkillDesperado::UArcherSkillDesperado()
 
 	CurCollisionIdx = 0;
 	//-----------------------------
+
+	SkillDamage = 2444444;
 }
 
 bool UArcherSkillDesperado::Use()

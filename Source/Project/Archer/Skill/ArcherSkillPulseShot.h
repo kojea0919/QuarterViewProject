@@ -18,5 +18,5 @@ public:
 	UArcherSkillPulseShot();
 
 	virtual bool Use() override;
-	
+
 };

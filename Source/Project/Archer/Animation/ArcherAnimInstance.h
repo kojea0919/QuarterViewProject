@@ -63,7 +63,10 @@ public:
 	UAnimMontage* GetArrowShowerMontage() const { return ArrowShowerMontage; }
 	UAnimMontage* GetPulseShotMontage() const { return PulseShotMontage; }
 	UAnimMontage* GetDiveShotMontage() const { return DiveShotMontage; }
+	UAnimMontage* GetUltimateMontage() const { return UltimateMontage; }
 	//-----------------------------
+
+	void ResumeCurrentMontage();
 
 public:
 	void SetCurSkill(class UBaseSkill* Skill) { CurSkill = Skill; }
@@ -150,6 +153,9 @@ private:
 	UFUNCTION()
 	void ANimNotify_SetNormalState();
 
+	UFUNCTION()
+	void AnimNotify_UltimateShot();
+
 private:
 	UFUNCTION()
 	void BasicAttackMontageEnd(UAnimMontage* Montage, bool value);
@@ -191,6 +197,9 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Skill, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* DiveShotMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Respawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* UltimateMontage;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Hit, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* StiffHitMontage;
 
@@ -213,7 +222,5 @@ private:
 
 	//현재 사용중인 ComboSkill
 	class UComboSkill* CurExcuteComboSkill;
-
-
 
 };

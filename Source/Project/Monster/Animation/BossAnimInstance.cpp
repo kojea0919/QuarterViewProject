@@ -139,6 +139,14 @@ void UBossAnimInstance::PlaySoulSiphonEnd()
 	}
 }
 
+void UBossAnimInstance::PlayStunLoop()
+{
+	if (!Montage_IsPlaying(StunLoopMontage))
+	{
+		Montage_Play(StunLoopMontage);
+	}
+}
+
 void UBossAnimInstance::StopCurMontage()
 {
 	Montage_Stop(0.0f);
@@ -253,6 +261,14 @@ void UBossAnimInstance::AnimNotify_CheckBigSwingOverlap()
 	}
 }
 
+void UBossAnimInstance::AnimNotify_StartBehaviorTree()
+{
+	if (Boss)
+	{
+		Boss->StartBehaviorTree();
+	}
+}
+
 void UBossAnimInstance::InitMontage()
 {
 	//Basic Combo Attck Montage Init
@@ -333,6 +349,15 @@ void UBossAnimInstance::InitMontage()
 	if (SOULSIPHONEND_MONTAGE.Succeeded())
 	{
 		SoulSiphonEndMontage = SOULSIPHONEND_MONTAGE.Object;
+	}
+	//-------------------------------------------
+
+	//StunLoop Montage Init
+	//-------------------------------------------
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> STUNLOOP_MONTAGE(TEXT("/Game/GamePlay/Enemy/Boss/Animation/BossStunLoop.BossStunLoop"));
+	if (STUNLOOP_MONTAGE.Succeeded())
+	{
+		StunLoopMontage =  STUNLOOP_MONTAGE.Object;
 	}
 	//-------------------------------------------
 }

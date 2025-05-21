@@ -27,6 +27,7 @@
 #include "Archer/Inventory/EquipmentComponent.h"
 #include "UI/Inventory.h"
 #include "UI/ArcherInteractionUI.h"
+#include "UI/DamageText.h"
 #include "Item/BaseItem.h"
 #include "Item/WeaponItem.h"
 #include "Item/ArmorItem.h"
@@ -297,7 +298,13 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		}
 
 		CurHP -= Damage;
-		CurHP = 0;
+
+		DamageProc(Damage);
+		if (ArcherController)
+		{
+			ArcherController->SetPlayerCurrentHPRate(CurHP / MaxHP);
+		}
+
 		if (CurHP <= 0)
 		{
 			if (DamageType->GetDamageType() == EBossDamageType::Stiff)
@@ -306,14 +313,14 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 				ArcherAnim->PlayKnockBackDeadMontage();
 
 			Dead = true;
+
+			if (ArcherController)
+			{
+				ArcherController->PlayerDead();	
+				ArcherController->StopMovement();
+			}
 		}
 
-		if (ArcherController)
-		{
-			ArcherController->SetPlayerCurrentHPRate(CurHP / MaxHP);
-			ArcherController->PlayerDead();
-			ArcherController->StopMovement();
-		}
 	}
 
 	return 0.0f;
@@ -615,11 +622,11 @@ void AArcher::BasicAttackShot()
 			FCollisionShape::MakeBox(BasicAttackBoxExtent),
 			Params);
 		
-		DrawDebugBox(GetWorld(),
+		/*DrawDebugBox(GetWorld(),
 			BoxLocation,
 			BasicAttackBoxExtent,
 			GetActorQuat(),
-			FColor::Green,false,2);
+			FColor::Green,false,2);*/
 
 		//충돌이 된 경우
 		if (IsHit)
@@ -628,7 +635,7 @@ void AArcher::BasicAttackShot()
 			{
 				UGameplayStatics::ApplyDamage(
 					Hit.GetActor(),
-					20.0f,
+					BasicAttackBaseDamage,
 					GetInstigatorController(),
 					this,
 					UArcherBasicDamageType::StaticClass());
@@ -859,11 +866,22 @@ void AArcher::PlayUltimateSequence()
 
 		if (LevelSequencePlayer)
 		{
-			//LevelSequencePlayer->OnFinished.AddDynamic(this, &APlayeLevelSequenceActor::FinishedSequence);
-
+			LevelSequencePlayer->OnFinished.AddDynamic(this, &AArcher::UltimateSequenceFinished);
+			PlayerState = EPlayerState::UsingUltimate;
 			LevelSequencePlayer->Play();
 		}
+
+		if (ArcherController)
+		{
+			ArcherController->StartedUltimateSequence();
+		}
 	}
+}
+
+void AArcher::UltimateSequenceFinished()
+{
+	if (ArcherAnim)
+		ArcherAnim->ResumeCurrentMontage();
 }
 
 void AArcher::RotateMouseDirection()
@@ -918,6 +936,23 @@ void AArcher::InitPhase3State()
 	PlayerState = EPlayerState::Normal;
 
 	CustomTimeDilation = 1.f;
+}
+
+void AArcher::UltimateEnd()
+{
+	PlayerState = EPlayerState::Normal;
+}
+
+void AArcher::UltimateShot()
+{
+	if (Bow)
+	{
+		if (ArcherController)
+		{
+			Bow->UltimateShot(ArcherController->GetCurrentBoss());
+
+		}
+	}
 }
 
 void AArcher::RotateBossDirection(float DeltaSecond)
@@ -1126,6 +1161,44 @@ void AArcher::UpdateCameraTransform(float DeltaTime)
 	SpringArm->TargetArmLength = CurArmLength;
 	SpringArm->SetRelativeRotation(ResultQ.Rotator());
 	SpringArm->SetRelativeLocation(ResultVec);
+}
+
+void AArcher::DamageProc(float Damage)
+{
+	UDamageText* DamageText = CreateWidget<UDamageText>(GetWorld(), DamageTextWidgetClass);
+	if (DamageText)
+	{
+		DamageText->AddToViewport();
+		DamageText->SetDamageText(Damage);
+
+		//데미지 Text위치 지정
+		//------------------------------------
+		FVector2D ScreenPos;
+		FVector UILocation = GetActorLocation() + DamageTextOffset;
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (nullptr == PlayerController)
+			return;
+
+		UGameplayStatics::ProjectWorldToScreen(PlayerController, UILocation, ScreenPos);
+		DamageText->SetPlayerController(PlayerController);
+		DamageText->SetOwnerLocation(UILocation);
+
+		DamageText->SetPositionInViewport(ScreenPos);
+		DamageText->PlayBasicDamageTextAnimation();
+		DamageText->SetColorAndOpacity(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+		//------------------------------------
+	}
+}
+
+FVector AArcher::GetRandomVector() const
+{
+	FVector ReturnVector; 
+	float Range = RandomVectorRange;
+	ReturnVector.X = FMath::RandRange(-Range, Range);
+	ReturnVector.Y = FMath::RandRange(-Range, Range);
+	ReturnVector.Z = FMath::RandRange(-Range, Range);
+	return ReturnVector;
 }
 
 void AArcher::UpdateRotation(float Alpha)

@@ -8,6 +8,7 @@
 AArcherBigArrowEffect::AArcherBigArrowEffect()
 {
 	NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Effect/Niagara/NS_Archer_BigArrow.NS_Archer_BigArrow"));
+
 }
 
 void AArcherBigArrowEffect::OnNiagaraSystemFinished_Impl()

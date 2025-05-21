@@ -31,6 +31,7 @@ UArcherSkillFlippingArrow::UArcherSkillFlippingArrow()
 
 	CurCollisionIdx = 0;
 
+	SkillDamage = 400000;
 }
 
 bool UArcherSkillFlippingArrow::Use()

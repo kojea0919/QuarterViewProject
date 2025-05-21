@@ -52,6 +52,10 @@ void ABossAIController::StopBehaviorTree()
 	if (BehaviorTreeComponent)
 	{
 		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
+
+		UBlackboardComponent* BlackboardComp = Blackboard.Get();
+		if (BlackboardComp)
+			BlackboardComp->SetValueAsBool(TEXT("IsPlayingMontage"), false);
 	}
 }
 

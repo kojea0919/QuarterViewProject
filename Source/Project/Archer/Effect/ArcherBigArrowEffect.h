@@ -20,4 +20,5 @@ public:
 public:
 	virtual void OnNiagaraSystemFinished_Impl();
 	
+
 };

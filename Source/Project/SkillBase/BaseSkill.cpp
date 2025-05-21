@@ -37,7 +37,7 @@ bool UBaseSkill::Use()
 
 		AnimInstance->Montage_Play(SkillMontage);
 
-		//AnimInstnace의 BindSkillMontageEndDeleegate함수를 호출해서
+		//AnimInstnace의 BindSkillMontageEndDelegate함수를 호출해서
 		//Animation이 끝나면 Skill의 End함수를 호출하도록 한다.
 		AnimInstance->BindSkillMontageEndDelegate(SkillMontage);
 		AnimInstance->SetCurSkill(this);
@@ -212,14 +212,14 @@ void UBaseSkill::CheckEnemyOverlap()
 		{
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
-				20.0f,
+				SkillDamage + FMath::RandRange(-SkillDamage / 10.f, SkillDamage / 10.0f),
 				Archer->GetInstigatorController(),
 				Archer,
 				UArcherBasicDamageType::StaticClass());
 		}
 	}
 
-	switch (CollisionTypeArr[CurCollisionIdx])
+	/*switch (CollisionTypeArr[CurCollisionIdx])
 	{
 	case ECollisionType::Box:
 		DrawDebugBox(Archer->GetWorld(),
@@ -239,7 +239,7 @@ void UBaseSkill::CheckEnemyOverlap()
 		break;
 	default:
 		return;
-	}
+	}*/
 }
 
 void UBaseSkill::StartMutliHitSkillEnemyOverlap()

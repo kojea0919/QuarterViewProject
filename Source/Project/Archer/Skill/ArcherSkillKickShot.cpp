@@ -19,6 +19,8 @@ UArcherSkillKickShot::UArcherSkillKickShot()
 	CollisionHeightOffsetArr.Push(0.0f);
 
 	CurCollisionIdx = 0;
+
+	SkillDamage = 4354354;
 }
 
 bool UArcherSkillKickShot::Use()

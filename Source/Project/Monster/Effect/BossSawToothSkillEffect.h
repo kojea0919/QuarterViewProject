@@ -74,5 +74,5 @@ protected:
 	//이동 속도
 	float MoveSpeed;
 
-	const float SawToothDamage = 200.0f;
+	const float SawToothDamage = 100.0f;
 };

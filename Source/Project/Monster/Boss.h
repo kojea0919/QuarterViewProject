@@ -67,6 +67,10 @@ public:
 	void DestroyDomainExpansion();
 	void CleanSoulSiphonActor() { SoulSiphonActor = nullptr; }
 	
+	void SetStunState();
+
+	void PlayStunLoop();
+
 public:
 	void CheckSoulSiphonOverlap();
 	void CheckBigSwingOverlap();
@@ -105,11 +109,14 @@ public:
 
 	void SetStartPhase2();
 	void SetStartPhase3();
+
+
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	void BasicTypeDamageProc();
+	void BasicTypeDamageProc(float Damage);
 
 	FVector GetRandomVector();
 
@@ -220,8 +227,8 @@ private:
 
 	//체력 관련 변수
 	//------------------------------------------------
-	const float MaxHP = 100000000.f;
-	float CurHP = 100000000.f;
+	const float MaxHP = 1000000000.f;
+	float CurHP = 1000000000.f;
 	//------------------------------------------------
 	
 	//보스 페이즈 관련 변수
@@ -229,17 +236,17 @@ private:
 	int CurBossPhase;
 	const int MaxBosPhase = 3;
 
-	const float Phase1ToPhase2HP = 90000000;
-	const float Phase2ToPhase3HP = 10000000;
+	const float Phase1ToPhase2HP = 900000000;
+	const float Phase2ToPhase3HP = 100000000;
 
 	bool NeedPlayLevelSequence;
 	//------------------------------------------------
 
 	//데미지 관련 변수
 	//------------------------------------------------
-	float BigSwingDamage = 250.0f;
-	float SoulSiphonStartDamage = 100.0f;
-	float SoulSiphonEndDamage = 300.0f;
+	float BigSwingDamage = 150.0f;
+	float SoulSiphonStartDamage = 50.0f;
+	float SoulSiphonEndDamage = 150.0f;
 	//------------------------------------------------
 
 	//Pattern 잠시 휴식
@@ -252,7 +259,7 @@ private:
 	//------------------------------------------------
 	bool IsIllusionState;
 	int SoulSiphonUsePatternCount;
-	const int MaxSoulSiphonPatternCount = 10;	//일반 패턴을 10번 사용해야 SoulSiphon한번 사용 가능
+	const int MaxSoulSiphonPatternCount = 3;	//일반 패턴을 10번 사용해야 SoulSiphon한번 사용 가능
 	//------------------------------------------------
 
 

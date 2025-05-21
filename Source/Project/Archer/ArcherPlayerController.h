@@ -52,6 +52,9 @@ public:
 
 	void UseDSlot();
 	void ReleaseDSlot();
+
+	void UseSSlot();
+	void ReleaseSSlot();
 	//-------------------------------------------------
 
 	void UseStopSequenceButton();
@@ -76,6 +79,7 @@ public:
 
 	void SetBoss(class ABoss* Boss);
 	FVector GetBossLocation() const;
+	class ABoss* GetCurrentBoss() const { return CurrentBoss; }
 
 	void SetDisableInput();
 	void SetEnableInput();
@@ -102,6 +106,8 @@ public:
 	void StopPlayerSlow();
 
 	void RemoveMouseReverse() { IsMouseReverseState = false; }
+
+	void StartedUltimateSequence();
 
 	//void SetVisibleCircleFadeOut(bool Enable);
 	//void PlayCircleFadeOut();
@@ -165,6 +171,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotRInputAction;
 
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* SlotSInputAction;
+	
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* SlotDInputAction;
 

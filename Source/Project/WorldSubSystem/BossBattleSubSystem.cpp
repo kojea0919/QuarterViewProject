@@ -65,7 +65,7 @@ void UBossBattleSubSystem::SetPhase2Light()
 	SetBurnSkyHidden();
 	SetDeathSkyVisible();
 	RecaptureSky();
-	SetDirectionalLigthIntensity(0.01f);
+	SetDirectionalLigthIntensity(0.1f);
 }
 
 void UBossBattleSubSystem::ResetSky()

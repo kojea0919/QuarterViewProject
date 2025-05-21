@@ -232,6 +232,13 @@ void UPlayerHUD::NativeConstruct()
 		QuickSlot->SetSlotKeyText(TEXT("F"));
 	}
 
+	QuickSlot = Cast<USkillQuickSlot>(GetWidgetFromName(TEXT("UI_QuickSlotS")));
+	if (QuickSlot)
+	{
+		SkillQuickSlotArr.Push(QuickSlot);
+		QuickSlot->SetSlotKeyText(TEXT("S"));
+	}
+
 	SkillGaugeBar = Cast<USkillGaugeBar>(GetWidgetFromName(TEXT("UI_SkillGaugeBar")));
 
 	IntersectionKey = Cast<UUserWidget>(GetWidgetFromName(TEXT("UI_IntersectionKey")));

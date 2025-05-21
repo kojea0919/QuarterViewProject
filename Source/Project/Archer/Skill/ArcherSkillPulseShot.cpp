@@ -15,6 +15,8 @@ UArcherSkillPulseShot::UArcherSkillPulseShot()
 
 	DamageTermTime = 0.05f;
 	MaxCallDamageTimerNum = 12;
+
+	SkillDamage = 7666666;
 }
 
 bool UArcherSkillPulseShot::Use()

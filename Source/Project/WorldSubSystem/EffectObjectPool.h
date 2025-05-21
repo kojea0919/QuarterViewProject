@@ -84,6 +84,13 @@ public:
 
 	class ABossBigSwingAreaMarkEffect* GetBossBigSwingAreaMarkEffect();
 	void ReturnBossBigSwingAreaMarkEffect(class ABossBigSwingAreaMarkEffect* ReturnObj);
+
+	class AUltimateArrow* GetUltimateArrow();
+	void ReturnUltimateArrow(class AUltimateArrow* ReturnObj);
+
+	class AUltimateArrowHit* GetUltimateArrowHit();
+	void ReturnUltimateArrowHit(class AUltimateArrowHit* ReturnObj);
+
 private:
 	//Array Size InitÇÔ¼ö
 	template<typename T>
@@ -158,6 +165,12 @@ private:
 
 	UPROPERTY()
 	TArray<class ABossBigSwingAreaMarkEffect*> BossBigSwingAreaMarkEffectArr;
+
+	UPROPERTY()
+	TArray<class AUltimateArrow*> UltimateArrowArr;
+
+	UPROPERTY()
+	TArray<class AUltimateArrowHit*> UltimateArrowHitArr;
 };
 
 

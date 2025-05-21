@@ -13,6 +13,8 @@
 #include "Archer/Effect/AfterimageEffect.h"
 #include "Archer/Effect/ArcherLaserEffect.h"
 #include "Archer/Effect/ArcherPulseShotMuzzleEffect.h"
+#include "Archer/Effect/UltimateArrow.h"
+#include "Archer/Effect/UltimateArrowHit.h"
 #include "Monster/Effect/BasicHitEffect.h"
 #include "Monster/Effect/BossSawToothSkillEffect.h"
 #include "Monster/Effect/BossSpawnMeteorReadyEffect.h"
@@ -61,6 +63,8 @@ void UEffectObjectPool::Init()
 	InitArr(BossDomainExpansionEffectArr, 1);
 	InitArr(BossSoulSiphonLoopEffectArr, 1);
 	InitArr(BossBigSwingAreaMarkEffectArr, 1);
+	InitArr(UltimateArrowArr, 8);
+	InitArr(UltimateArrowHitArr, 8);
 }
 
 AArcherBasicAttackArrowEffect* UEffectObjectPool::GetArcherBasicAttackArrowEffect()
@@ -271,4 +275,24 @@ ABossBigSwingAreaMarkEffect* UEffectObjectPool::GetBossBigSwingAreaMarkEffect()
 void UEffectObjectPool::ReturnBossBigSwingAreaMarkEffect(ABossBigSwingAreaMarkEffect* ReturnObj)
 {
 	ReturnEffectObject(BossBigSwingAreaMarkEffectArr, ReturnObj);
+}
+
+AUltimateArrow* UEffectObjectPool::GetUltimateArrow()
+{
+	return GetEffectObject(UltimateArrowArr);
+}
+
+void UEffectObjectPool::ReturnUltimateArrow(AUltimateArrow* ReturnObj)
+{
+	ReturnEffectObject(UltimateArrowArr, ReturnObj);
+}
+
+AUltimateArrowHit* UEffectObjectPool::GetUltimateArrowHit()
+{
+	return GetEffectObject(UltimateArrowHitArr);
+}
+
+void UEffectObjectPool::ReturnUltimateArrowHit(AUltimateArrowHit* ReturnObj)
+{
+	ReturnEffectObject(UltimateArrowHitArr, ReturnObj);
 }

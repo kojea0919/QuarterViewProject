@@ -149,6 +149,9 @@ protected:
 	int MaxCallDamageTimerNum = 4;
 	//------------------------
 
+	//스킬 데미지
+	float SkillDamage;
+
 private:
 	UAnimMontage* SkillMontage;
 

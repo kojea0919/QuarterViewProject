@@ -15,7 +15,8 @@ enum class EPlayerState
 	Bound,
 	Stiff,
 	Down,
-	PlayingLevelSequence
+	PlayingLevelSequence,
+	UsingUltimate
 };
 
 class UCurveVector;
@@ -121,6 +122,8 @@ public:
 
 	void InitPhase3State();
 
+	void UltimateEnd();
+	void UltimateShot();
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
@@ -198,6 +201,9 @@ public:
 	//궁극기 시네마틱 재생
 	void PlayUltimateSequence();
 
+	UFUNCTION()
+	void UltimateSequenceFinished();
+
 private:
 	//마우스 방향으로 회전하는 함수
 	void RotateMouseDirection();
@@ -227,6 +233,8 @@ private:
 
 	void UpdateCameraTransform(float DeltaTime);
 
+	void DamageProc(float Damage);
+	FVector GetRandomVector() const;
 private:
 	//카메라 관련 컴포넌트
 	//-----------------------------------------------------------------------------------------------
@@ -453,4 +461,20 @@ private:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class ULevelSequence* UltimateSequence;
+
+
+	//Damage
+	//--------------------------------------------
+	const float BasicAttackBaseDamage = 200000;
+	//--------------------------------------------
+
+	//받은 Damage관련 변수
+	//-----------------------------------------------------------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UDamageText> DamageTextWidgetClass;
+
+	const FVector DamageTextOffset = { 0.0f,-125.0f,60.0f };
+
+	const float RandomVectorRange = 30;
+	//-----------------------------------------------------------------------------
 };

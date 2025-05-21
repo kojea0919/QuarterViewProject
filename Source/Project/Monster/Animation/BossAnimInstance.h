@@ -31,9 +31,9 @@ public:
 	void PlayDomainExpansion();
 	void PlaySoulSiphon();
 	void PlaySoulSiphonEnd();
+	void PlayStunLoop();
 
 	void StopCurMontage();
-
 private:
 	UFUNCTION()
 	void AnimNotify_RotateStart();
@@ -74,6 +74,10 @@ private:
 	UFUNCTION()
 	void AnimNotify_CheckBigSwingOverlap();
 
+	UFUNCTION()
+	void AnimNotify_StartBehaviorTree();
+
+
 private:
 	void InitMontage();
 
@@ -113,6 +117,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* SoulSiphonEndMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* StunLoopMontage;
 
 private:
 	class ABoss* Boss;

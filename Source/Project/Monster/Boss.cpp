@@ -133,12 +133,12 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 	switch (DamageType->GetDamageType())
 	{
 	case EArcherDamageType::Basic:
-		BasicTypeDamageProc();
+		BasicTypeDamageProc((int)Damage);
 		break;
 	}
 
 	if(!IsIllusionState)
-		CurHP -= 30000000;
+		CurHP -= (int)Damage;
 
 	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
 	if (ArcherController)
@@ -196,16 +196,23 @@ void ABoss::SetOutLineEnable(bool Enable)
 
 void ABoss::MontageEnd()
 {
+	//현재 몽타주가 끝나면 BlackBoard 갱신
+	//-------------------------------------------------------------------
 	ABossAIController* AIController = Cast<ABossAIController>(Controller);
 	if (AIController)
 	{
 		AIController->MontageEnd();
-		IncreasePatternCount();
-		IncreaseSoulSiphonPatternCount();
 	}
 	else
 		return;
+	//-------------------------------------------------------------------
+	
+	IncreasePatternCount();					//휴식을 위한 PatternCount 증가
+	IncreaseSoulSiphonPatternCount();		//SoulSiphonPattern을 위한 Count 증가
 
+
+	//LevelSequence 재생이 필요한 경우 1.2초 대기 후 Cinematic재생 함수 호출
+	//-------------------------------------------------------------------
 	if (NeedPlayLevelSequence)
 	{
 		UWorld* World = GetWorld();
@@ -215,6 +222,7 @@ void ABoss::MontageEnd()
 		
 		AIController->StopBehaviorTree();
 	}
+	//-------------------------------------------------------------------
 }
 
 void ABoss::SoulSiphonEndMontageEnd()
@@ -692,6 +700,7 @@ void ABoss::IllusionOff()
 	{
 		AIController->SetIllusionEnd(true);
 		AIController->MontageEnd();
+		AIController->StopMovement();
 	}
 }
 
@@ -758,6 +767,19 @@ void ABoss::DestroyDomainExpansion()
 		DomainExpansionEffect->OnNiagaraSystemFinished_Impl();
 }
 
+void ABoss::SetStunState()
+{
+	//플레이어가 죽었으면 ai멈추기
+	ABossAIController* AIController = Cast<ABossAIController>(Controller);
+	if (AIController)
+	{
+		AIController->StopBehaviorTree();
+
+		if (BossAnim)
+			BossAnim->PlayStunLoop();
+	}
+}
+
 void ABoss::CheckSoulSiphonOverlap()
 {
 	TArray<FHitResult> HitResults;
@@ -776,17 +798,19 @@ void ABoss::CheckSoulSiphonOverlap()
 		FCollisionShape::MakeSphere(SoulSiphonCollisionRadius),
 		Params);
 
-	DrawDebugSphere(GetWorld(),
+	/*DrawDebugSphere(GetWorld(),
 		SphereLocation,
 		SoulSiphonCollisionRadius, 12,
-		FColor::Green, false, 2);
+		FColor::Green, false, 2);*/
 
 	//충돌이 된 경우
+	//------------------------------------------------------------
 	if (IsHit)
 	{
+		//데미지 처리
+		//----------------------------------------------
 		for (auto& Hit : HitResults)
 		{
-
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
 				SoulSiphonStartDamage,
@@ -794,23 +818,32 @@ void ABoss::CheckSoulSiphonOverlap()
 				this,
 				UBossStiffDamageType::StaticClass());
 		}
+		//----------------------------------------------
+
+
+		//BlackBoard Update
+		//----------------------------------------------
 		ABossAIController* AIController = Cast<ABossAIController>(Controller);
 		if (AIController)
 		{
-			AIController->SetUsingSoulSiphonState(true);
-			AIController->SetCanUseSoulSiphon(false);			
+			AIController->SetUsingSoulSiphonState(true);		//현재 상태를 SoulSiphon을 사용한 상태로 만들기
+			AIController->SetCanUseSoulSiphon(false);			//SoulSiphon을 사용했으므로 CanUseSoulSiphon을 false로 만들기
 		}
+		//----------------------------------------------
 
 		SoulSiphonActor = GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
 		SoulSiphonActor->SetBoss(this);
 
-		//플레이어, 보스 Transform 저장
+		//맞은 시점의 플레이어, 보스 Transform 저장
+		//----------------------------------------------
 		UBossBattleSubSystem * BossBattle = GetWorld()->GetSubsystem<UBossBattleSubSystem>();
 		BossBattle->SaveBossTransform(GetActorTransform());
 		BossBattle->SavePlayerTransform(Player->GetActorTransform());
+		//----------------------------------------------
 
-		IsIllusionState = true;
+		IsIllusionState = true;	//IsIllusionState를 true로 해서 데미지를 안 받게 설정
 	}
+	//------------------------------------------------------------
 }
 
 void ABoss::CheckBigSwingOverlap()
@@ -831,10 +864,10 @@ void ABoss::CheckBigSwingOverlap()
 		FCollisionShape::MakeSphere(BigSwingCollisionRadius),
 		Params);
 
-	DrawDebugSphere(GetWorld(),
-		SphereLocation,
-		BigSwingCollisionRadius, 12,
-		FColor::Green, false, 2);
+	//DrawDebugSphere(GetWorld(),
+	//	SphereLocation,
+	//	BigSwingCollisionRadius, 12,
+	//	FColor::Green, false, 2);
 
 	//충돌이 된 경우
 	if (IsHit)
@@ -858,7 +891,7 @@ void ABoss::CheckBigSwingOverlap()
 	}
 }
 
-void ABoss::BasicTypeDamageProc()
+void ABoss::BasicTypeDamageProc(float Damage)
 {
 	UEffectObjectPool* EffectObjectPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
 	if (nullptr == EffectObjectPool)
@@ -875,7 +908,7 @@ void ABoss::BasicTypeDamageProc()
 	if (DamageText)
 	{
 		DamageText->AddToViewport();
-		DamageText->SetDamageText(1000000);
+		DamageText->SetDamageText(Damage);
 
 		//데미지 Text위치 지정
 		//------------------------------------

@@ -10,7 +10,7 @@
 #include "Archer/Effect/ArcherBasicAttackMuzzleEffect.h"
 #include "BaseEffectActor/ParticleEffectActor.h"
 #include "Archer/Effect/ArcherBigArrowEffect.h"
-
+#include "Archer/Effect/UltimateArrow.h"
 
 ABow::ABow()
 	: DynMaterial(nullptr)
@@ -177,6 +177,22 @@ void ABow::ArrowShowerShot()
 
 void ABow::PulseShot()
 {
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	//Effect가 플레이어의 앞 방향으로 발사
+	//-----------------------------------------------------------
+	AArcherBigArrowEffect* ArrowEffect1 = EffectObjPool->GetArcherBigArrowEffect();
+	SpawnArrowAddYawAngle(ArrowEffect1, -3);
+	AArcherBigArrowEffect* ArrowEffect2 = EffectObjPool->GetArcherBigArrowEffect();
+	SpawnArrowAddYawAngle(ArrowEffect2, 0);
+	AArcherBigArrowEffect* ArrowEffect3 = EffectObjPool->GetArcherBigArrowEffect();
+	SpawnArrowAddYawAngle(ArrowEffect3, 3);
+	//-----------------------------------------------------------
+
+	AArcherBasicAttackMuzzleEffect* MuzzleEffect = EffectObjPool->GetArcherBasicAttackMuzzleEffect();
+	SpawnMuzzle(MuzzleEffect);
 }
 
 void ABow::SetChargingEffect(bool Enable)
@@ -189,6 +205,32 @@ void ABow::SetChargingEffect(bool Enable)
 	{
 		DynMaterial->SetScalarParameterValue(FName("ChargingEffectEnable"), 0.0f);
 	}
+}
+
+void ABow::UltimateShot(class ABoss * Boss)
+{
+	UEffectObjectPool* EffectObjPool = GetWorld()->GetSubsystem<UEffectObjectPool>();
+	if (nullptr == EffectObjPool)
+		return;
+
+	FTransform UltimateBaseTransform = Bow->GetSocketTransform(TEXT("Ultimate"));
+
+	FRotator RotatorArr[8] = { FRotator(30.f, 30.f, 0.f),FRotator(-30.f, -30.f, 0.f),FRotator(30.f, -30.f, 0.f),FRotator(-30.f, 30.f, 0.f),
+	FRotator(40.f,0.0f,0.0f),FRotator(-40.0f,0.0f,0.0f) ,FRotator(0.0f,40.f,0.0f) ,FRotator(0.0f,-40.0f,0.0f) };
+
+	FVector BowForward = GetActorForwardVector();
+	for (int i = 0; i < 8; ++i)
+	{
+		FTransform CurArrowTransform = UltimateBaseTransform;
+		FRotator NewRotator = CurArrowTransform.Rotator() + RotatorArr[i];
+		CurArrowTransform.SetRotation(NewRotator.Quaternion());
+
+		AUltimateArrow* CurArrow = EffectObjPool->GetUltimateArrow();
+		CurArrow->SetActorTransform(CurArrowTransform);
+		CurArrow->SetBoss(Boss);
+		CurArrow->SetOverlapStart();
+	}
+
 }
 
 void ABow::SpawnArrow(ANiagaraEffectActor* ArrowEffect, bool UsePlayerDir)
