@@ -235,6 +235,8 @@ private:
 
 	void DamageProc(float Damage);
 	FVector GetRandomVector() const;
+
+	void HideBlockMapComponent();
 private:
 	//카메라 관련 컴포넌트
 	//-----------------------------------------------------------------------------------------------
@@ -477,4 +479,10 @@ private:
 
 	const float RandomVectorRange = 30;
 	//-----------------------------------------------------------------------------
+
+
+	AActor* TargetHideActor;
+	TArray<UMaterialInstanceDynamic*> TargetHideActorMaterialArr;
+	bool IsLineTraceMapComponent;
+
 };

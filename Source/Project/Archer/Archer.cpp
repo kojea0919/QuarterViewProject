@@ -47,7 +47,7 @@ AArcher::AArcher()
 	DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false),
 	PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1), IsUpdateCameraTransform(false),
-	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0), CurHP(2000), MaxHP(2000), Dead(true)
+	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0), CurHP(2000), MaxHP(2000), Dead(true), TargetHideActor(nullptr), IsLineTraceMapComponent(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -1199,6 +1199,54 @@ FVector AArcher::GetRandomVector() const
 	ReturnVector.Y = FMath::RandRange(-Range, Range);
 	ReturnVector.Z = FMath::RandRange(-Range, Range);
 	return ReturnVector;
+}
+
+void AArcher::HideBlockMapComponent()
+{
+	FVector Start = QuarterViewCamera->GetComponentLocation();
+	FVector End = QuarterViewCamera->GetForwardVector() * SpringArm->TargetArmLength + Start;
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+
+	if (GetWorld()->LineTraceSingleByObjectType(HitResult, Start, End,
+		ECollisionChannel::ECC_GameTraceChannel6, Params))
+	{
+		if (TargetHideActor == HitResult.GetActor())
+			return;
+
+		TargetHideActor = HitResult.GetActor();
+		UStaticMeshComponent * Target= Cast<UStaticMeshComponent>(TargetHideActor->GetRootComponent());
+		if (Target)
+		{
+			TArray<UMaterialInterface*> Materials = Target->GetMaterials();
+			int32 Num = Materials.Num();
+			for (int32 i = 0; i < Num; ++i)
+			{
+				UMaterialInstanceDynamic * DynMaterial = UMaterialInstanceDynamic::Create(Materials[i], Target->GetStaticMesh());
+				DynMaterial->SetScalarParameterValue(TEXT("OpacityMask"), 0);
+				TargetHideActorMaterialArr.Add(DynMaterial);
+			}
+
+		}
+	}
+	else
+	{
+		UStaticMeshComponent* Target = Cast<UStaticMeshComponent>(TargetHideActor->GetRootComponent());
+		if (Target)
+		{
+			int32 Num = TargetHideActorMaterialArr.Num();
+			for (int32 i = 0; i < Num; ++i)
+			{
+				TargetHideActorMaterialArr[i]->SetScalarParameterValue(TEXT("OpacityMask"), 1);
+			}
+
+		}
+
+		TargetHideActor = nullptr;
+		TargetHideActorMaterialArr.Empty();
+	}
+
 }
 
 void AArcher::UpdateRotation(float Alpha)

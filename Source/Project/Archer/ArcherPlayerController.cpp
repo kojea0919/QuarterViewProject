@@ -288,20 +288,22 @@ void AArcherPlayerController::CheckMousePositionCollision()
 FVector AArcherPlayerController::GetMouseWorldLocation()
 {
 	FHitResult HitResult;
-	GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
-
-	FVector TargetLocation = HitResult.Location;
-
-	//마우스 반전상태면 플레이러를 기준으로 대칭이동 후 반환
-	//------------------------------------------------------
-	if (IsMouseReverseState)
+	FVector TargetLocation;
+	if (GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
 	{
-		FVector TargetToPlayerVector = GetCharacter()->GetActorLocation() - TargetLocation;
+		TargetLocation = HitResult.Location;
 
-		TargetLocation = TargetToPlayerVector + GetCharacter()->GetActorLocation();
-		TargetLocation.Z = GetCharacter()->GetActorLocation().Z - 90.0f;
+		//마우스 반전상태면 플레이러를 기준으로 대칭이동 후 반환
+		//------------------------------------------------------
+		if (IsMouseReverseState)
+		{
+			FVector TargetToPlayerVector = GetCharacter()->GetActorLocation() - TargetLocation;
+
+			TargetLocation = TargetToPlayerVector + GetCharacter()->GetActorLocation();
+			TargetLocation.Z = GetCharacter()->GetActorLocation().Z - 90.0f;
+		}
+		//------------------------------------------------------
 	}
-	//------------------------------------------------------
 
 	return TargetLocation;
 }
@@ -796,7 +798,6 @@ void AArcherPlayerController::StartedUltimateSequence()
 	if (CurrentBoss)
 		CurrentBoss->SetStunState();
 }
-
 //void AArcherPlayerController::SetVisibleCircleFadeOut(bool Enable)
 //{
 //	if (CircleFadeOut)
