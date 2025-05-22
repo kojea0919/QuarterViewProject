@@ -29,6 +29,7 @@
 #include "Monster/SpawnActor/SoulSiphonActor.h"
 #include "DamageType/BossStiffDamageType.h"
 #include "DamageType/BossKnockBackDamageType.h"
+#include "DamageType/BossCameraShakeDamageType.h"
 
 ABoss::ABoss()
 	: CurTime(0),IsUpdateShockWave(false), Player(nullptr), BossAnim(nullptr), RotateToPlayer(false), RotateSpeed(650.f), CurrentBasicComboAttackIdx(0),
@@ -211,14 +212,14 @@ void ABoss::MontageEnd()
 	IncreaseSoulSiphonPatternCount();		//SoulSiphonPattern을 위한 Count 증가
 
 
-	//LevelSequence 재생이 필요한 경우 1.2초 대기 후 Cinematic재생 함수 호출
+	//LevelSequence 재생이 필요한 경우 1초 대기 후 Cinematic재생 함수 호출
 	//-------------------------------------------------------------------
 	if (NeedPlayLevelSequence)
 	{
 		UWorld* World = GetWorld();
 
 		if (nullptr != World)
-			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 1.2f, false);
+			World->GetTimerManager().SetTimer(PlayNextCinematicTimer, this, &ABoss::PlayNextPhaseCinematic, 1.0f, false);
 		
 		AIController->StopBehaviorTree();
 	}
@@ -666,7 +667,7 @@ void ABoss::SoulSiphonEnd()
 		SoulSiphonEndDamage,
 		GetInstigatorController(),
 		this,
-		UBossKnockBackDamageType::StaticClass());
+		UBossCameraShakeDamageType::StaticClass());
 
 	SoulSiphonUsePatternCount = 0;
 }

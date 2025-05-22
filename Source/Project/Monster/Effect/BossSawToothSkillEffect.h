@@ -29,6 +29,7 @@ public:
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	virtual void SetEffectEnable(bool Enable) override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -75,4 +76,7 @@ protected:
 	float MoveSpeed;
 
 	const float SawToothDamage = 100.0f;
+
+	UPROPERTY()
+	class USoundCue* Sound;
 };

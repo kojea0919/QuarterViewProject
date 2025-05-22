@@ -136,7 +136,7 @@ void USkillManagerComponent::Init()
 	Ultimate->SetMontage(Anim->GetUltimateMontage());
 	Ultimate->SetBaseClass(Archer);
 	Ultimate->SetQuickSlotKey(ESkillQuickSlot::SlotS);
-	Ultimate->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_DiveShot.M_DiveShot"));
+	Ultimate->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_Ultimate.M_Ultimate"));
 
 	PlayerController->SetQuickSlotSkill(Ultimate, ESkillQuickSlot::SlotS);
 	//---------------------------------------------------------

@@ -103,6 +103,8 @@ public:
 
 	ESkillType GetSkillType() const { return SkillType; }
 
+	void SetDamageTermTime(float TermTime) { DamageTermTime = TermTime; }
+	void SetMaxCallDamageTimerNum(int CallNum) { MaxCallDamageTimerNum = CallNum; }
 protected:
 	class AArcher* Archer;
 

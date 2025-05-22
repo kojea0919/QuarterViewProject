@@ -1,6 +1,8 @@
 #include "Archer/Effect/UltimateArrowHit.h"
 #include "WorldSubSystem/EffectObjectPool.h"
 #include "Particles/ParticleSystem.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 AUltimateArrowHit::AUltimateArrowHit()
 {
@@ -9,9 +11,27 @@ AUltimateArrowHit::AUltimateArrowHit()
 	{
 		Effect->SetTemplate(PS_ARROW.Object);
 	}
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> SC_HITSOUND(TEXT("/Game/GamePlay/Player/Archer/Sound/SC_UltimateHit.SC_UltimateHit"));
+	if (SC_HITSOUND.Succeeded())
+	{
+		HitSound = SC_HITSOUND.Object;
+	}
 }
 
 void AUltimateArrowHit::OnParticleSystemFinished_Impl()
 {
 	EffectObjPool->ReturnUltimateArrowHit(this);
+
+}
+
+void AUltimateArrowHit::SetEffectEnable(bool Enable)
+{
+	Super::SetEffectEnable(Enable);
+
+	if (Enable && HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+		UE_LOG(LogTemp, Warning, TEXT("Call"));
+	}
 }

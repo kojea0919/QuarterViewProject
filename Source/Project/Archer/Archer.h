@@ -90,16 +90,13 @@ public:
 	FTransform GetSoulSiphonEffectPos() const;
 
 	EPlayerState GetPlayerState() const { return PlayerState; }
-	void SetNormalState() 
+	void SetNormalState()
 	{
 		PlayerState = EPlayerState::Normal; 
 		SetActorHiddenInGame(false);
 	}
-	void SetPlayingLevelSequenceState()
-	{
-		PlayerState = EPlayerState::PlayingLevelSequence;
-		SetActorHiddenInGame(true);
-	}
+	void SetPlayingLevelSequenceState();
+	
 
 	void SetTargetCameraRotation(const FRotator & Rotation) { TargetCameraRotation = Rotation; }
 	void SetTargetCameraLocation(const FVector& Location) { TargetCameraLocation = Location; }
@@ -480,8 +477,9 @@ private:
 	const float RandomVectorRange = 30;
 	//-----------------------------------------------------------------------------
 
-
 	class AHideMapComponent* TargetHideActor;
 	bool IsLineTraceMapComponent;
+
+	class ULevelSequencePlayer* UltimateSequencePlayer;
 
 };

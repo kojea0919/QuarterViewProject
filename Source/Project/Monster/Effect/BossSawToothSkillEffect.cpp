@@ -10,6 +10,7 @@
 #include "Archer/Archer.h"
 #include "Kismet/GameplayStatics.h"
 #include "DamageType/BossStiffDamageType.h"
+#include "Sound/SoundCue.h"
 
 ABossSawToothSkillEffect::ABossSawToothSkillEffect()
 	:TelegraphComp(nullptr), NeedToUpdateScale(true), IsCanMove(false), CurMoveDistance(0.0f), MoveSpeed(2000.0f)
@@ -33,6 +34,11 @@ ABossSawToothSkillEffect::ABossSawToothSkillEffect()
 	Effect->SetRelativeLocation(FVector(0.0f, 0.0f, -120.0f));
 	BoxCollider->SetBoxExtent(FVector(120.0f, 20.f, 120.f));
 
+	static ConstructorHelpers::FObjectFinder<USoundCue> SC_SOUND(TEXT("/Game/GamePlay/Enemy/Boss/Sound/SC_SawTooth.SC_SawTooth"));
+	if (SC_SOUND.Succeeded())
+	{
+		Sound = SC_SOUND.Object;
+	}
 }
 
 void ABossSawToothSkillEffect::OnTelegraphFinished(UNiagaraComponent* PSystem)
@@ -85,6 +91,16 @@ void ABossSawToothSkillEffect::OnComponentBeginOverlap(UPrimitiveComponent* Over
 			GetInstigatorController(),
 			this,
 			UBossStiffDamageType::StaticClass());
+	}
+}
+
+void ABossSawToothSkillEffect::SetEffectEnable(bool Enable)
+{
+	Super::SetEffectEnable(Enable);
+
+	if (Enable && Sound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation());
 	}
 }
 

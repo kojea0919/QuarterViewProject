@@ -48,7 +48,8 @@ AArcher::AArcher()
 	DefaultSpeed(600.0f), Attacking(false), CurrentCombo(0), MaxCombo(2), ComboInput(false), CanNextCombo(false),
 	MoveAble(true), MoveSkillOn(false), IsUseSkill(false), LookMouseDirection(false), RotateSpeed(120.0f), IsCameraZoomOut(false),
 	PlayerState(EPlayerState::Normal), RotateToBoss(false), RotationDirectionToBoss(1), IsUpdateCameraTransform(false),
-	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0), CurHP(2000), MaxHP(2000), Dead(true), TargetHideActor(nullptr), IsLineTraceMapComponent(true)
+	CameraTransformSpeed(0.1f), CurCameraTransformAlpha(0), CurHP(2000), MaxHP(2000), Dead(true), TargetHideActor(nullptr), IsLineTraceMapComponent(true),
+	UltimateSequencePlayer(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -275,6 +276,9 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+	if (PlayerState == EPlayerState::UsingUltimate)
+		return 0.0f;
+
 	if (nullptr != ArcherAnim)
 	{
 		//Damage Type¿¡ µû¶ó °æÁ÷¸ð¼Ç or ³Ë¹é¸ð¼Ç
@@ -298,7 +302,16 @@ float AArcher::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 			ArcherAnim->PlayKnockBackMontage();
 			ComputeRotateDirectionToBoss();
 			//RotateToBoss = true;
-
+			break;
+		case EBossDamageType::CameraShake:
+			PlayerState = EPlayerState::Down;
+			ArcherAnim->PlayKnockBackMontage();
+			ComputeRotateDirectionToBoss();
+			if(ArcherController)
+			{
+				ArcherController->ClientStartCameraShake(ArcherJumpCameraShakeClass);
+			}
+			break;
 		}
 
 		CurHP -= Damage;
@@ -447,6 +460,22 @@ void AArcher::SetVisibleInteractionUI(bool Enable)
 FTransform AArcher::GetSoulSiphonEffectPos() const
 {
 	return GetMesh()->GetSocketTransform(TEXT("SoulSiphonLoopPos"));
+}
+
+void AArcher::SetPlayingLevelSequenceState()
+{
+	//±Ã±Ø±â »ç¿ëÁßÀÌ¸é ±Ã±Ø±â ½ºÅµµÇ°Ô ±¸Çö
+	//---------------------------------------------------------------------
+	if (PlayerState == EPlayerState::UsingUltimate && UltimateSequencePlayer)
+	{
+		if (ArcherAnim)
+			ArcherAnim->StopAllMontages(0);
+		UltimateSequencePlayer->Stop();
+	}
+	//---------------------------------------------------------------------
+
+	PlayerState = EPlayerState::PlayingLevelSequence;
+	SetActorHiddenInGame(true);
 }
 
 void AArcher::SetUpdateCameraTransform(bool Reverse)
@@ -865,14 +894,17 @@ void AArcher::PlayUltimateSequence()
 {
 	if (UltimateSequence)
 	{
-		ALevelSequenceActor* SequenceActor;
-		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), UltimateSequence, FMovieSceneSequencePlaybackSettings(), SequenceActor);
-
-		if (LevelSequencePlayer)
+		if (nullptr == UltimateSequencePlayer)
 		{
-			LevelSequencePlayer->OnFinished.AddDynamic(this, &AArcher::UltimateSequenceFinished);
+			ALevelSequenceActor* SequenceActor;
+			UltimateSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), UltimateSequence, FMovieSceneSequencePlaybackSettings(), SequenceActor);
+		}
+
+		if (UltimateSequencePlayer)
+		{
+			UltimateSequencePlayer->OnFinished.AddDynamic(this, &AArcher::UltimateSequenceFinished);
 			PlayerState = EPlayerState::UsingUltimate;
-			LevelSequencePlayer->Play();
+			UltimateSequencePlayer->Play();
 		}
 
 		if (ArcherController)

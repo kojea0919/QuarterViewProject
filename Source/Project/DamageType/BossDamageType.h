@@ -10,7 +10,8 @@
 enum class EBossDamageType
 {
 	Stiff,
-	KnockBack
+	KnockBack,
+	CameraShake
 };
 
 /**

@@ -17,4 +17,9 @@ public:
 
 	virtual void OnParticleSystemFinished_Impl();
 	
+	virtual void SetEffectEnable(bool Enable) override;
+private:
+	UPROPERTY()
+	class USoundCue* HitSound;
+
 };

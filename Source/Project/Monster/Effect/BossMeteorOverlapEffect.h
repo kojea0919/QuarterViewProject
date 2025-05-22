@@ -18,4 +18,10 @@ public:
 	ABossMeteorOverlapEffect();
 
 	virtual void OnParticleSystemFinished_Impl() override;
+
+	virtual void SetEffectEnable(bool Enable) override;
+private:
+	UPROPERTY()
+	class USoundCue* HitSound;
+
 };

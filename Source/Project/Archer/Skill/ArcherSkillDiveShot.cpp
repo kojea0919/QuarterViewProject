@@ -4,6 +4,21 @@
 #include "Archer/Skill/ArcherSkillDiveShot.h"
 #include "Archer/Archer.h"
 
+UArcherSkillDiveShot::UArcherSkillDiveShot()
+{
+	//구형 Collision 정보 Setting
+	//-----------------------------
+	CollisionForwardScaleArr.Push(0);
+	CollisionTypeArr.Push(ECollisionType::Sphere);
+	CollisionExtentArr.Push(FVector(150.0f));
+	CollisionHeightOffsetArr.Push(-90.0f);
+
+	CurCollisionIdx = 0;
+	//-----------------------------
+
+	SkillDamage = 2444444;
+}
+
 bool UArcherSkillDiveShot::Use()
 {
 	if(!Super::Use())
@@ -12,4 +27,9 @@ bool UArcherSkillDiveShot::Use()
 	Archer->SetMoveAble(false);
 
 	return true;
+}
+
+void UArcherSkillDiveShot::CheckEnemyOverlap()
+{
+	Super::CheckEnemyOverlap();
 }

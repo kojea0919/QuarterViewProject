@@ -13,8 +13,12 @@ UArcherSkillArrowShower::UArcherSkillArrowShower()
 {
 	SetChargingSpeed(1.0f);
 	SetTotalChargingTime(1.0f);
+	SetDamageTermTime(0.15f);
+	SetMaxCallDamageTimerNum(7);
 
 	SetCoolTime(1.0f);
+
+	SkillDamage = 2444444;
 
 	//구형 Collision 정보 Setting
 	//-----------------------------

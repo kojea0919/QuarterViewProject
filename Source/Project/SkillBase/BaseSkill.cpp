@@ -7,6 +7,7 @@
 #include "UI/SkillQuickSlot.h"
 #include "DrawDebugHelpers.h"
 #include "DamageType/ArcherBasicDamageType.h"
+#include "Monster/Boss.h"
 
 UBaseSkill::UBaseSkill()
 	: Archer(nullptr), AnimInstance(nullptr), SkillUIMaterial(nullptr), SkillType(ESkillType::Base), CurSlot(nullptr),
@@ -210,16 +211,19 @@ void UBaseSkill::CheckEnemyOverlap()
 	{
 		for (auto& Hit : HitResults)
 		{
-			UGameplayStatics::ApplyDamage(
-				Hit.GetActor(),
-				SkillDamage + FMath::RandRange(-SkillDamage / 10.f, SkillDamage / 10.0f),
-				Archer->GetInstigatorController(),
-				Archer,
-				UArcherBasicDamageType::StaticClass());
+			if (Cast<ABoss>(Hit.GetActor()))
+			{
+				UGameplayStatics::ApplyDamage(
+					Hit.GetActor(),
+					SkillDamage + FMath::RandRange(-SkillDamage / 10.f, SkillDamage / 10.0f),
+					Archer->GetInstigatorController(),
+					Archer,
+					UArcherBasicDamageType::StaticClass());
+			}
 		}
 	}
 
-	/*switch (CollisionTypeArr[CurCollisionIdx])
+	switch (CollisionTypeArr[CurCollisionIdx])
 	{
 	case ECollisionType::Box:
 		DrawDebugBox(Archer->GetWorld(),
@@ -239,7 +243,7 @@ void UBaseSkill::CheckEnemyOverlap()
 		break;
 	default:
 		return;
-	}*/
+	}
 }
 
 void UBaseSkill::StartMutliHitSkillEnemyOverlap()
