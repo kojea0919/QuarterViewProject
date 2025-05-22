@@ -43,10 +43,12 @@ private:
 
 	FString CurrentItemName;
 
+	UPROPERTY()
 	UTexture2D* BaseTexture;
 
 	int CurSlotIdx;
 
+	UPROPERTY()
 	class UStore* CurrentStore;
 
 	int CurrentQuantity;

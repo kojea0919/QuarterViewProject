@@ -31,6 +31,7 @@ private:
 	class UProgressBar* SkillGaugeBar;
 
 	//현재 실행 중인 Skill에 대한 포인터
+	UPROPERTY()
 	class UChargingSkill* CurExcuteSkill;
 
 	float CurPercent;

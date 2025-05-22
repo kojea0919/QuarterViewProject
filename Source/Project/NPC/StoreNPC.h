@@ -47,5 +47,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = ItemList, meta = (AllowPrivateAccess = "true"))
 	TMap<FString, class UPotionItem*> PotionItemMap;
 
+	UPROPERTY()
 	class AArcherPlayerController* ArcherController;
 };

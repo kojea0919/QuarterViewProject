@@ -131,6 +131,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UItemToolTip> ItemToolTipWidgetClass;
 
+	UPROPERTY()
 	class UItemToolTip* ToolTip;
 	//-----------------------------------------------
 
@@ -140,8 +141,10 @@ private:
 	UPROPERTY()
 	class UButton* PurchaseButton;	//구매 버튼
 	
+	UPROPERTY()
 	class AStoreNPC* CurrentNPC;	//현재 아이템을 팔 NPC
 	
+	UPROPERTY()
 	class AArcher* CurrentPlayer;	//현재 구매중인 Player
 
 	EItemListType CurrentItemButtonType;

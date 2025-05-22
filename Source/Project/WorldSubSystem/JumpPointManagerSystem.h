@@ -21,7 +21,10 @@ public:
 	const AJumpEndPoint* GetJumpEndPoint(const FString& TagName);
 
 private:
+	UPROPERTY()
 	TMap<FString, class AJumpStartPoint*> JumpStartPointMap;
+
+	UPROPERTY()
 	TMap<FString, class AJumpEndPoint*> JumpEndPointMap;
 
 };

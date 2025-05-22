@@ -27,5 +27,6 @@ protected:
 
 
 private:
+	UPROPERTY()
 	class UInventory* Inventory;
 };

@@ -60,8 +60,10 @@ private:
 
 	bool IsSetItem;	//현재 슬롯에 아이템이 들어있는지 나타내는 변수
 
+	UPROPERTY()
 	UTexture2D* ItemTexture;
 
+	UPROPERTY()
 	class UStore* CurrentStore;
 
 	FString CurrentItemName;

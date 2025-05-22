@@ -122,6 +122,7 @@ private:
 	UAnimMontage* StunLoopMontage;
 
 private:
+	UPROPERTY()
 	class ABoss* Boss;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))

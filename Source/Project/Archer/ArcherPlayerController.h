@@ -130,6 +130,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
 	TSubclassOf<class UPlayerHUD> PlayerHUDWidgetClass;
 
+	UPROPERTY()
 	class UPlayerHUD* PlayerHUD;
 	//-------------------------------------------------
 
@@ -138,6 +139,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
 	TSubclassOf<class UUserWidget> LevelSequenceHUDWidgetClass;
 
+	UPROPERTY()
 	class UUserWidget* LevelSequenceHUD;
 	//-------------------------------------------------
 
@@ -146,6 +148,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
 	TSubclassOf<class UPlayerDeadHUD> PlayerDeadHUDWidgetClass;
 
+	UPROPERTY()
 	class UPlayerDeadHUD* PlayerDeadHUD;
 	//-------------------------------------------------
 
@@ -211,6 +214,7 @@ private:
 	bool IsSetStoreNPC;		//현재 Store에 NPC가 배정이 됐는지 나타내는 변수
 
 	//보스
+	UPROPERTY()
 	class ABoss* CurrentBoss;
 	bool BossRenderOutLine;
 
@@ -220,6 +224,7 @@ private:
 	//-----------------------------------------------
 	bool IsPlayingLevelSequence;
 
+	UPROPERTY()
 	class ULevelSequencePlayer* CurLevelSequencePlayer;
 	//-----------------------------------------------
 

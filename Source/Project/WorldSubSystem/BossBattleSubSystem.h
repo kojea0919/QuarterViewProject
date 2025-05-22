@@ -69,14 +69,25 @@ private:
 
 	FTransform PlayerRespawnTransform;
 
+	UPROPERTY()
 	class APlayeLevelSequenceActor* BossSpawnSequence;
+
+	UPROPERTY()
 	class APlayeLevelSequenceActor* BossPhase2Sequence;
+
+	UPROPERTY()
 	class APlayeLevelSequenceActor* BossPhase3Sequence;
+
+	UPROPERTY()
 	class APlayeLevelSequenceActor* BossDeadSequence;
 
+	UPROPERTY()
 	class ASky* BurnSky;
+
+	UPROPERTY()
 	class ASky* DeathSky;
 	
+	UPROPERTY()
 	class AMainLevelLight* MainLevelLight;
 
 	FTransform Phase3BossTransform;

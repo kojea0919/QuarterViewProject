@@ -32,6 +32,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
 	TSubclassOf<class ULobbyHUD> LobbyHUDWidgetClass;
 
+	UPROPERTY()
 	class ULobbyHUD* LobbyHUD;
 	//-------------------------------------------------
 	

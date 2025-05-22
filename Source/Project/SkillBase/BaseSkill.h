@@ -105,12 +105,16 @@ public:
 
 	void SetDamageTermTime(float TermTime) { DamageTermTime = TermTime; }
 	void SetMaxCallDamageTimerNum(int CallNum) { MaxCallDamageTimerNum = CallNum; }
+
 protected:
+	UPROPERTY()
 	class AArcher* Archer;
 
+	UPROPERTY()
 	class UArcherAnimInstance* AnimInstance;
 
 	//스킬 UI Material
+	UPROPERTY()
 	UMaterialInstanceDynamic* SkillUIMaterial;
 
 	//스킬 Slot Key
@@ -122,6 +126,7 @@ protected:
 	ESkillType SkillType;
 
 	//스킬 QuickSlot
+	UPROPERTY()
 	class USkillQuickSlot* CurSlot;
 
 	//현재 스킬이 설치형 스킬인지 나타내는 변수
@@ -155,6 +160,7 @@ protected:
 	float SkillDamage;
 
 private:
+	UPROPERTY()
 	UAnimMontage* SkillMontage;
 
 	//쿨타임 관련 변수

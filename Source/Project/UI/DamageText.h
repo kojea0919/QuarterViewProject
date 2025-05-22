@@ -34,6 +34,7 @@ private:
 	
 	FVector OwnerLocation; //이 Text를 생성한 Owner의 위치
 
+	UPROPERTY()
 	APlayerController* PlayerController;
 
 	//ScaleDown Animation

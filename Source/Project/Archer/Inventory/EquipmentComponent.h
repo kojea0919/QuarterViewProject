@@ -38,21 +38,27 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	UPROPERTY()
 	class UEquipment* EquipWidget;
 
 	//ÀåÂøÁßÀÎ ¹«±â
+	UPROPERTY()
 	class UWeaponItem* CurWeapon;
 
 	//ÀåÂøÁßÀÎ ¸ðÀÚ
+	UPROPERTY()
 	class UArmorItem* CurHat;
 
 	//ÀåÂøÁßÀÎ °©¿Ê
+	UPROPERTY()
 	class UArmorItem* CurChest;
 
 	//ÀåÂøÁßÀÎ ¹ÙÁö
+	UPROPERTY()
 	class UArmorItem* CurPants;
 
 	//ÀåÂøÁßÀÎ Àå°©
+	UPROPERTY()
 	class UArmorItem* CurGlove;
 		
 };

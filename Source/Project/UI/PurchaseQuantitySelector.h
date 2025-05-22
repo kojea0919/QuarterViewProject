@@ -56,6 +56,7 @@ private:
 	int CurrentQuantity;		//현재 입력 받은 개수
 	const int MaxQuantity = 99;
 
+	UPROPERTY()
 	class UStore* CurrentStore;
 
 	FString CurrentItemName;

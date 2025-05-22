@@ -51,8 +51,10 @@ private:
 	UPROPERTY()
 	class UButton* SlotButton;
 
+	UPROPERTY()
 	class UBaseItem* Item;
 	
+	UPROPERTY()
 	class UInventory* Inventory;
 
 	bool Empty;				//슬롯의 상태

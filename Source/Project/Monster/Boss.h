@@ -160,20 +160,25 @@ private:
 	FTimerHandle RemoveDomainExpansionTimer;
 	const float DomainExpansionHoldingTime = 10.f;
 
+	UPROPERTY()
 	class ABossDomainExpansionEffect* DomainExpansionEffect;
 	//-----------------------------------------------------------------------------
 
 	//흑백 처리 MPC
 	//-----------------------------------------------------------------------------
+	UPROPERTY()
 	UMaterialParameterCollection* BlackAndWhiteMPC;
 	
+	UPROPERTY()
 	UMaterialParameterCollectionInstance* BlackAndWhiteMPCInstance;
 	//-----------------------------------------------------------------------------
 
 	//충격파 PostProcess
 	//-----------------------------------------------------------------------------
+	UPROPERTY()
 	UMaterialParameterCollection* ShockWaveMPC;
 
+	UPROPERTY()
 	UMaterialParameterCollectionInstance* ShockWaveMPCInstance;
 
 	float CurTime;
@@ -191,6 +196,7 @@ private:
 	const float RandomVectorRange= 30;
 	//-----------------------------------------------------------------------------
 
+	UPROPERTY()
 	class AArcher* Player;
 
 	UPROPERTY()
@@ -220,6 +226,7 @@ private:
 	FTimerHandle DashEffectCreateTimer;	
 	const float DashEffectTermTime = 0.15f;
 
+	UPROPERTY()
 	class ABossSoulSiphonLoopEffect* SoulSiphonLoopEffect;
 
 	bool PrevSkillIsDash; 
@@ -265,5 +272,6 @@ private:
 
 	FTimerHandle PlayNextCinematicTimer;
 
+	UPROPERTY()
 	class ASoulSiphonActor* SoulSiphonActor;
 };

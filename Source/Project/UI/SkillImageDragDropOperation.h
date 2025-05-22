@@ -19,6 +19,7 @@ public:
 	class USkillQuickSlot* GetDragObject() const { return DragObject; }
 
 private:
+	UPROPERTY()
 	class USkillQuickSlot* DragObject;
 	
 };

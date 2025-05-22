@@ -74,6 +74,7 @@ private:
 	UPROPERTY()
 	class UButton* ExitButton;
 
+	UPROPERTY()
 	class AArcher* CurrentPlayer;
 
 	FVector2D DragOffset;

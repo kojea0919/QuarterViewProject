@@ -24,6 +24,7 @@ private:
 	UPROPERTY()
 	class UImage* DragImage;
 
+	UPROPERTY()
 	UMaterialInstanceDynamic* DragImageMaterial = nullptr;
 	
 };

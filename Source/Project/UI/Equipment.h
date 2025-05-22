@@ -133,5 +133,6 @@ private:
 
 	//----------------------------
 
+	UPROPERTY()
 	class AArcher* CurrentPlayer;
 };

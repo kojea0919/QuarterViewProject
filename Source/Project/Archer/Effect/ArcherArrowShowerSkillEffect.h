@@ -30,5 +30,6 @@ private:
 	UPROPERTY()
 	class UAudioComponent* AudioComp;
 
+	UPROPERTY()
 	class USoundWave* SoundWave;
 };

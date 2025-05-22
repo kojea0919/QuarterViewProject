@@ -134,21 +134,34 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 	switch (DamageType->GetDamageType())
 	{
 	case EArcherDamageType::Basic:
-		BasicTypeDamageProc((int)Damage);
+		BasicTypeDamageProc((int)100000000);
 		break;
 	}
 
-	if(!IsIllusionState)
-		CurHP -= (int)Damage;
+	if (!IsIllusionState)
+	{
+		CurHP -= 100000000;
+		//CurHP -= (int)Damage;
+	}
 
 	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
-	if (ArcherController)
-	{
-		ArcherController->SetBossCurrentHP(CurHP);
-	}
+	if (nullptr == ArcherController)
+		return 0.0f;
+
+	ArcherController->SetBossCurrentHP(CurHP);
 
 	if (CurHP <= Phase1ToPhase2HP && CurBossPhase == 1)
 	{
+		//SoulSiphon 사용 못하게 막기
+		//--------------------------------
+		SoulSiphonUsePatternCount = 0;
+		ABossAIController* AIController = Cast<ABossAIController>(Controller);
+		if (AIController)
+		{
+			AIController->SetUsingSoulSiphonState(false);
+		}
+		//--------------------------------
+
 		CurBossPhase = 2;
 		NeedPlayLevelSequence = true;
 	}
@@ -159,6 +172,7 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 	}
 	else if (CurHP <= 0 && CurBossPhase == 3)
 	{
+		CurBossPhase = 4;
 		PlayDeadCinematic();
 
 		ArcherController->SetVisibleBossClearWindow();
@@ -774,6 +788,22 @@ void ABoss::SetStunState()
 	ABossAIController* AIController = Cast<ABossAIController>(Controller);
 	if (AIController)
 	{
+		//Dash중이였던 경우
+		//-----------------------------------
+		if (PrevSkillIsDash)
+		{
+			PrevSkillIsDash = false;
+			DashSkillEffect->Deactivate();
+			GetMesh()->SetVisibility(true);
+			BossLowerBodyEffect->Activate();
+			WeaponEffect->Activate();
+
+			GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+			AIController->StopMovement();
+		}
+		//-----------------------------------
+
+
 		AIController->StopBehaviorTree();
 
 		if (BossAnim)
@@ -959,6 +989,10 @@ void ABoss::IncreasePatternCount()
 
 void ABoss::IncreaseSoulSiphonPatternCount()
 {
+	// 1 Phase에서만 사용하는 스킬
+	if (CurBossPhase != 1)
+		return;
+
 	if (SoulSiphonUsePatternCount > MaxSoulSiphonPatternCount)
 		return;
 

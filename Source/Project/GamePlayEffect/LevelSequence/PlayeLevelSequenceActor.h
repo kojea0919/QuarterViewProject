@@ -55,7 +55,9 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class ULevelSequence* LevelSequence;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class ULevelSequencePlayer* LevelSequencePlayer;
 
+	UPROPERTY()
 	class AArcherPlayerController* ArcherController;
 };

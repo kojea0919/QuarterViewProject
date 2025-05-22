@@ -31,5 +31,6 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* MeshCollision;
 
+	UPROPERTY()
 	class ABoss* CurrentBoss;
 };

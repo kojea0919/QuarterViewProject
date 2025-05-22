@@ -32,6 +32,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxCollider;
 
+	UPROPERTY()
 	class ABoss* Boss;
 
 	UPROPERTY(EditDefaultsOnly)

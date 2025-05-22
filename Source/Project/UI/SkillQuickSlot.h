@@ -128,6 +128,7 @@ private:
 	bool Empty;
 
 	//현재 슬롯에 있는 Skill
+	UPROPERTY()
 	class UBaseSkill* SlotSkill;
 
 	bool IsUltimateSkillSlot;

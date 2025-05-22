@@ -700,7 +700,7 @@ void AArcherPlayerController::StopLevelSequence()
 			CurrentBoss->SetStartPhase2();
 		}
 
-		if (CurrentBoss->GetCurrentPhase() == 3)
+		else if (CurrentBoss->GetCurrentPhase() == 3)
 		{
 			//마우스 반전
 			IsMouseReverseState = true;
@@ -710,7 +710,11 @@ void AArcherPlayerController::StopLevelSequence()
 
 			Archer->SetActorTransform(BossBattleSubSystem->GetPhase3PlayerTransform());
 			CurrentBoss->SetActorTransform(BossBattleSubSystem->GetPhase3BossTransform());
+		}
 
+		else if (CurrentBoss->GetCurrentPhase() == 4)
+		{
+			return;
 		}
 	
 		//BosHPBarUI On
