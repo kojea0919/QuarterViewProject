@@ -302,17 +302,19 @@ private:
 	bool IsCanRotate;
 	//-----------------------------------------------------------------------------------------------
 
+	UPROPERTY()
 	class AArcherPlayerController* ArcherController;
 
 	UPROPERTY()
 	class UArcherAnimInstance* ArcherAnim;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	class ABow* Bow;
 
+	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DynMaterialArr;
 
+	UPROPERTY()
 	class AMoveSkillFootDirt* FootDirtEffect;
 
 
@@ -386,9 +388,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = SceneShatter, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UUserWidget> SceneShatterWidgetClass;
 
+	UPROPERTY()
 	class ASceneShatter* SceneShatter;
+
+	UPROPERTY()
 	class ASceneShatterFieldSystemActor* FieldSystemActor;
 
+	UPROPERTY()
 	UUserWidget* SceneShatterWidget;
 
 	FTimerHandle ShatterCreateTimerHandle; //부수는 효과 적용
@@ -477,9 +483,11 @@ private:
 	const float RandomVectorRange = 30;
 	//-----------------------------------------------------------------------------
 
+	UPROPERTY()
 	class AHideMapComponent* TargetHideActor;
 	bool IsLineTraceMapComponent;
 
+	UPROPERTY()
 	class ULevelSequencePlayer* UltimateSequencePlayer;
 
 };

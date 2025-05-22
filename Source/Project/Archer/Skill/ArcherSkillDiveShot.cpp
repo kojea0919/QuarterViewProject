@@ -28,8 +28,3 @@ bool UArcherSkillDiveShot::Use()
 
 	return true;
 }
-
-void UArcherSkillDiveShot::CheckEnemyOverlap()
-{
-	Super::CheckEnemyOverlap();
-}

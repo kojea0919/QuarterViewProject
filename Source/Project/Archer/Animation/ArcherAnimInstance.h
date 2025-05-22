@@ -215,12 +215,15 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Respawn, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* RespawnMontage;
 
+	UPROPERTY()
 	class AArcher* Archer;
 
 	//현재 사용중인 Skill
+	UPROPERTY()
 	class UBaseSkill* CurSkill;
 
 	//현재 사용중인 ComboSkill
+	UPROPERTY()
 	class UComboSkill* CurExcuteComboSkill;
 
 };
