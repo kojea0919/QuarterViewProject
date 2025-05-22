@@ -41,6 +41,7 @@
 #include "GamePlayEffect/SceneShatter/SceneShatterFieldSystemActor.h"
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
+#include "GamePlayEffect/HideMap/HideMapComponent.h"
 
 AArcher::AArcher()
 	: IsCanRotate(true), ArcherController(nullptr), ArcherAnim(nullptr), Bow(nullptr), FootDirtEffect(nullptr),
@@ -228,6 +229,9 @@ void AArcher::Tick(float DeltaTime)
 
 	if(IsUpdateCameraTransform)
 		UpdateCameraTransform(DeltaTime);
+
+	if (IsLineTraceMapComponent)
+		HideBlockMapComponent();
 }
 
 void AArcher::PostInitializeComponents()
@@ -1212,39 +1216,23 @@ void AArcher::HideBlockMapComponent()
 	if (GetWorld()->LineTraceSingleByObjectType(HitResult, Start, End,
 		ECollisionChannel::ECC_GameTraceChannel6, Params))
 	{
-		if (TargetHideActor == HitResult.GetActor())
+		if (TargetHideActor == HitResult.GetActor() || TargetHideActor != nullptr)
 			return;
 
-		TargetHideActor = HitResult.GetActor();
-		UStaticMeshComponent * Target= Cast<UStaticMeshComponent>(TargetHideActor->GetRootComponent());
-		if (Target)
+		TargetHideActor = Cast<AHideMapComponent>(HitResult.GetActor());
+		if (TargetHideActor)
 		{
-			TArray<UMaterialInterface*> Materials = Target->GetMaterials();
-			int32 Num = Materials.Num();
-			for (int32 i = 0; i < Num; ++i)
-			{
-				UMaterialInstanceDynamic * DynMaterial = UMaterialInstanceDynamic::Create(Materials[i], Target->GetStaticMesh());
-				DynMaterial->SetScalarParameterValue(TEXT("OpacityMask"), 0);
-				TargetHideActorMaterialArr.Add(DynMaterial);
-			}
-
+			TargetHideActor->SetOpacityMask(0);
 		}
 	}
 	else
 	{
-		UStaticMeshComponent* Target = Cast<UStaticMeshComponent>(TargetHideActor->GetRootComponent());
-		if (Target)
+		if (TargetHideActor)
 		{
-			int32 Num = TargetHideActorMaterialArr.Num();
-			for (int32 i = 0; i < Num; ++i)
-			{
-				TargetHideActorMaterialArr[i]->SetScalarParameterValue(TEXT("OpacityMask"), 1);
-			}
+			TargetHideActor->SetOpacityMask(1);
 
+			TargetHideActor = nullptr;
 		}
-
-		TargetHideActor = nullptr;
-		TargetHideActorMaterialArr.Empty();
 	}
 
 }

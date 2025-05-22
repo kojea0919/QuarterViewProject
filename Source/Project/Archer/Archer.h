@@ -481,8 +481,7 @@ private:
 	//-----------------------------------------------------------------------------
 
 
-	AActor* TargetHideActor;
-	TArray<UMaterialInstanceDynamic*> TargetHideActorMaterialArr;
+	class AHideMapComponent* TargetHideActor;
 	bool IsLineTraceMapComponent;
 
 };

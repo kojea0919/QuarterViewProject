@@ -19,4 +19,16 @@ public:
 
 public:
 	virtual void OnNiagaraSystemFinished_Impl();
+
+	virtual void SpwanNiagaraEffect(const FTransform& Transform) override;
+
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY()
+	class UAudioComponent* AudioComp;
+
+	class USoundWave* SoundWave;
 };
