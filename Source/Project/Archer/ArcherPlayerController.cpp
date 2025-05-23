@@ -117,6 +117,8 @@ void AArcherPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
+
+
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(SlotQInputAction, ETriggerEvent::Triggered, this, &AArcherPlayerController::UseQSlot);
@@ -611,9 +613,11 @@ void AArcherPlayerController::SetBossCurrentHP(float HP)
 
 void AArcherPlayerController::SetVisibleBossClearWindow()
 {
-	if (PlayerHUD)
+	if (PlayerEndHUD)
 	{
-		PlayerHUD->SetVisibilityBossClear(true);
+		PlayerEndHUD->SetState(false);
+		PlayerEndHUD->SetVisibility(ESlateVisibility::Visible);
+		PlayerEndHUD->PlayTextAnimation();
 	}
 }
 
@@ -736,6 +740,8 @@ void AArcherPlayerController::StopLevelSequence()
 
 		else if (CurrentBoss->GetCurrentPhase() == 4)
 		{
+			SetVisibleBossClearWindow();
+
 			return;
 		}
 	
@@ -766,6 +772,7 @@ void AArcherPlayerController::PlayerDead()
 {
 	if (PlayerEndHUD)
 	{
+		PlayerEndHUD->SetState(true);
 		PlayerEndHUD->SetVisibility(ESlateVisibility::Visible);
 		PlayerEndHUD->PlayTextAnimation();
 	}

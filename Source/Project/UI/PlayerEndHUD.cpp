@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "PlayerEndHUD.h"
@@ -14,30 +14,27 @@ void UPlayerEndHUD::ClickExitButton()
 		PlayerController->ResetPlayerAndBoss();
 	}
 
-	ResultText->SetRenderScale(FVector2D(0.0f));
+	FailText->SetRenderScale(FVector2D(0.0f));
+	SuccessText->SetRenderScale(FVector2D(0.0f));
 }
 
 void UPlayerEndHUD::PlayTextAnimation()
 {
-	if (TextAnimation)
-		PlayAnimation(TextAnimation);
+	if (IsDead && FailAnimation)
+	{	
+		PlayAnimation(FailAnimation);
+	}
+	else if (SuccessAnimation)
+	{
+		PlayAnimation(SuccessAnimation);
+	}
 }
-
-//void UPlayerEndHUD::SetState(bool Dead)
-//{
-//	if (Dead)
-//	{
-//		ResultText->SetText(FText::FromString(TEXT("°ø·« ½ÇÆÐ")));
-//	}
-//	else
-//	{
-//		ResultText->SetText(FText::FromString(TEXT("°ø·« ¼º°ø")));
-//	}
-//}
 
 void UPlayerEndHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	IsDead = false;
 
 	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("ExitButton")));
 	if (ExitButton)
@@ -45,6 +42,8 @@ void UPlayerEndHUD::NativeConstruct()
 		ExitButton->OnPressed.AddDynamic(this, &UPlayerEndHUD::ClickExitButton);
 	}
 
-	ResultText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ResultText")));
+	FailText = Cast<UTextBlock>(GetWidgetFromName(TEXT("FailText")));
+
+	SuccessText = Cast<UTextBlock>(GetWidgetFromName(TEXT("SuccessText")));
 
 }

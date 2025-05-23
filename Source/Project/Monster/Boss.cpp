@@ -175,7 +175,6 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 		CurBossPhase = 4;
 		PlayDeadCinematic();
 
-		ArcherController->SetVisibleBossClearWindow();
 		ArcherController->RemoveMouseReverse();
 
 		SetActorLocation(FVector(0.0f));

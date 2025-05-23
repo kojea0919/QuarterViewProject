@@ -20,7 +20,7 @@ public:
 
 	void PlayTextAnimation();
 
-	//void SetState(bool Dead);
+	void SetState(bool Dead) { IsDead = Dead; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -30,8 +30,16 @@ private:
 	class UButton* ExitButton;
 
 	UPROPERTY()
-	class UTextBlock* ResultText;
+	class UTextBlock* FailText;
+
+	UPROPERTY()
+	class UTextBlock* SuccessText;
 	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
-	UWidgetAnimation* TextAnimation;
+	UWidgetAnimation* FailAnimation;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* SuccessAnimation;
+
+	bool IsDead;
 };
