@@ -409,7 +409,7 @@ private:
 	//연출용 카메라 위치, 회전 정보
 	//--------------------------------------------
 	const FRotator DefaultCameraRotation = FRotator(-45.0f, -45.0f, 0.0f);
-	const float DefaultArmLength = 800.f;
+	const float DefaultArmLength = 850.f;
 
 	FRotator StartCameraRotation;
 	FVector StartCameraLocation;

@@ -99,7 +99,7 @@ public:
 	void PlayLevelSequence(class ULevelSequencePlayer* SequencePlayer);
 	void StopLevelSequence();
 
-	void SetVisiblePlayerDeadHUD(bool Enable);
+	void SetVisiblePlayerEndHUD(bool Enable);
 	void PlayerDead();
 
 	void ResetPlayerAndBoss();
@@ -111,6 +111,8 @@ public:
 
 	//void SetVisibleCircleFadeOut(bool Enable);
 	//void PlayCircleFadeOut();
+
+	void SetBGMManager(class ABGMManager* Manager) { BGMManager = Manager; }
 
 private:
 	//마우스 입력시 마우스 포인터 방향으로 이동하는 함수
@@ -146,10 +148,10 @@ private:
 	//Fail UI
 	//-------------------------------------------------
 	UPROPERTY(VisibleAnywhere, Category = HUD, meta = (AllowPrivateAccess = " true"))
-	TSubclassOf<class UPlayerDeadHUD> PlayerDeadHUDWidgetClass;
+	TSubclassOf<class UPlayerEndHUD> PlayerEndHUDWidgetClass;
 
 	UPROPERTY()
-	class UPlayerDeadHUD* PlayerDeadHUD;
+	class UPlayerEndHUD* PlayerEndHUD;
 	//-------------------------------------------------
 
 	////CircleFadeOut
@@ -234,4 +236,8 @@ private:
 	///클릭 이펙트
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = " true"))
 	class UNiagaraSystem* MouseClickEffect;
+
+	UPROPERTY()
+	class ABGMManager* BGMManager;
+
 };

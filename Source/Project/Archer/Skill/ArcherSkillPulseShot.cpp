@@ -10,7 +10,7 @@ UArcherSkillPulseShot::UArcherSkillPulseShot()
 
 	CollisionForwardScaleArr.Push(600);
 	CollisionTypeArr.Push(ECollisionType::Box);
-	CollisionExtentArr.Push(FVector(600.0f, 40.f, 70.0f));
+	CollisionExtentArr.Push(FVector(600.0f, 70.f, 70.0f));
 	CollisionHeightOffsetArr.Push(0.0f);
 
 	DamageTermTime = 0.05f;

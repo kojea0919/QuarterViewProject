@@ -14,15 +14,16 @@
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
 #include "WorldSubSystem/BossBattleSubSystem.h"
-#include "UI/PlayerDeadHUD.h"
+#include "UI/PlayerEndHUD.h"
 #include "GamePlayEffect/Sky/Sky.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "GamePlayEffect/BGMManager/BGMManager.h"
 //#include "UI/CircleFadeOutHUD.h"
 
 AArcherPlayerController::AArcherPlayerController()
 	: PlayerHUD(nullptr), IsSetStoreNPC(false), BossRenderOutLine(false), IsPlayingLevelSequence(false), CurLevelSequencePlayer(nullptr),
-	IsMouseReverseState(false)
+	IsMouseReverseState(false),BGMManager(nullptr)
 {
 	static ConstructorHelpers::FClassFinder<UPlayerHUD> UI_PLAYERHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerHUD.UI_PlayerHUD_C"));
 	if (UI_PLAYERHUD_C.Succeeded())
@@ -32,9 +33,9 @@ AArcherPlayerController::AArcherPlayerController()
 	if (UI_LEVELSEQUENCEHUD_C.Succeeded())
 		LevelSequenceHUDWidgetClass = UI_LEVELSEQUENCEHUD_C.Class;
 
-	static ConstructorHelpers::FClassFinder<UPlayerDeadHUD> UI_PLAYERDEADHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerDeadHUD.UI_PlayerDeadHUD_C"));
+	static ConstructorHelpers::FClassFinder<UPlayerEndHUD> UI_PLAYERDEADHUD_C(TEXT("/Game/GamePlay/Player/UI/UI_PlayerEndHUD.UI_PlayerEndHUD_C"));
 	if (UI_PLAYERDEADHUD_C.Succeeded())
-		PlayerDeadHUDWidgetClass = UI_PLAYERDEADHUD_C.Class;
+		PlayerEndHUDWidgetClass = UI_PLAYERDEADHUD_C.Class;
 
 	static ConstructorHelpers::FObjectFinder<UInputAction>IA_SLOTQ_INPUTACTION(TEXT("/Game/GamePlay/Player/Input/IA_UseQuickSlotQ.IA_UseQuickSlotQ"));
 	if (IA_SLOTQ_INPUTACTION.Succeeded())
@@ -234,13 +235,13 @@ void AArcherPlayerController::InitHUD()
 		}
 	}
 
-	if (PlayerDeadHUDWidgetClass)
+	if (PlayerEndHUDWidgetClass)
 	{
-		PlayerDeadHUD = CreateWidget<UPlayerDeadHUD>(this, PlayerDeadHUDWidgetClass);
-		if (PlayerDeadHUD)
+		PlayerEndHUD = CreateWidget<UPlayerEndHUD>(this, PlayerEndHUDWidgetClass);
+		if (PlayerEndHUD)
 		{
-			PlayerDeadHUD->AddToViewport();
-			PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
+			PlayerEndHUD->AddToViewport();
+			PlayerEndHUD->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 
@@ -659,6 +660,10 @@ void AArcherPlayerController::PlayLevelSequence(ULevelSequencePlayer* SequencePl
 	if (CurrentBoss)
 		CurrentBoss->SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
 
+	if (BGMManager)
+		BGMManager->StopBGM();
+	
+
 	SetVisiblePlayerHUD(false);
 	SetIsPlayingLevelSequence(true);
 	CurLevelSequencePlayer = SequencePlayer;
@@ -693,8 +698,22 @@ void AArcherPlayerController::StopLevelSequence()
 		CurrentBoss->SetActorTransform(BossTransform);
 		CurrentBoss->SetActorHiddenInGame(false);
 
-		if (CurrentBoss->GetCurrentPhase() == 2)
+		if (CurrentBoss->GetCurrentPhase() == 1)
 		{
+			if (BGMManager)
+				BGMManager->PlayPhase1BGM();
+		}
+
+		else if (CurrentBoss->GetCurrentPhase() == 2)
+		{
+			if (BGMManager)
+			{
+				if (!BGMManager->IsPlayingBGM())
+				{
+					BGMManager->PlayPhase2BGM();
+				}
+			}
+
 			BossBattleSubSystem->SetPhase2Light();
 
 			CurrentBoss->SetStartPhase2();
@@ -702,6 +721,9 @@ void AArcherPlayerController::StopLevelSequence()
 
 		else if (CurrentBoss->GetCurrentPhase() == 3)
 		{
+			if (BGMManager)
+				BGMManager->PlayPhase3BGM();
+
 			//마우스 반전
 			IsMouseReverseState = true;
 
@@ -729,23 +751,23 @@ void AArcherPlayerController::StopLevelSequence()
 
 }
 
-void AArcherPlayerController::SetVisiblePlayerDeadHUD(bool Enable)
+void AArcherPlayerController::SetVisiblePlayerEndHUD(bool Enable)
 {
-	if (PlayerDeadHUD)
+	if (PlayerEndHUD)
 	{
 		if(Enable)
-			PlayerDeadHUD->SetVisibility(ESlateVisibility::Visible);
+			PlayerEndHUD->SetVisibility(ESlateVisibility::Visible);
 		else
-			PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
+			PlayerEndHUD->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
 void AArcherPlayerController::PlayerDead()
 {
-	if (PlayerDeadHUD)
+	if (PlayerEndHUD)
 	{
-		PlayerDeadHUD->SetVisibility(ESlateVisibility::Visible);
-		PlayerDeadHUD->PlayFailAnimation();
+		PlayerEndHUD->SetVisibility(ESlateVisibility::Visible);
+		PlayerEndHUD->PlayTextAnimation();
 	}
 
 
@@ -757,8 +779,8 @@ void AArcherPlayerController::PlayerDead()
 
 void AArcherPlayerController::ResetPlayerAndBoss()
 {
-	if (PlayerDeadHUD)
-		PlayerDeadHUD->SetVisibility(ESlateVisibility::Hidden);
+	if (PlayerEndHUD)
+		PlayerEndHUD->SetVisibility(ESlateVisibility::Hidden);
 
 	AArcher* Archer = Cast<AArcher>(GetCharacter());
 	if (Archer)
