@@ -60,6 +60,9 @@ public:
 	const FTransform& GetPhase3BossTransform() const { return Phase3BossTransform; }
 	const FTransform& GetPhase3PlayerTransform() const { return Phase3PlayerTransform; }
 
+	void AddSoulSiphonLocation(const FTransform& Transform);
+	FTransform GetRandomSoulSiphonLocation() const;
+
 private:
 	FTransform BossSavedTransform;
 	FTransform PlayerSavedTransform;
@@ -93,4 +96,5 @@ private:
 	FTransform Phase3BossTransform;
 	FTransform Phase3PlayerTransform;
 
+	TArray<FTransform> SoulSiphonLocationArr;
 };

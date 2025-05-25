@@ -134,14 +134,14 @@ float ABoss::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControll
 	switch (DamageType->GetDamageType())
 	{
 	case EArcherDamageType::Basic:
-		BasicTypeDamageProc((int)100000000);
+		BasicTypeDamageProc((int)Damage);
 		break;
 	}
 
 	if (!IsIllusionState)
 	{
-		CurHP -= 100000000;
-		//CurHP -= (int)Damage;
+		//CurHP -= 100000000;
+		CurHP -= (int)Damage;
 	}
 
 	AArcherPlayerController* ArcherController = Player->GetController<AArcherPlayerController>();
@@ -861,8 +861,6 @@ void ABoss::CheckSoulSiphonOverlap()
 		}
 		//----------------------------------------------
 
-		SoulSiphonActor = GetWorld()->SpawnActor<ASoulSiphonActor>(SphereLocation, FRotator());
-		SoulSiphonActor->SetBoss(this);
 
 		//맞은 시점의 플레이어, 보스 Transform 저장
 		//----------------------------------------------
@@ -870,6 +868,9 @@ void ABoss::CheckSoulSiphonOverlap()
 		BossBattle->SaveBossTransform(GetActorTransform());
 		BossBattle->SavePlayerTransform(Player->GetActorTransform());
 		//----------------------------------------------
+
+		SoulSiphonActor = GetWorld()->SpawnActor<ASoulSiphonActor>(BossBattle->GetRandomSoulSiphonLocation().GetLocation(), FRotator(0.0f));
+		SoulSiphonActor->SetBoss(this);
 
 		IsIllusionState = true;	//IsIllusionState를 true로 해서 데미지를 안 받게 설정
 	}
@@ -1033,7 +1034,7 @@ bool ABoss::LookPlayer(float DeltaTime)
 	FVector BossForward = GetActorForwardVector();
 	FVector BossToPlayerVector = (Player->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
-	if (BossForward.Equals(BossToPlayerVector, 0.07f))
+	if (BossForward.Equals(BossToPlayerVector, 0.1f))
 	{
 		RotateToPlayer = false;
 		return true;

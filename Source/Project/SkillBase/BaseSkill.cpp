@@ -223,7 +223,7 @@ void UBaseSkill::CheckEnemyOverlap()
 		}
 	}
 
-	switch (CollisionTypeArr[CurCollisionIdx])
+	/*switch (CollisionTypeArr[CurCollisionIdx])
 	{
 	case ECollisionType::Box:
 		DrawDebugBox(Archer->GetWorld(),
@@ -243,7 +243,7 @@ void UBaseSkill::CheckEnemyOverlap()
 		break;
 	default:
 		return;
-	}
+	}*/
 }
 
 void UBaseSkill::StartMutliHitSkillEnemyOverlap()

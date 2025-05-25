@@ -212,17 +212,20 @@ void AArcherPlayerController::MoveTarget(FVector TargetLocation)
 
 void AArcherPlayerController::InitHUD()
 {
-	if (PlayerHUDWidgetClass)
+	if (PlayerHUD == nullptr)
 	{
-		PlayerHUD = CreateWidget<UPlayerHUD>(this,PlayerHUDWidgetClass);
-		if (PlayerHUD)
+		if (PlayerHUDWidgetClass)
 		{
-			PlayerHUD->AddToViewport();
-
-			if (CurrentBoss)
+			PlayerHUD = CreateWidget<UPlayerHUD>(this, PlayerHUDWidgetClass);
+			if (PlayerHUD)
 			{
-				PlayerHUD->SetBossMaxHP(CurrentBoss->GetMaxHP());
-				PlayerHUD->InitBossHP();
+				PlayerHUD->AddToViewport();
+				if (CurrentBoss)
+				{
+					PlayerHUD->SetBossMaxHP(CurrentBoss->GetMaxHP());
+					PlayerHUD->InitBossHP();
+				}
+				PlayerHUD->PlayFadeInAnimation();
 			}
 		}
 	}
@@ -316,6 +319,24 @@ void AArcherPlayerController::SetQuickSlotSkill(UBaseSkill* Skill, ESkillQuickSl
 	AArcher* Archer = Cast<AArcher>(GetCharacter());
 	if (Archer->GetPlayerState() != EPlayerState::Normal)
 		return;
+
+	if (nullptr == PlayerHUD)
+	{
+		if (PlayerHUDWidgetClass)
+		{
+			PlayerHUD = CreateWidget<UPlayerHUD>(this, PlayerHUDWidgetClass);
+			if (PlayerHUD)
+			{
+				PlayerHUD->AddToViewport();
+				if (CurrentBoss)
+				{
+					PlayerHUD->SetBossMaxHP(CurrentBoss->GetMaxHP());
+					PlayerHUD->InitBossHP();
+				}
+				PlayerHUD->PlayFadeInAnimation();
+			}
+		}
+	}
 
 	if (PlayerHUD)
 	{

@@ -16,7 +16,7 @@ UArcherSkillArrowShower::UArcherSkillArrowShower()
 	SetDamageTermTime(0.15f);
 	SetMaxCallDamageTimerNum(7);
 
-	SetCoolTime(1.0f);
+	SetCoolTime(3.0f);
 
 	SkillDamage = 2444444;
 

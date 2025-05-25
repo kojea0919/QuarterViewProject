@@ -84,3 +84,22 @@ void UBossBattleSubSystem::ResetLight()
 	if (MainLevelLight)
 		MainLevelLight->SetIntensityDirLight(6);
 }
+
+void UBossBattleSubSystem::AddSoulSiphonLocation(const FTransform& Transform)
+{
+	SoulSiphonLocationArr.Add(Transform);
+}
+
+FTransform UBossBattleSubSystem::GetRandomSoulSiphonLocation() const
+{
+	int32 Size = SoulSiphonLocationArr.Num();
+
+	if (Size == 0)
+	{
+		FTransform TempTransform;
+		TempTransform.SetLocation(FVector((6500,2080, 14350)));
+	}
+
+	int32 RandomIdx = FMath::RandRange(0, Size);
+	return SoulSiphonLocationArr[RandomIdx];
+}

@@ -90,11 +90,7 @@ public:
 	FTransform GetSoulSiphonEffectPos() const;
 
 	EPlayerState GetPlayerState() const { return PlayerState; }
-	void SetNormalState()
-	{
-		PlayerState = EPlayerState::Normal; 
-		SetActorHiddenInGame(false);
-	}
+	void SetNormalState();
 	void SetPlayingLevelSequenceState();
 	
 

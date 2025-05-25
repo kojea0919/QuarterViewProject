@@ -16,6 +16,8 @@ UArcherSkillDesperado::UArcherSkillDesperado()
 	CurCollisionIdx = 0;
 	//-----------------------------
 
+	SetCoolTime(3.0f);
+
 	SkillDamage = 2444444;
 }
 

@@ -42,4 +42,7 @@ private:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = " true"))
 	class USoundCue* BossPhase3BGM;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = " true"))
+	class USoundCue* BaseBGM;
 };

@@ -21,6 +21,8 @@ public:
 	void UseSkill(ESkillQuickSlot SlotKey);
 	void ReleaseSkill(ESkillQuickSlot SlotKey);
 
+	void PlayFadeInAnimation();
+
 public:
 	class USkillGaugeBar* GetSkillGaugeBar() const { return SkillGaugeBar; }
 
@@ -76,4 +78,7 @@ private:
 
 	UPROPERTY()
 	class UPlayerProgressBar* PlayerProgressBar;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* FadeInAnimation;
 };

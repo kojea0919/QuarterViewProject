@@ -16,6 +16,8 @@ UArcherSkillPulseShot::UArcherSkillPulseShot()
 	DamageTermTime = 0.05f;
 	MaxCallDamageTimerNum = 12;
 
+	SetCoolTime(3.0f);
+
 	SkillDamage = 7666666;
 }
 

@@ -16,6 +16,8 @@ UArcherSkillDiveShot::UArcherSkillDiveShot()
 	CurCollisionIdx = 0;
 	//-----------------------------
 
+	SetCoolTime(5.0f);
+
 	SkillDamage = 2444444;
 }
 

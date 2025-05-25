@@ -64,6 +64,12 @@ void UPlayerHUD::ReleaseSkill(ESkillQuickSlot SlotKey)
 	//------------------------------------------------------------------
 }
 
+void UPlayerHUD::PlayFadeInAnimation()
+{
+	if (FadeInAnimation)
+		PlayAnimation(FadeInAnimation);
+}
+
 void UPlayerHUD::SetVisibilityIntersectionKey(bool Enable)
 {
 	if (IntersectionKey)

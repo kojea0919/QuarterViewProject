@@ -76,6 +76,6 @@ void ABossMeteorEffect::SetOverlapEventOn()
 void ABossMeteorEffect::BeginPlay()
 {
 	Super::BeginPlay();
-
+	MeteorCollider->SetGenerateOverlapEvents(false);
 	MeteorCollider->OnComponentBeginOverlap.AddDynamic(this, &ABossMeteorEffect::OnComponentBeginOverlap);
 }

@@ -18,7 +18,7 @@ ASoulSiphonActor::ASoulSiphonActor()
 	RootComponent = Mesh;
 	MeshCollision->SetupAttachment(Mesh);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MESH(TEXT("/Engine/VREditor/BasicMeshes/SM_Ball_01.SM_Ball_01"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MESH(TEXT("/Game/InfinityBladeGrassLands/Environments/Plains/Env_Plains_Statues/StaticMesh/SM_Plains_Castle_DemonDoor_01.SM_Plains_Castle_DemonDoor_01"));
 	if (MESH.Succeeded())
 		Mesh->SetStaticMesh(MESH.Object);
 
@@ -36,6 +36,7 @@ void ASoulSiphonActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AddActorWorldRotation(FRotator(0.0f, DeltaTime * 180.0f, 0.0f));
 }
 
 float ASoulSiphonActor::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

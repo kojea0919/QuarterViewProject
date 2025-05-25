@@ -15,12 +15,14 @@ AAfterimageEffect::AAfterimageEffect()
 	//----------------------------------------
 	RootComponent = Mesh;
 
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_MESH(TEXT("/Game/GamePlay/Player/Archer/Mesh/Player.Player"));
 	if (SK_MESH.Succeeded())
 	{
 		//Mesh->SetSkeletalMesh(SK_MESH.Object);
 		Mesh->SetSkinnedAssetAndUpdate(SK_MESH.Object);
 	}
+
 	//----------------------------------------
 }
 

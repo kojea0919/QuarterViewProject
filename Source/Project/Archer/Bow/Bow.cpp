@@ -22,9 +22,12 @@ ABow::ABow()
 	SkillWeaponEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SKILLWEAPONEFFECT"));
 
 	RootComponent = Bow;
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM_BOW(TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/Bow2.Bow2"));
-	if (SM_BOW.Succeeded())
-		Bow->SetSkeletalMesh(SM_BOW.Object);
+	
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_BOW(TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/Bow2.Bow2"));
+	if(SK_BOW.Succeeded())
+	{
+		Bow->SetSkeletalMesh(SK_BOW.Object);
+	}
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_BASICWEAPONEFFECT(TEXT("/Game/ParagonSparrow/FX/Particles/Sparrow/Abilities/Ultimate/FX/P_SparrowBuff_Homescreen.P_SparrowBuff_Homescreen"));
 	if (PS_BASICWEAPONEFFECT.Succeeded())
@@ -56,7 +59,7 @@ void ABow::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/M_Bow.M_Bow"));
+	UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/GamePlay/Player/Archer/Weapon/Bow2/M_Bow2.M_Bow2"));
 	DynMaterial = UMaterialInstanceDynamic::Create(Material, Bow->GetSkeletalMeshAsset());
 	Bow->SetMaterial(0, DynMaterial);
 

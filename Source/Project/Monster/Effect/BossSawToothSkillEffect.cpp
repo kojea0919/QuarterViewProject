@@ -51,6 +51,8 @@ void ABossSawToothSkillEffect::OnTelegraphFinished(UNiagaraComponent* PSystem)
 void ABossSawToothSkillEffect::OnParticleSystemFinished_Impl()
 {
 	EffectObjPool->ReturnBossSawToothSkillEffect(this);
+
+	BoxCollider->SetGenerateOverlapEvents(false);
 }
 
 void ABossSawToothSkillEffect::StartTelegraphRectangle()
@@ -101,6 +103,11 @@ void ABossSawToothSkillEffect::SetEffectEnable(bool Enable)
 	if (Enable && Sound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation());
+		BoxCollider->SetGenerateOverlapEvents(true);
+	}
+	else
+	{
+		BoxCollider->SetGenerateOverlapEvents(false);
 	}
 }
 

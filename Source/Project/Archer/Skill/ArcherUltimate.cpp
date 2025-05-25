@@ -4,6 +4,7 @@
 
 UArcherUltimate::UArcherUltimate()
 {
+	SetCoolTime(60.0f);
 }
 
 bool UArcherUltimate::Use()

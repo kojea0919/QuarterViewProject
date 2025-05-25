@@ -31,6 +31,8 @@ UArcherSkillFlippingArrow::UArcherSkillFlippingArrow()
 
 	CurCollisionIdx = 0;
 
+	SetCoolTime(2.0f);
+
 	SkillDamage = 400000;
 }
 

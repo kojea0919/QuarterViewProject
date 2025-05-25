@@ -462,6 +462,15 @@ FTransform AArcher::GetSoulSiphonEffectPos() const
 	return GetMesh()->GetSocketTransform(TEXT("SoulSiphonLoopPos"));
 }
 
+void AArcher::SetNormalState()
+{
+	PlayerState = EPlayerState::Normal;
+	SetActorHiddenInGame(false);
+
+	if (Bow)
+		Bow->SetActorHiddenInGame(false);
+}
+
 void AArcher::SetPlayingLevelSequenceState()
 {
 	//±Ã±Ø±â »ç¿ëÁßÀÌ¸é ±Ã±Ø±â ½ºÅµµÇ°Ô ±¸Çö
@@ -476,6 +485,9 @@ void AArcher::SetPlayingLevelSequenceState()
 
 	PlayerState = EPlayerState::PlayingLevelSequence;
 	SetActorHiddenInGame(true);
+
+	if (Bow)
+		Bow->SetActorHiddenInGame(true);
 }
 
 void AArcher::SetUpdateCameraTransform(bool Reverse)
@@ -977,6 +989,7 @@ void AArcher::InitPhase3State()
 void AArcher::UltimateEnd()
 {
 	PlayerState = EPlayerState::Normal;
+	
 }
 
 void AArcher::UltimateShot()
@@ -1020,14 +1033,6 @@ void AArcher::ComputeRotateDirectionToBoss()
 
 	SetActorRotation(PlayerToBossVector.Rotation());
 	return;
-
-
-	float Z = PlayerToBossVector.Cross(GetActorForwardVector()).Z;
-	
-	if (Z)
-		Z = 1;
-	else
-		Z = -1;
 }
 
 void AArcher::UpdateAttackTargetLocation()
