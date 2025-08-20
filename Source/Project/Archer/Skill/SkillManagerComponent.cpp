@@ -11,7 +11,6 @@
 #include "ArcherSkillArrowShower.h"
 #include "ArcherSkillPulseShot.h"
 #include "ArcherSkillDiveShot.h"
-#include "ArcherUltimate.h"
 #include "UI/SkillGaugeBar.h"
 
 USkillManagerComponent::USkillManagerComponent()
@@ -127,26 +126,4 @@ void USkillManagerComponent::Init()
 
 	PlayerController->SetQuickSlotSkill(DiveShot, ESkillQuickSlot::SlotD);
 	//---------------------------------------------------------
-
-	//Ultimate Setting
-	//---------------------------------------------------------
-	UArcherUltimate* Ultimate = NewObject<UArcherUltimate>();
-	SkillArr.Push(Ultimate);
-	Ultimate->SetAnimInstance(Anim);
-	Ultimate->SetMontage(Anim->GetUltimateMontage());
-	Ultimate->SetBaseClass(Archer);
-	Ultimate->SetQuickSlotKey(ESkillQuickSlot::SlotS);
-	Ultimate->SetMaterial(TEXT("/Game/GamePlay/Player/UI/Skill/M_Ultimate.M_Ultimate"));
-
-	PlayerController->SetQuickSlotSkill(Ultimate, ESkillQuickSlot::SlotS);
-	//---------------------------------------------------------
 }
-
-UBaseSkill* USkillManagerComponent::GetSkill(uint8 SkillType)
-{
-	if (SkillType >= SkillArr.Num())
-		return nullptr;
-
-	return SkillArr[SkillType];
-}
-

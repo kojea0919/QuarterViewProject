@@ -22,12 +22,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	virtual void Init();
-
-	class UBaseSkill* GetSkill(uint8 SkillType);
+	void Init();
 
 protected:
 	UPROPERTY()
-	TArray<class UBaseSkill*> SkillArr;
-		
+	TArray<class UBaseSkill*> SkillArr;		
 };

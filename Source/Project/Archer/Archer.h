@@ -15,8 +15,7 @@ enum class EPlayerState
 	Bound,
 	Stiff,
 	Down,
-	PlayingLevelSequence,
-	UsingUltimate
+	PlayingLevelSequence
 };
 
 class UCurveVector;
@@ -90,9 +89,16 @@ public:
 	FTransform GetSoulSiphonEffectPos() const;
 
 	EPlayerState GetPlayerState() const { return PlayerState; }
-	void SetNormalState();
-	void SetPlayingLevelSequenceState();
-	
+	void SetNormalState() 
+	{
+		PlayerState = EPlayerState::Normal; 
+		SetActorHiddenInGame(false);
+	}
+	void SetPlayingLevelSequenceState()
+	{
+		PlayerState = EPlayerState::PlayingLevelSequence;
+		SetActorHiddenInGame(true);
+	}
 
 	void SetTargetCameraRotation(const FRotator & Rotation) { TargetCameraRotation = Rotation; }
 	void SetTargetCameraLocation(const FVector& Location) { TargetCameraLocation = Location; }
@@ -115,8 +121,6 @@ public:
 
 	void InitPhase3State();
 
-	void UltimateEnd();
-	void UltimateShot();
 public:
 	//장비 장착 함수
 	//인자는 새로 장착할 아이템
@@ -194,9 +198,6 @@ public:
 	//궁극기 시네마틱 재생
 	void PlayUltimateSequence();
 
-	UFUNCTION()
-	void UltimateSequenceFinished();
-
 private:
 	//마우스 방향으로 회전하는 함수
 	void RotateMouseDirection();
@@ -226,10 +227,6 @@ private:
 
 	void UpdateCameraTransform(float DeltaTime);
 
-	void DamageProc(float Damage);
-	FVector GetRandomVector() const;
-
-	void HideBlockMapComponent();
 private:
 	//카메라 관련 컴포넌트
 	//-----------------------------------------------------------------------------------------------
@@ -298,19 +295,17 @@ private:
 	bool IsCanRotate;
 	//-----------------------------------------------------------------------------------------------
 
-	UPROPERTY()
 	class AArcherPlayerController* ArcherController;
 
 	UPROPERTY()
 	class UArcherAnimInstance* ArcherAnim;
 
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	class ABow* Bow;
 
-	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DynMaterialArr;
 
-	UPROPERTY()
 	class AMoveSkillFootDirt* FootDirtEffect;
 
 
@@ -355,7 +350,6 @@ private:
 	//회전 속도
 	float RotateSpeed;
 
-
 	//기본 공격 범위
 	//--------------------------------------------
 	const FVector BasicAttackBoxExtent = FVector(600.f,90.f,90.f);
@@ -363,9 +357,10 @@ private:
 	//--------------------------------------------
 
 	//카메라 Shake
+	//--------------------------------------------
 	UPROPERTY(EditAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCameraShakeBase> ArcherSkillCameraShakeClass;
-
+	//--------------------------------------------
 
 	//Camera ZoomOut 효과
 	//--------------------------------------------
@@ -384,13 +379,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = SceneShatter, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UUserWidget> SceneShatterWidgetClass;
 
-	UPROPERTY()
 	class ASceneShatter* SceneShatter;
-
-	UPROPERTY()
 	class ASceneShatterFieldSystemActor* FieldSystemActor;
 
-	UPROPERTY()
 	UUserWidget* SceneShatterWidget;
 
 	FTimerHandle ShatterCreateTimerHandle; //부수는 효과 적용
@@ -402,10 +393,11 @@ private:
 	const float KnockBackRotateSpeed = 360.f;
 	short RotationDirectionToBoss;
 
+
 	//연출용 카메라 위치, 회전 정보
 	//--------------------------------------------
 	const FRotator DefaultCameraRotation = FRotator(-45.0f, -45.0f, 0.0f);
-	const float DefaultArmLength = 850.f;
+	const float DefaultArmLength = 800.f;
 
 	FRotator StartCameraRotation;
 	FVector StartCameraLocation;
@@ -419,6 +411,7 @@ private:
 	float CurCameraTransformAlpha;
 	//--------------------------------------------
 	
+
 	//점프용 캐릭터 위치
 	//--------------------------------------------
 	FVector JumpStartPoint;
@@ -452,6 +445,7 @@ private:
 	FTimerHandle JumpCameraShakeTimerHandle;
 	//--------------------------------------------
 
+
 	//HP
 	//--------------------------------------------
 	float CurHP;
@@ -460,30 +454,10 @@ private:
 	bool Dead;
 	//--------------------------------------------
 
+
+	//궁극기 연출 Sequence
+	//--------------------------------------------
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class ULevelSequence* UltimateSequence;
-
-
-	//Damage
 	//--------------------------------------------
-	const float BasicAttackBaseDamage = 200000;
-	//--------------------------------------------
-
-	//받은 Damage관련 변수
-	//-----------------------------------------------------------------------------
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UDamageText> DamageTextWidgetClass;
-
-	const FVector DamageTextOffset = { 0.0f,-125.0f,60.0f };
-
-	const float RandomVectorRange = 30;
-	//-----------------------------------------------------------------------------
-
-	UPROPERTY()
-	class AHideMapComponent* TargetHideActor;
-	bool IsLineTraceMapComponent;
-
-	UPROPERTY()
-	class ULevelSequencePlayer* UltimateSequencePlayer;
-
 };

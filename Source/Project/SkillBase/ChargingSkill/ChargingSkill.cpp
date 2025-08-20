@@ -22,9 +22,6 @@ bool UChargingSkill::Use()
 		return false;
 	}
 
-	//if (!IsCanCharging)
-	//	return false;
-
 	//스킬 게이지바 출력
 	if (SkillGaugeBar)
 	{
@@ -50,7 +47,6 @@ bool UChargingSkill::Use()
 	//------------------------------------------------------
 
 	IsCharging = true;
-	//IsCanCharging = false;
 
 	return true;
 }
@@ -79,7 +75,6 @@ void UChargingSkill::End()
 	ResetSkillState();
 
 	IsCharging = false;
-	//IsCanCharging = true;
 }
 
 void UChargingSkill::ResetSkillState()

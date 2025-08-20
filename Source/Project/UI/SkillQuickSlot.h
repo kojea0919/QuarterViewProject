@@ -23,7 +23,7 @@ public:
 	//Slot Skill Get Set
 	//--------------------------------------
 	void SetSkill(class UBaseSkill* Skill);
-	class UBaseSkill* GetSkill() const { return SlotSkill; }
+	TWeakObjectPtr<class UBaseSkill> GetSkill() const { return SlotSkill; }
 	//--------------------------------------
 
 	//SlotKeyText의 Text를 SlotKey로 설정
@@ -128,8 +128,7 @@ private:
 	bool Empty;
 
 	//현재 슬롯에 있는 Skill
-	UPROPERTY()
-	class UBaseSkill* SlotSkill;
+	TWeakObjectPtr<class UBaseSkill> SlotSkill;
 
 	bool IsUltimateSkillSlot;
 

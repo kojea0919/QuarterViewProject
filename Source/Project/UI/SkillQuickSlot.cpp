@@ -91,9 +91,10 @@ void USkillQuickSlot::UseSkill()
 	if (nullptr == SlotSkill)
 		return;
 
-	if (!SlotSkill->IsCoolDownActive())
+	UBaseSkill* SelfSkill = SlotSkill.Get();
+	if (!SelfSkill->IsCoolDownActive())
 	{
-		SlotSkill->Use();
+		SelfSkill->Use();
 	}
 	/*else
 	{
@@ -103,8 +104,9 @@ void USkillQuickSlot::UseSkill()
 
 void USkillQuickSlot::ReleaseSkill()
 {
-	if (SlotSkill)
-		SlotSkill->ReleaseSkill();
+	UBaseSkill* SelfSkill = SlotSkill.Get();
+	if (SelfSkill)
+		SelfSkill->ReleaseSkill();
 }
 
 void USkillQuickSlot::NativeConstruct()
@@ -113,7 +115,6 @@ void USkillQuickSlot::NativeConstruct()
 
 	Empty = true;
 
-	//SkillCoolTimeEnd = Cast<UImage>(GetWidgetFromName(FName("Img_SkillCoolTimeEnd")));
 	SlotImage = Cast<UImage>(GetWidgetFromName(FName("Img_SlotImage")));
 	SkillImage = Cast<UImage>(GetWidgetFromName(FName("Img_SkillImage")));
 	SlotKeyText = Cast<UTextBlock>(GetWidgetFromName(FName("Text_SlotKey")));
@@ -187,23 +188,24 @@ bool USkillQuickSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropE
 	USkillImageDragDropOperation* DragDropOperation = Cast<USkillImageDragDropOperation>(InOperation);
 	if (nullptr == DragDropOperation)
 		return false;
+
 	USkillQuickSlot* DragObject = DragDropOperation->GetDragObject();
 
-
-	UBaseSkill* DragSkill = DragObject->SlotSkill;
+	UBaseSkill* DragSkill = DragObject->SlotSkill.Get();
+	UBaseSkill* SelfSkill = SlotSkill.Get();
 
 	//두 슬롯에 스킬이 모두 있는 경우
-	if (DragSkill && SlotSkill)
+	if (DragSkill && SelfSkill)
 	{
 		//슬롯에 있는 스킬이 아직 쿨타임 중이면 Swap작업 pass
 		//-------------------------------------------------------------------
-		if (DragSkill->IsCoolDownActive() || SlotSkill && SlotSkill->IsCoolDownActive())
+		if (DragSkill->IsCoolDownActive() || SelfSkill && SelfSkill->IsCoolDownActive())
 			return false;
 		//-------------------------------------------------------------------
 
 		//궁극기와 일반 스킬은 Swap작업 pass
 		bool DragSkillIsUltimate = DragSkill->GetIsUltimateSkill();
-		bool CurSkillIsUltimate = SlotSkill->GetIsUltimateSkill();
+		bool CurSkillIsUltimate = SelfSkill->GetIsUltimateSkill();
 
 		if (DragSkillIsUltimate || CurSkillIsUltimate)
 			return false;
@@ -258,20 +260,21 @@ void USkillQuickSlot::SwapSkill(USkillQuickSlot* OtherSlot)
 
 		//SkillSlot바꾸기
 		//---------------------------------------------------------------------------
-		UBaseSkill* OtherSkill = OtherSlot->SlotSkill;
+		UBaseSkill * OtherSkill = OtherSlot->SlotSkill.Get();
+		UBaseSkill * SelfSkill = SlotSkill.Get();
 		if (OtherSkill)
 			OtherSkill->SetQuickSlot(this);
-		if (SlotSkill)
-			SlotSkill->SetQuickSlot(OtherSlot);
+		if (SelfSkill)
+			SelfSkill->SetQuickSlot(OtherSlot);
 		//---------------------------------------------------------------------------
 
 		//Skill바꾸기
 		//---------------------------------------------------------------------------
-		OtherSlot->SlotSkill = SlotSkill;
+		OtherSlot->SlotSkill = SelfSkill;
 		SlotSkill = OtherSkill;
 
-		SetSkillTypeImage(SlotSkill);
-		OtherSlot->SetSkillTypeImage(OtherSlot->SlotSkill);
+		SetSkillTypeImage(OtherSkill);
+		OtherSlot->SetSkillTypeImage(SelfSkill);
 		//---------------------------------------------------------------------------
 
 		//Empty바꾸기

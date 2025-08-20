@@ -33,6 +33,7 @@ bool UBaseSkill::Use()
 			CurSlot->PlayUseSkillAnimation();
 
 		Archer->SetUseSkill(true);
+
 		if (NeedRotation)
 			Archer->RotateMouseDirectionTimeLineVersion();
 
